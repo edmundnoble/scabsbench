@@ -23,6 +23,11 @@ object RangeBenchmark
     else listConsRec(i :: s, i - 1)
 
   @annotation.tailrec
+  def vecConsRec(s: Vector[Int], i: Int): Vector[Int] =
+    if (i == 0) s
+    else vecConsRec(i +: s, i - 1)
+
+  @annotation.tailrec
   def steqSnocRec(s: Steq[Int], i: Int): Steq[Int] =
     if (i == 0) s
     else steqSnocRec(KaplanTarjanSteq.snoc(s, i), i - 1)
@@ -30,7 +35,12 @@ object RangeBenchmark
   @annotation.tailrec
   def listSnocRec(s: List[Int], i: Int): List[Int] =
     if (i == 0) s
-    else listSnocRec(s :+ i,  i - 1)
+    else listSnocRec(s :+ i, i - 1)
+
+  @annotation.tailrec
+  def vecSnocRec(s: Vector[Int], i: Int): Vector[Int] =
+    if (i == 0) s
+    else vecSnocRec(s :+ i, i - 1)
 
   performance of "cons" in {
     measure method "steq" in {
@@ -41,6 +51,11 @@ object RangeBenchmark
     measure method "list" in {
       using(sizes) in {
         listConsRec(Nil, _)
+      }
+    }
+    measure method "vec" in {
+      using(sizes) in {
+        vecConsRec(Vector.empty[Int], _)
       }
     }
   }
@@ -54,6 +69,11 @@ object RangeBenchmark
     measure method "list" in {
       using(sizes) in {
         listSnocRec(Nil, _)
+      }
+    }
+    measure method "vec" in {
+      using(sizes) in {
+        vecSnocRec(Vector.empty[Int], _)
       }
     }
   }

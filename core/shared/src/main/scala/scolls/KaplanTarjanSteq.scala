@@ -16,7 +16,7 @@ object KaplanTarjanSteq {
 
   def empty[A]: Steq[A] = Steq(Nil)
   def isEmpty[A](steq: Steq[A]): Boolean = steq.cons.isEmpty
-  def nonEmpty[A](steq: Steq[A]): Boolean = steq.cons.isEmpty
+  def nonEmpty[A](steq: Steq[A]): Boolean = steq.cons.nonEmpty
   def head[A](steq: Steq[A]): A = {
     val (ps, _) = popPS(steq.cons)
     headPS(ps) match {
@@ -95,7 +95,7 @@ object KaplanTarjanSteq {
       case (PS(ps), cs) =>
         val (ps1, cs1) = popPS(cs)
         makeGrPS(ps, ps1) match {
-          case (psn, (Nil, Nil)) => fixY(PS(psn) :: regular(PS((Nil, Nil)) :: cs1))
+          case (psn, (Nil, Nil)) => fixY[A](PS[A](psn) :: regular[A](PS[A]((Nil, Nil)) :: cs1))
           case (psn, ps1n) => PS(ps) :: fixY(PS(ps1) :: cs1)
         }
     }
@@ -109,9 +109,9 @@ object KaplanTarjanSteq {
     else Yellow
 
   def fixY[A](cons: List[C[A]]): List[C[A]] = {
-    val ps = cons.head.asInstanceOf[PS].ps
+    val ps = cons.head.asInstanceOf[PS[A]].ps
     if (cons.length == 1) {
-      val ps = cons.head.asInstanceOf[PS].ps
+      val ps = cons.head.asInstanceOf[PS[A]].ps
       def isYellow(xs: PST[A]): Boolean = xs match {
         case (Nil, sx) => colorX(sx) == Yellow
         case (px, Nil) => colorX(px) == Yellow

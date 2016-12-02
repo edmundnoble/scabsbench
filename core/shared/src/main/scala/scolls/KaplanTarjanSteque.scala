@@ -1,3 +1,4 @@
+/*
 package scolls
 
 object KaplanTarjanSteque {
@@ -32,3 +33,4 @@ final case class KaplanTarjanSteque[A <: AnyRef](prefix: Buffer[A], child: Kapla
 
   }
 }
+*/

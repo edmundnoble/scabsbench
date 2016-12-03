@@ -14,7 +14,7 @@ object SeqBenchmarks
 
   val constructSizes: Gen[Int] = Gen.enumeration("sizes")(10, 100, 1000, 2000)
   val destructSizes: Gen[Int] = Gen.enumeration("sizes")(100, 1000)
-  val treeSizes: Gen[Int] = Gen.enumeration("treeSizes")(10, 100, 400)
+  val treeSizes: Gen[Int] = Gen.enumeration("treeSizes")(100, 500, 1200)
   val balancedTreeSizes: Gen[Int] = Gen.enumeration("treeSizes")(15, 20)
   val leftNestedTrees: Gen[LTree[Int]] = treeSizes.map(generateLeftNestedTree)
   val rightNestedTrees: Gen[LTree[Int]] = treeSizes.map(generateRightNestedTree)
@@ -133,6 +133,7 @@ object SeqBenchmarks
     measure method "vec" in (using(constructSizes) in consRecBench[Vector])
     measure method "que" in (using(constructSizes) in consRecBench[OkasakiQueue])
     measure method "hque" in (using(constructSizes) in consRecBench[HQueue])
+    measure method "cat" in (using(constructSizes) in consRecBench[Catenable])
   }
 
   performance of "snoc" in {
@@ -141,6 +142,7 @@ object SeqBenchmarks
     measure method "vec" in (using(constructSizes) in snocRecBench[Vector])
     measure method "que" in (using(constructSizes) in snocRecBench[OkasakiQueue])
     measure method "hque" in (using(constructSizes) in snocRecBench[HQueue])
+    measure method "cat" in (using(constructSizes) in snocRecBench[Catenable])
   }
 
   performance of "summing cons-constructed seq" in {
@@ -149,6 +151,7 @@ object SeqBenchmarks
     measure method "vec" in (using(testConsSeqOnes[Vector]) in sumBench[Vector])
     measure method "que" in (using(testConsSeqOnes[OkasakiQueue]) in sumBench[OkasakiQueue])
     measure method "hque" in (using(testConsSeqOnes[HQueue]) in sumBench[HQueue])
+    measure method "cat" in (using(testConsSeqOnes[Catenable]) in sumBench[Catenable])
   }
 
   performance of "summing snoc-constructed seq" in {
@@ -157,6 +160,7 @@ object SeqBenchmarks
     measure method "vec" in (using(testSnocSeqOnes[Vector]) in sumBench[Vector])
     measure method "que" in (using(testSnocSeqOnes[OkasakiQueue]) in sumBench[OkasakiQueue])
     measure method "hque" in (using(testSnocSeqOnes[HQueue]) in sumBench[HQueue])
+    measure method "cat" in (using(testSnocSeqOnes[Catenable]) in sumBench[Catenable])
   }
 
 //  performance of "concatenating cons-constructed seqs" in {
@@ -164,6 +168,7 @@ object SeqBenchmarks
 //    measure method "vec" in (using(testConsSeqOnes[Vector]) in concatBench[Vector, Int])
 //    measure method "que" in (using(testConsSeqOnes[OkasakiQueue]) in concatBench[OkasakiQueue, Int])
 //    measure method "hque" in (using(testConsSeqOnes[HQueue]) in concatBench[HQueue, Int])
+//    measure method "cat" in (using(testSnocSeqOnes[Catenable]) in concatBench[Catenable, Int])
 //  }
 //
 //  performance of "concatenating snoc-constructed seqs" in {
@@ -171,6 +176,7 @@ object SeqBenchmarks
 //    measure method "vec" in (using(testSnocSeqOnes[Vector]) in concatBench[Vector, Int])
 //    measure method "que" in (using(testSnocSeqOnes[OkasakiQueue]) in concatBench[OkasakiQueue, Int])
 //    measure method "hque" in (using(testSnocSeqOnes[HQueue]) in concatBench[HQueue, Int])
+//    measure method "cat" in (using(testSnocSeqOnes[Catenable]) in concatBench[Catenable, Int])
 //  }
 
   performance of "concatenating left-nested trees" in {
@@ -178,6 +184,7 @@ object SeqBenchmarks
     measure method "vec" in (using(leftNestedTrees) in frontierRec[Vector, Int])
     measure method "que" in (using(leftNestedTrees) in frontierRec[OkasakiQueue, Int])
     measure method "hque" in (using(leftNestedTrees) in frontierRec[HQueue, Int])
+    measure method "cat" in (using(leftNestedTrees) in frontierRec[Catenable, Int])
   }
 
   performance of "concatenating right-nested trees" in {
@@ -185,6 +192,7 @@ object SeqBenchmarks
     measure method "vec" in (using(rightNestedTrees) in frontierRec[Vector, Int])
     measure method "que" in (using(rightNestedTrees) in frontierRec[OkasakiQueue, Int])
     measure method "hque" in (using(rightNestedTrees) in frontierRec[HQueue, Int])
+    measure method "cat" in (using(rightNestedTrees) in frontierRec[Catenable, Int])
   }
 
   performance of "concatenating jagged trees" in {
@@ -192,6 +200,7 @@ object SeqBenchmarks
     measure method "vec" in (using(jaggedNestedTrees) in frontierRec[Vector, Int])
     measure method "que" in (using(jaggedNestedTrees) in frontierRec[OkasakiQueue, Int])
     measure method "hque" in (using(jaggedNestedTrees) in frontierRec[HQueue, Int])
+    measure method "cat" in (using(jaggedNestedTrees) in frontierRec[Catenable, Int])
   }
 
   performance of "concatenating balanced trees" in {
@@ -199,6 +208,7 @@ object SeqBenchmarks
     measure method "vec" in (using(balancedNestedTrees) in frontierRec[Vector, Int])
     measure method "que" in (using(balancedNestedTrees) in frontierRec[OkasakiQueue, Int])
     measure method "hque" in (using(balancedNestedTrees) in frontierRec[HQueue, Int])
+    measure method "cat" in (using(balancedNestedTrees) in frontierRec[Catenable, Int])
   }
 
   performance of "functionally concatenating left-nested trees" in {
@@ -206,6 +216,7 @@ object SeqBenchmarks
     measure method "vec" in (using(leftNestedTrees) in frontierCPS[Vector, Int])
     measure method "que" in (using(leftNestedTrees) in frontierCPS[OkasakiQueue, Int])
     measure method "hque" in (using(leftNestedTrees) in frontierCPS[HQueue, Int])
+    measure method "cat" in (using(leftNestedTrees) in frontierCPS[Catenable, Int])
   }
 
   performance of "functionally concatenating right-nested trees" in {
@@ -213,6 +224,7 @@ object SeqBenchmarks
     measure method "vec" in (using(rightNestedTrees) in frontierCPS[Vector, Int])
     measure method "que" in (using(rightNestedTrees) in frontierCPS[OkasakiQueue, Int])
     measure method "hque" in (using(rightNestedTrees) in frontierCPS[HQueue, Int])
+    measure method "cat" in (using(rightNestedTrees) in frontierCPS[Catenable, Int])
   }
 
   performance of "functionally concatenating jagged trees" in {
@@ -220,6 +232,7 @@ object SeqBenchmarks
     measure method "vec" in (using(jaggedNestedTrees) in frontierCPS[Vector, Int])
     measure method "vec" in (using(jaggedNestedTrees) in frontierCPS[Vector, Int])
     measure method "hque" in (using(jaggedNestedTrees) in frontierCPS[HQueue, Int])
+    measure method "cat" in (using(jaggedNestedTrees) in frontierCPS[Catenable, Int])
   }
 
   performance of "functionally concatenating balanced trees" in {
@@ -227,6 +240,7 @@ object SeqBenchmarks
     measure method "vec" in (using(balancedNestedTrees) in frontierCPS[Vector, Int])
     measure method "que" in (using(balancedNestedTrees) in frontierCPS[OkasakiQueue, Int])
     measure method "hque" in (using(balancedNestedTrees) in frontierCPS[HQueue, Int])
+    measure method "cat" in (using(balancedNestedTrees) in frontierCPS[Catenable, Int])
   }
 
 

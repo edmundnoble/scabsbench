@@ -89,9 +89,8 @@ object KaplanTarjanSteq {
   }
 
   def popPS[A](cons: List[C[A]]): (PST[A], List[C[A]]) = {
-    val head = cons.head
     val tail = cons.tail
-    head match {
+    cons.head match {
       case PS(ps) => (ps, tail)
       case Y(List(ps)) => (ps, tail)
       case Y(ps :: pss) => (ps, Y(pss) :: tail)
@@ -121,7 +120,7 @@ object KaplanTarjanSteq {
         val (ps1, cs1) = popPS(cs)
         makeGrPS(ps, ps1) match {
           case (psn, (Nil, Nil)) => fixY[A](PS[A](psn) :: regular[A](PS[A]((Nil, Nil)) :: cs1))
-          case (psn, ps1n) => PS(ps) :: fixY(PS(ps1) :: cs1)
+          case (psn, ps1n) => PS(psn) :: fixY(PS(ps1n) :: cs1)
         }
     }
   }

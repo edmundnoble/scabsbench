@@ -22,7 +22,7 @@ object SeqBenchmarks
 
   val constructSizes: Gen[Int] = Gen.enumeration("sizes")(10, 100, 1000, 2000)
   val destructSizes: Gen[Int] = Gen.enumeration("sizes")(100, 1000)
-  val concatInnerOuterSizes: Gen[(Int, Int)] = Gen.enumeration("sizes")((100, 10))
+  val concatInnerOuterSizes: Gen[(Int, Int)] = Gen.enumeration("sizes")((100, 10), (200, 30))
   val treeSizes: Gen[Int] = Gen.enumeration("treeSizes")(100, 500, 1200)
   val balancedTreeSizes: Gen[Int] = Gen.enumeration("treeSizes")(15, 20)
   val leftNestedTrees: Gen[LTree[Int]] = treeSizes.map(generateLeftNestedTree)

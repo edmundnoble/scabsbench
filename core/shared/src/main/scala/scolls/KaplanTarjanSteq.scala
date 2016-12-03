@@ -14,55 +14,80 @@ object KaplanTarjanSteq {
   case object Yellow extends Color
   case object Green extends Color
 
-  def empty[A]: Steq[A] = Steq(Nil)
-  def isEmpty[A](steq: Steq[A]): Boolean = steq.cons.isEmpty
-  def nonEmpty[A](steq: Steq[A]): Boolean = steq.cons.nonEmpty
-  def head[A](steq: Steq[A]): A = {
-    val (ps, _) = popPS(steq.cons)
-    headPS(ps) match {
-      case Lf(a) => a
+  implicit val steqSequenceInstance: Sequence[Steq] = new Sequence[Steq] {
+
+    def empty[A]: Steq[A] = Steq(Nil)
+
+    def isEmpty[A](steq: Steq[A]): Boolean = steq.cons.isEmpty
+
+    def nonEmpty[A](steq: Steq[A]): Boolean = steq.cons.nonEmpty
+
+    def head[A](steq: Steq[A]): A = {
+      val (ps, _) = popPS(steq.cons)
+      headPS(ps) match {
+        case Lf(a) => a
+      }
+    }
+
+    def last[A](steq: Steq[A]): A = {
+      val (ps, _) = popPS(steq.cons)
+      lastPS(ps) match {
+        case Lf(a) => a
+      }
+    }
+
+    def cons[A](a: A, steq: Steq[A]): Steq[A] = if (nonEmpty(steq)) {
+      val ((px, sx), cs1) = popPS(steq.cons)
+      Steq[A](normD(fixY(PS(Lf(a) :: px, sx) :: cs1)))
+    } else {
+      Steq[A](PS[A](Lf[A](a) :: Nil, Nil) :: Nil)
+    }
+
+    def snoc[A](steq: Steq[A], a: A): Steq[A] = if (nonEmpty(steq)) {
+      val ((px, sx), cs1) = popPS(steq.cons)
+      Steq[A](normD(fixY(PS(Lf(a) :: px, sx) :: cs1)))
+    } else {
+      Steq[A](PS[A](Nil, Lf[A](a) :: Nil) :: Nil)
+    }
+
+    def tail[A](steq: Steq[A]): Steq[A] = {
+      val (ps, cs1) = popPS(steq.cons)
+      Steq[A](normD(fixY[A](PS[A](tailPS[A](ps)) :: cs1)))
+    }
+
+    def init[A](steq: Steq[A]): Steq[A] = {
+      val (ps, cs1) = popPS(steq.cons)
+      Steq[A](normD(fixY(PS(initPS(ps)) :: cs1)))
+    }
+
+    def lengthSeq[A](steq: Steq[A]): Int = {
+      def accSum(c: C[A], soFar: Int): Int = c match {
+        case PS((px, sx)) => px.length + sx.length + 2 * soFar
+        case Y(pss) => pss.map(PS[A]).foldRight(soFar)(accSum)
+      }
+      steq.cons.foldRight(0)(accSum)
+    }
+
+    def toList[A](steq: Steq[A]): List[A] = {
+      def toListC(c: C[A], rest: List[A]): List[A] = c match {
+        case PS(ps) => toListPS(ps, rest)
+        case Y(pss) => pss.foldRight(rest)(toListPS)
+      }
+      steq.cons.foldRight(Nil: List[A])(toListC)
+    }
+
+    override def toSeq[A](xs: List[A]): Steq[A] =
+      xs.foldLeft(empty[A])(snoc)
+
+    override def fold[A, B](q: Steq[A])(z: B)(f: (B, A) => B): B = {
+      def foldC(c: C[A], soFar: B): B = c match {
+        case PS(ps) => foldPS[A, B](ps, soFar, f)
+        case Y(pss) => pss.foldRight(soFar)(foldPS[A, B](_, _, f))
+      }
+      q.cons.foldRight(z)(foldC)
     }
   }
-  def last[A](steq: Steq[A]): A = {
-    val (ps, _) = popPS(steq.cons)
-    lastPS(ps) match {
-      case Lf(a) => a
-    }
-  }
-  def cons[A](a: A, steq: Steq[A]): Steq[A] = if (nonEmpty(steq)) {
-    val ((px, sx), cs1) = popPS(steq.cons)
-    Steq[A](normD(fixY(PS(Lf(a) :: px, sx) :: cs1)))
-  } else {
-    Steq[A](PS[A](Lf[A](a) :: Nil, Nil) :: Nil)
-  }
-  def snoc[A](steq: Steq[A], a: A): Steq[A] = if (nonEmpty(steq)) {
-    val ((px, sx), cs1) = popPS(steq.cons)
-    Steq[A](normD(fixY(PS(Lf(a) :: px, sx) :: cs1)))
-  } else {
-    Steq[A](PS[A](Nil, Lf[A](a) :: Nil) :: Nil)
-  }
-  def tail[A](steq: Steq[A]): Steq[A] = {
-    val (ps, cs1) = popPS(steq.cons)
-    Steq[A](normD(fixY[A](PS[A](tailPS[A](ps)) :: cs1)))
-  }
-  def init[A](steq: Steq[A]): Steq[A] = {
-    val (ps, cs1) = popPS(steq.cons)
-    Steq[A](normD(fixY(PS(initPS(ps)) :: cs1)))
-  }
-  def length[A](steq: Steq[A]): Int = {
-    def accSum(c: C[A], soFar: Int): Int = c match {
-      case PS((px, sx)) => px.length + sx.length + 2 * soFar
-      case Y(pss) => pss.map(PS[A]).foldRight(soFar)(accSum)
-    }
-    steq.cons.foldRight(0)(accSum)
-  }
-  def toList[A](steq: Steq[A]): List[A] = {
-    def toListC(c: C[A], rest: List[A]): List[A] = c match {
-      case PS(ps) => toListPS(ps, rest)
-      case Y(pss) => pss.foldRight(rest)(toListPS)
-    }
-    steq.cons.foldRight(Nil: List[A])(toListC)
-  }
+
   def popPS[A](cons: List[C[A]]): (PST[A], List[C[A]]) = {
     val head = cons.head
     val tail = cons.tail
@@ -130,23 +155,23 @@ object KaplanTarjanSteq {
     }
   }
 
-    def regular[A](cons: List[C[A]]): List[C[A]] = cons match {
-      case PS((Nil, Nil)) :: Nil => Nil
-      case _ => cons
-    }
+  def regular[A](cons: List[C[A]]): List[C[A]] = cons match {
+    case PS((Nil, Nil)) :: Nil => Nil
+    case _ => cons
+  }
 
-    def colorOfFirst[A](cons: List[C[A]]): Color = cons match {
-      case Y(_) :: _ => Yellow
-      case PS((Nil, sx)) :: Nil => colorX(sx)
-      case PS((px, Nil)) :: Nil => colorX(px)
-      case PS((px, sx)) :: _ => min(colorX(px), colorX(sx))
-    }
+  def colorOfFirst[A](cons: List[C[A]]): Color = cons match {
+    case Y(_) :: _ => Yellow
+    case PS((Nil, sx)) :: Nil => colorX(sx)
+    case PS((px, Nil)) :: Nil => colorX(px)
+    case PS((px, sx)) :: _ => min(colorX(px), colorX(sx))
+  }
 
-    def makeGrPS[A](t: PST[A], ps1: PST[A]): (PST[A], PST[A]) = {
-      val (pxn, ps1n) = makeGrPx(t._1, ps1)
-      val (sxn, ps1nn) = makeGrSx(t._2, ps1n)
-      ((pxn, sxn), ps1nn)
-    }
+  def makeGrPS[A](t: PST[A], ps1: PST[A]): (PST[A], PST[A]) = {
+    val (pxn, ps1n) = makeGrPx(t._1, ps1)
+    val (sxn, ps1nn) = makeGrSx(t._2, ps1n)
+    ((pxn, sxn), ps1nn)
+  }
 
   def makeGrPx[A](px: List[LTree[A]], ps: PST[A]): (List[LTree[A]], PST[A]) = {
     val n = px.length
@@ -189,8 +214,12 @@ object KaplanTarjanSteq {
     t._1.flatMap(LTree.frontier) ++ rest ++ t._2.flatMap(LTree.frontier)
   }
 
+  def foldPS[A, B](t: PST[A], rest: B, f: (B, A) => B): B = {
+    t._2.flatMap(LTree.frontier).foldLeft(t._1.flatMap(LTree.frontier).foldLeft(rest)(f))(f)
+  }
+
   def headPS[A](t: PST[A]): LTree[A] = {
-    if (t._1.isEmpty) (t._2.head)
+    if (t._1.isEmpty) t._2.head
     else t._1.head
   }
 

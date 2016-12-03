@@ -7,6 +7,10 @@ lazy val scolls = project.in(file("."))
   .aggregate(coreJVM, coreJS, bench)
 
 lazy val core = crossProject.in(file("core"))
+  .settings(libraryDependencies += "com.github.mpilquist" %%% "simulacrum" % "0.10.0")
+  .settings(addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full))
+
+resolvers += "Sonatype Public" at "https://oss.sonatype.org/content/groups/public/"
 
 resolvers += "Sonatype OSS Snapshots" at
   "https://oss.sonatype.org/content/repositories/snapshots"

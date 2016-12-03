@@ -1,0 +1,659 @@
+info]
+[info] :::Summary of regression test results - Accepter():::
+[info] Test group: cons.list
+[info] - cons.list.Test-0 measurements:
+[info]   - at sizes -> 10: passed
+[info]     (mean = 0.00 ms, ci = <0.00 ms, 0.01 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.01 ms, ci = <0.00 ms, 0.01 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 0.04 ms, ci = <0.03 ms, 0.06 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 2000: passed
+[info]     (mean = 0.08 ms, ci = <0.05 ms, 0.12 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: cons.steq
+[info] - cons.steq.Test-1 measurements:
+[info]   - at sizes -> 10: passed
+[info]     (mean = 0.01 ms, ci = <0.00 ms, 0.01 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.03 ms, ci = <0.02 ms, 0.03 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 1.04 ms, ci = <0.89 ms, 1.20 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 2000: passed
+[info]     (mean = 5.06 ms, ci = <4.63 ms, 5.48 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: cons.vec
+[info] - cons.vec.Test-2 measurements:
+[info]   - at sizes -> 10: passed
+[info]     (mean = 0.01 ms, ci = <0.00 ms, 0.01 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.01 ms, ci = <0.01 ms, 0.02 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 0.08 ms, ci = <0.05 ms, 0.11 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 2000: passed
+[info]     (mean = 0.12 ms, ci = <0.09 ms, 0.16 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: cons.que
+[info] - cons.que.Test-3 measurements:
+[info]   - at sizes -> 10: passed
+[info]     (mean = 0.00 ms, ci = <0.00 ms, 0.01 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.01 ms, ci = <0.00 ms, 0.01 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 0.05 ms, ci = <0.02 ms, 0.08 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 2000: passed
+[info]     (mean = 0.10 ms, ci = <0.05 ms, 0.15 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: cons.hque
+[info] - cons.hque.Test-4 measurements:
+[info]   - at sizes -> 10: passed
+[info]     (mean = 0.00 ms, ci = <0.00 ms, 0.00 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.01 ms, ci = <0.00 ms, 0.01 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 0.05 ms, ci = <0.04 ms, 0.07 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 2000: passed
+[info]     (mean = 0.11 ms, ci = <0.06 ms, 0.15 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: cons.cat
+[info] - cons.cat.Test-5 measurements:
+[info]   - at sizes -> 10: passed
+[info]     (mean = 0.00 ms, ci = <0.00 ms, 0.00 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.01 ms, ci = <0.00 ms, 0.01 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 0.04 ms, ci = <0.02 ms, 0.06 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 2000: passed
+[info]     (mean = 0.08 ms, ci = <0.04 ms, 0.12 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: snoc.list
+[info] - snoc.list.Test-6 measurements:
+[info]   - at sizes -> 10: passed
+[info]     (mean = 0.00 ms, ci = <0.00 ms, 0.00 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.06 ms, ci = <0.05 ms, 0.07 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 5.53 ms, ci = <4.06 ms, 6.99 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 2000: passed
+[info]     (mean = 20.68 ms, ci = <17.40 ms, 23.95 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: snoc.steq
+[info] - snoc.steq.Test-7 measurements:
+[info]   - at sizes -> 10: passed
+[info]     (mean = 0.01 ms, ci = <0.01 ms, 0.02 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.06 ms, ci = <0.05 ms, 0.07 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 6.45 ms, ci = <6.08 ms, 6.81 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 2000: passed
+[info]     (mean = 37.14 ms, ci = <34.12 ms, 40.16 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: snoc.vec
+[info] - snoc.vec.Test-8 measurements:
+[info]   - at sizes -> 10: passed
+[info]     (mean = 0.00 ms, ci = <0.00 ms, 0.01 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.01 ms, ci = <0.01 ms, 0.02 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 0.08 ms, ci = <0.06 ms, 0.10 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 2000: passed
+[info]     (mean = 0.14 ms, ci = <0.11 ms, 0.17 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: snoc.que
+[info] - snoc.que.Test-9 measurements:
+[info]   - at sizes -> 10: passed
+[info]     (mean = 0.00 ms, ci = <0.00 ms, 0.01 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.01 ms, ci = <0.00 ms, 0.01 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 0.04 ms, ci = <0.02 ms, 0.06 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 2000: passed
+[info]     (mean = 0.07 ms, ci = <0.03 ms, 0.11 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: snoc.hque
+[info] - snoc.hque.Test-10 measurements:
+[info]   - at sizes -> 10: passed
+[info]     (mean = 0.00 ms, ci = <-0.00 ms, 0.01 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.01 ms, ci = <0.00 ms, 0.01 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 0.05 ms, ci = <0.03 ms, 0.08 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 2000: passed
+[info]     (mean = 0.09 ms, ci = <0.06 ms, 0.13 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: snoc.cat
+[info] - snoc.cat.Test-11 measurements:
+[info]   - at sizes -> 10: passed
+[info]     (mean = 0.00 ms, ci = <0.00 ms, 0.01 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.01 ms, ci = <0.00 ms, 0.01 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 0.05 ms, ci = <0.01 ms, 0.08 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 2000: passed
+[info]     (mean = 0.08 ms, ci = <0.03 ms, 0.14 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: summing cons-constructed seq.list
+[info] - summing cons-constructed seq.list.Test-12 measurements:
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.02 ms, ci = <0.01 ms, 0.02 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 0.13 ms, ci = <0.09 ms, 0.18 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: summing cons-constructed seq.steq
+[info] - summing cons-constructed seq.steq.Test-13 measurements:
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.03 ms, ci = <0.01 ms, 0.05 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 0.21 ms, ci = <0.10 ms, 0.32 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: summing cons-constructed seq.vec
+[info] - summing cons-constructed seq.vec.Test-14 measurements:
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.02 ms, ci = <0.01 ms, 0.02 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 0.09 ms, ci = <0.07 ms, 0.10 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: summing cons-constructed seq.que
+[info] - summing cons-constructed seq.que.Test-15 measurements:
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.03 ms, ci = <0.02 ms, 0.03 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 0.16 ms, ci = <0.11 ms, 0.21 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: summing cons-constructed seq.hque
+[info] - summing cons-constructed seq.hque.Test-16 measurements:
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.02 ms, ci = <0.02 ms, 0.02 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 0.14 ms, ci = <0.09 ms, 0.18 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: summing cons-constructed seq.cat
+[info] - summing cons-constructed seq.cat.Test-17 measurements:
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.04 ms, ci = <0.03 ms, 0.04 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 0.33 ms, ci = <0.27 ms, 0.38 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: summing snoc-constructed seq.list
+[info] - summing snoc-constructed seq.list.Test-18 measurements:
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.02 ms, ci = <0.02 ms, 0.03 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 0.16 ms, ci = <0.12 ms, 0.20 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: summing snoc-constructed seq.steq
+[info] - summing snoc-constructed seq.steq.Test-19 measurements:
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.05 ms, ci = <0.03 ms, 0.07 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 0.37 ms, ci = <0.15 ms, 0.58 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: summing snoc-constructed seq.vec
+[info] - summing snoc-constructed seq.vec.Test-20 measurements:
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.02 ms, ci = <0.01 ms, 0.03 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 0.12 ms, ci = <0.03 ms, 0.20 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: summing snoc-constructed seq.que
+[info] - summing snoc-constructed seq.que.Test-21 measurements:
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.03 ms, ci = <0.03 ms, 0.04 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 0.24 ms, ci = <0.19 ms, 0.30 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: summing snoc-constructed seq.hque
+[info] - summing snoc-constructed seq.hque.Test-22 measurements:
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.03 ms, ci = <0.02 ms, 0.04 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 0.23 ms, ci = <0.17 ms, 0.29 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: summing snoc-constructed seq.cat
+[info] - summing snoc-constructed seq.cat.Test-23 measurements:
+[info]   - at sizes -> 100: passed
+[info]     (mean = 0.05 ms, ci = <0.03 ms, 0.08 ms>, significance = 1.0E-10)
+[info]   - at sizes -> 1000: passed
+[info]     (mean = 0.32 ms, ci = <0.10 ms, 0.54 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating cons-constructed seqs to the right.list
+[info] - concatenating cons-constructed seqs to the right.list.Test-24 measurements:
+[info]   - at sizes -> (100,10): passed
+[info]     (mean = 0.04 ms, ci = <0.02 ms, 0.05 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating cons-constructed seqs to the right.vec
+[info] - concatenating cons-constructed seqs to the right.vec.Test-25 measurements:
+[info]   - at sizes -> (100,10): passed
+[info]     (mean = 0.17 ms, ci = <0.06 ms, 0.28 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating cons-constructed seqs to the right.que
+[info] - concatenating cons-constructed seqs to the right.que.Test-26 measurements:
+[info]   - at sizes -> (100,10): passed
+[info]     (mean = 0.03 ms, ci = <0.02 ms, 0.05 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating cons-constructed seqs to the right.hque
+[info] - concatenating cons-constructed seqs to the right.hque.Test-27 measurements:
+[info]   - at sizes -> (100,10): passed
+[info]     (mean = 0.05 ms, ci = <0.02 ms, 0.09 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating cons-constructed seqs to the right.cat
+[info] - concatenating cons-constructed seqs to the right.cat.Test-28 measurements:
+[info]   - at sizes -> (100,10): passed
+[info]     (mean = 0.01 ms, ci = <-0.00 ms, 0.03 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating snoc-constructed seqs to the right.list
+[info] - concatenating snoc-constructed seqs to the right.list.Test-29 measurements:
+[info]   - at sizes -> (100,10): passed
+[info]     (mean = 0.04 ms, ci = <0.03 ms, 0.06 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating snoc-constructed seqs to the right.vec
+[info] - concatenating snoc-constructed seqs to the right.vec.Test-30 measurements:
+[info]   - at sizes -> (100,10): passed
+[info]     (mean = 0.19 ms, ci = <0.08 ms, 0.30 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating snoc-constructed seqs to the right.que
+[info] - concatenating snoc-constructed seqs to the right.que.Test-31 measurements:
+[info]   - at sizes -> (100,10): passed
+[info]     (mean = 0.05 ms, ci = <0.03 ms, 0.07 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating snoc-constructed seqs to the right.hque
+[info] - concatenating snoc-constructed seqs to the right.hque.Test-32 measurements:
+[info]   - at sizes -> (100,10): passed
+[info]     (mean = 0.05 ms, ci = <0.03 ms, 0.06 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating snoc-constructed seqs to the right.cat
+[info] - concatenating snoc-constructed seqs to the right.cat.Test-33 measurements:
+[info]   - at sizes -> (100,10): passed
+[info]     (mean = 0.00 ms, ci = <0.00 ms, 0.01 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating cons-constructed seqs to the left.list
+[info] - concatenating cons-constructed seqs to the left.list.Test-34 measurements:
+[info]   - at sizes -> (100,10): passed
+[info]     (mean = 0.16 ms, ci = <0.08 ms, 0.25 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating cons-constructed seqs to the left.vec
+[info] - concatenating cons-constructed seqs to the left.vec.Test-35 measurements:
+[info]   - at sizes -> (100,10): passed
+[info]     (mean = 0.14 ms, ci = <0.01 ms, 0.27 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating cons-constructed seqs to the left.que
+[info] - concatenating cons-constructed seqs to the left.que.Test-36 measurements:
+[info]   - at sizes -> (100,10): passed
+[info]     (mean = 0.13 ms, ci = <0.04 ms, 0.21 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating cons-constructed seqs to the left.hque
+[info] - concatenating cons-constructed seqs to the left.hque.Test-37 measurements:
+[info]   - at sizes -> (100,10): passed
+[info]     (mean = 0.19 ms, ci = <0.05 ms, 0.33 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating cons-constructed seqs to the left.cat
+[info] - concatenating cons-constructed seqs to the left.cat.Test-38 measurements:
+[info]   - at sizes -> (100,10): passed
+[info]     (mean = 0.01 ms, ci = <0.00 ms, 0.01 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating snoc-constructed seqs to the left.list
+[info] - concatenating snoc-constructed seqs to the left.list.Test-39 measurements:
+[info]   - at sizes -> (100,10): passed
+[info]     (mean = 0.15 ms, ci = <0.08 ms, 0.22 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating snoc-constructed seqs to the left.vec
+[info] - concatenating snoc-constructed seqs to the left.vec.Test-40 measurements:
+[info]   - at sizes -> (100,10): passed
+[info]     (mean = 0.10 ms, ci = <0.00 ms, 0.19 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating snoc-constructed seqs to the left.que
+[info] - concatenating snoc-constructed seqs to the left.que.Test-41 measurements:
+[info]   - at sizes -> (100,10): passed
+[info]     (mean = 0.17 ms, ci = <0.06 ms, 0.29 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating snoc-constructed seqs to the left.hque
+[info] - concatenating snoc-constructed seqs to the left.hque.Test-42 measurements:
+[info]   - at sizes -> (100,10): passed
+[info]     (mean = 0.14 ms, ci = <0.08 ms, 0.19 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating snoc-constructed seqs to the left.cat
+[info] - concatenating snoc-constructed seqs to the left.cat.Test-43 measurements:
+[info]   - at sizes -> (100,10): passed
+[info]     (mean = 0.01 ms, ci = <0.00 ms, 0.02 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating left-nested trees.list
+[info] - concatenating left-nested trees.list.Test-44 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.08 ms, ci = <0.06 ms, 0.11 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 2.07 ms, ci = <1.37 ms, 2.77 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 10.23 ms, ci = <7.97 ms, 12.50 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating left-nested trees.vec
+[info] - concatenating left-nested trees.vec.Test-45 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.02 ms, ci = <0.01 ms, 0.02 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.07 ms, ci = <0.04 ms, 0.10 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.14 ms, ci = <0.09 ms, 0.19 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating left-nested trees.que
+[info] - concatenating left-nested trees.que.Test-46 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.07 ms, ci = <0.06 ms, 0.08 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 1.76 ms, ci = <1.18 ms, 2.34 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 9.56 ms, ci = <6.56 ms, 12.56 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating left-nested trees.hque
+[info] - concatenating left-nested trees.hque.Test-47 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.21 ms, ci = <0.17 ms, 0.26 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 5.01 ms, ci = <3.90 ms, 6.12 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 29.65 ms, ci = <25.28 ms, 34.02 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating left-nested trees.cat
+[info] - concatenating left-nested trees.cat.Test-48 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.00 ms, ci = <0.00 ms, 0.00 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.02 ms, ci = <0.00 ms, 0.03 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.03 ms, ci = <0.01 ms, 0.04 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating right-nested trees.list
+[info] - concatenating right-nested trees.list.Test-49 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.04 ms, ci = <0.01 ms, 0.07 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.05 ms, ci = <0.03 ms, 0.07 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.08 ms, ci = <0.05 ms, 0.10 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating right-nested trees.vec
+[info] - concatenating right-nested trees.vec.Test-50 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.11 ms, ci = <0.04 ms, 0.18 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.13 ms, ci = <0.08 ms, 0.17 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.16 ms, ci = <0.11 ms, 0.21 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating right-nested trees.que
+[info] - concatenating right-nested trees.que.Test-51 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.04 ms, ci = <0.00 ms, 0.07 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.11 ms, ci = <0.04 ms, 0.19 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.14 ms, ci = <0.09 ms, 0.19 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating right-nested trees.hque
+[info] - concatenating right-nested trees.hque.Test-52 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.04 ms, ci = <0.01 ms, 0.06 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.13 ms, ci = <0.02 ms, 0.24 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.20 ms, ci = <0.08 ms, 0.32 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating right-nested trees.cat
+[info] - concatenating right-nested trees.cat.Test-53 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.00 ms, ci = <0.00 ms, 0.00 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.01 ms, ci = <0.01 ms, 0.01 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.02 ms, ci = <0.02 ms, 0.03 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating jagged trees.list
+[info] - concatenating jagged trees.list.Test-54 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.03 ms, ci = <0.03 ms, 0.04 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.57 ms, ci = <0.52 ms, 0.61 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 5.08 ms, ci = <3.33 ms, 6.82 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating jagged trees.vec
+[info] - concatenating jagged trees.vec.Test-55 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.08 ms, ci = <0.03 ms, 0.14 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.14 ms, ci = <0.10 ms, 0.17 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.20 ms, ci = <0.11 ms, 0.29 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating jagged trees.que
+[info] - concatenating jagged trees.que.Test-56 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.03 ms, ci = <0.02 ms, 0.04 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.57 ms, ci = <0.46 ms, 0.68 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 4.23 ms, ci = <2.68 ms, 5.77 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating jagged trees.hque
+[info] - concatenating jagged trees.hque.Test-57 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.12 ms, ci = <0.08 ms, 0.16 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 3.73 ms, ci = <2.53 ms, 4.93 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 16.04 ms, ci = <13.49 ms, 18.59 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating jagged trees.cat
+[info] - concatenating jagged trees.cat.Test-58 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.00 ms, ci = <-0.00 ms, 0.01 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.01 ms, ci = <0.01 ms, 0.01 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.03 ms, ci = <0.01 ms, 0.05 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating balanced trees.list
+[info] - concatenating balanced trees.list.Test-59 measurements:
+[info]   - at treeSizes -> 15: passed
+[info]     (mean = 3.93 ms, ci = <3.56 ms, 4.30 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 20: passed
+[info]     (mean = 160.06 ms, ci = <155.63 ms, 164.49 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating balanced trees.vec
+[info] - concatenating balanced trees.vec.Test-60 measurements:
+[info]   - at treeSizes -> 15: passed
+[info]     (mean = 6.71 ms, ci = <5.89 ms, 7.53 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 20: passed
+[info]     (mean = 254.16 ms, ci = <248.25 ms, 260.08 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating balanced trees.que
+[info] - concatenating balanced trees.que.Test-61 measurements:
+[info]   - at treeSizes -> 15: passed
+[info]     (mean = 3.97 ms, ci = <3.60 ms, 4.33 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 20: passed
+[info]     (mean = 171.08 ms, ci = <165.29 ms, 176.87 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating balanced trees.hque
+[info] - concatenating balanced trees.hque.Test-62 measurements:
+[info]   - at treeSizes -> 15: passed
+[info]     (mean = 10.62 ms, ci = <8.76 ms, 12.49 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 20: passed
+[info]     (mean = 504.38 ms, ci = <479.54 ms, 529.23 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: concatenating balanced trees.cat
+[info] - concatenating balanced trees.cat.Test-63 measurements:
+[info]   - at treeSizes -> 15: passed
+[info]     (mean = 0.37 ms, ci = <0.34 ms, 0.40 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 20: passed
+[info]     (mean = 14.46 ms, ci = <12.61 ms, 16.31 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: functionally concatenating left-nested trees.list
+[info] - functionally concatenating left-nested trees.list.Test-64 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.01 ms, ci = <-0.01 ms, 0.04 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.02 ms, ci = <0.01 ms, 0.02 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.04 ms, ci = <0.02 ms, 0.07 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: functionally concatenating left-nested trees.vec
+[info] - functionally concatenating left-nested trees.vec.Test-65 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.01 ms, ci = <0.01 ms, 0.01 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.03 ms, ci = <0.02 ms, 0.04 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.06 ms, ci = <0.05 ms, 0.06 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: functionally concatenating left-nested trees.que
+[info] - functionally concatenating left-nested trees.que.Test-66 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.01 ms, ci = <-0.00 ms, 0.02 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.02 ms, ci = <0.01 ms, 0.02 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.06 ms, ci = <-0.01 ms, 0.13 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: functionally concatenating left-nested trees.hque
+[info] - functionally concatenating left-nested trees.hque.Test-67 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.01 ms, ci = <-0.00 ms, 0.01 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.02 ms, ci = <0.01 ms, 0.02 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.04 ms, ci = <0.03 ms, 0.05 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: functionally concatenating left-nested trees.cat
+[info] - functionally concatenating left-nested trees.cat.Test-68 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.00 ms, ci = <0.00 ms, 0.00 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.01 ms, ci = <0.01 ms, 0.02 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.03 ms, ci = <0.02 ms, 0.04 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: functionally concatenating right-nested trees.list
+[info] - functionally concatenating right-nested trees.list.Test-69 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.01 ms, ci = <-0.00 ms, 0.02 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.02 ms, ci = <0.01 ms, 0.02 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.04 ms, ci = <0.03 ms, 0.05 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: functionally concatenating right-nested trees.vec
+[info] - functionally concatenating right-nested trees.vec.Test-70 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.01 ms, ci = <0.00 ms, 0.02 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.03 ms, ci = <0.02 ms, 0.03 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.06 ms, ci = <0.05 ms, 0.06 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: functionally concatenating right-nested trees.que
+[info] - functionally concatenating right-nested trees.que.Test-71 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.01 ms, ci = <-0.00 ms, 0.02 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.02 ms, ci = <0.01 ms, 0.03 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.04 ms, ci = <0.03 ms, 0.05 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: functionally concatenating right-nested trees.hque
+[info] - functionally concatenating right-nested trees.hque.Test-72 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.01 ms, ci = <-0.00 ms, 0.03 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.03 ms, ci = <0.01 ms, 0.04 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.04 ms, ci = <0.03 ms, 0.05 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: functionally concatenating right-nested trees.cat
+[info] - functionally concatenating right-nested trees.cat.Test-73 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.00 ms, ci = <0.00 ms, 0.00 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.01 ms, ci = <0.01 ms, 0.02 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.03 ms, ci = <0.02 ms, 0.03 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: functionally concatenating jagged trees.list
+[info] - functionally concatenating jagged trees.list.Test-74 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.02 ms, ci = <-0.01 ms, 0.04 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.03 ms, ci = <0.01 ms, 0.05 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.04 ms, ci = <0.03 ms, 0.04 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: functionally concatenating jagged trees.vec
+[info] - functionally concatenating jagged trees.vec.Test-75 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.01 ms, ci = <0.01 ms, 0.01 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.03 ms, ci = <0.02 ms, 0.04 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.06 ms, ci = <0.04 ms, 0.09 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: functionally concatenating jagged trees.vec
+[info] - functionally concatenating jagged trees.vec.Test-76 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.01 ms, ci = <0.01 ms, 0.01 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.03 ms, ci = <0.02 ms, 0.05 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.06 ms, ci = <0.05 ms, 0.08 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: functionally concatenating jagged trees.hque
+[info] - functionally concatenating jagged trees.hque.Test-77 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.01 ms, ci = <-0.00 ms, 0.02 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.02 ms, ci = <0.02 ms, 0.03 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.04 ms, ci = <0.04 ms, 0.05 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: functionally concatenating jagged trees.cat
+[info] - functionally concatenating jagged trees.cat.Test-78 measurements:
+[info]   - at treeSizes -> 100: passed
+[info]     (mean = 0.00 ms, ci = <0.00 ms, 0.00 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 500: passed
+[info]     (mean = 0.01 ms, ci = <0.01 ms, 0.02 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 1200: passed
+[info]     (mean = 0.03 ms, ci = <0.02 ms, 0.04 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: functionally concatenating balanced trees.list
+[info] - functionally concatenating balanced trees.list.Test-79 measurements:
+[info]   - at treeSizes -> 15: passed
+[info]     (mean = 0.77 ms, ci = <0.63 ms, 0.92 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 20: passed
+[info]     (mean = 20.43 ms, ci = <19.01 ms, 21.85 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: functionally concatenating balanced trees.vec
+[info] - functionally concatenating balanced trees.vec.Test-80 measurements:
+[info]   - at treeSizes -> 15: passed
+[info]     (mean = 1.30 ms, ci = <0.98 ms, 1.61 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 20: passed
+[info]     (mean = 62.78 ms, ci = <34.80 ms, 90.77 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: functionally concatenating balanced trees.que
+[info] - functionally concatenating balanced trees.que.Test-81 measurements:
+[info]   - at treeSizes -> 15: passed
+[info]     (mean = 0.55 ms, ci = <0.45 ms, 0.66 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 20: passed
+[info]     (mean = 31.49 ms, ci = <27.26 ms, 35.71 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: functionally concatenating balanced trees.hque
+[info] - functionally concatenating balanced trees.hque.Test-82 measurements:
+[info]   - at treeSizes -> 15: passed
+[info]     (mean = 0.52 ms, ci = <0.47 ms, 0.56 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 20: passed
+[info]     (mean = 32.01 ms, ci = <30.33 ms, 33.68 ms>, significance = 1.0E-10)
+[info]
+[info] Test group: functionally concatenating balanced trees.cat
+[info] - functionally concatenating balanced trees.cat.Test-83 measurements:
+[info]   - at treeSizes -> 15: passed
+[info]     (mean = 0.55 ms, ci = <0.50 ms, 0.60 ms>, significance = 1.0E-10)
+[info]   - at treeSizes -> 20: passed
+[info]     (mean = 18.73 ms, ci = <16.30 ms, 21.15 ms>, significance = 1.0E-10)
+[info]
+[info] Summary: 84 tests passed, 0 tests failed.

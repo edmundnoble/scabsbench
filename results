@@ -1,0 +1,539 @@
+:::Summary of regression test results - Accepter():::
+cons.list
+10 (0.01 ms, <0.00 ms, 0.02 ms>, 1.0E-10)
+100 (0.01 ms, <0.00 ms, 0.01 ms>, 1.0E-10)
+1000 (0.05 ms, <0.03 ms, 0.07 ms>, 1.0E-10)
+2000 (0.09 ms, <0.05 ms, 0.14 ms>, 1.0E-10)
+
+cons.steq
+10 (0.00 ms, <0.00 ms, 0.01 ms>, 1.0E-10)
+100 (0.03 ms, <0.02 ms, 0.03 ms>, 1.0E-10)
+1000 (1.09 ms, <0.87 ms, 1.32 ms>, 1.0E-10)
+2000 (5.03 ms, <4.63 ms, 5.44 ms>, 1.0E-10)
+
+cons.vec
+10 (0.01 ms, <0.00 ms, 0.01 ms>, 1.0E-10)
+100 (0.01 ms, <0.00 ms, 0.02 ms>, 1.0E-10)
+1000 (0.08 ms, <0.05 ms, 0.10 ms>, 1.0E-10)
+2000 (0.14 ms, <0.10 ms, 0.18 ms>, 1.0E-10)
+
+cons.que
+10 (0.00 ms, <0.00 ms, 0.00 ms>, 1.0E-10)
+100 (0.01 ms, <0.00 ms, 0.01 ms>, 1.0E-10)
+1000 (0.05 ms, <0.05 ms, 0.05 ms>, 1.0E-10)
+2000 (0.11 ms, <0.10 ms, 0.11 ms>, 1.0E-10)
+
+cons.hque
+10 (0.00 ms, <0.00 ms, 0.00 ms>, 1.0E-10)
+100 (0.01 ms, <0.01 ms, 0.01 ms>, 1.0E-10)
+1000 (0.06 ms, <0.05 ms, 0.07 ms>, 1.0E-10)
+2000 (0.10 ms, <0.08 ms, 0.12 ms>, 1.0E-10)
+
+cons.cat
+10 (0.00 ms, <0.00 ms, 0.01 ms>, 1.0E-10)
+100 (0.01 ms, <0.00 ms, 0.01 ms>, 1.0E-10)
+1000 (0.04 ms, <0.03 ms, 0.06 ms>, 1.0E-10)
+2000 (0.10 ms, <0.06 ms, 0.14 ms>, 1.0E-10)
+
+cons.sque
+10 (0.00 ms, <0.00 ms, 0.01 ms>, 1.0E-10)
+100 (0.01 ms, <0.00 ms, 0.01 ms>, 1.0E-10)
+1000 (0.05 ms, <0.03 ms, 0.07 ms>, 1.0E-10)
+2000 (0.10 ms, <0.06 ms, 0.13 ms>, 1.0E-10)
+
+cons.stream
+10 (0.00 ms, <0.00 ms, 0.00 ms>, 1.0E-10)
+100 (0.01 ms, <0.01 ms, 0.01 ms>, 1.0E-10)
+1000 (0.07 ms, <0.05 ms, 0.08 ms>, 1.0E-10)
+2000 (0.11 ms, <0.09 ms, 0.14 ms>, 1.0E-10)
+
+snoc.list
+10 (0.00 ms, <0.00 ms, 0.01 ms>, 1.0E-10)
+100 (0.07 ms, <0.04 ms, 0.11 ms>, 1.0E-10)
+1000 (7.55 ms, <0.60 ms, 14.50 ms>, 1.0E-10)
+2000 (30.45 ms, <0.52 ms, 60.39 ms>, 1.0E-10)
+
+snoc.steq
+10 (0.01 ms, <0.01 ms, 0.02 ms>, 1.0E-10)
+100 (0.06 ms, <0.05 ms, 0.07 ms>, 1.0E-10)
+1000 (6.80 ms, <6.36 ms, 7.25 ms>, 1.0E-10)
+2000 (35.52 ms, <31.92 ms, 39.12 ms>, 1.0E-10)
+
+snoc.vec
+10 (0.00 ms, <0.00 ms, 0.01 ms>, 1.0E-10)
+100 (0.01 ms, <0.01 ms, 0.01 ms>, 1.0E-10)
+1000 (0.07 ms, <0.05 ms, 0.10 ms>, 1.0E-10)
+2000 (0.14 ms, <0.09 ms, 0.20 ms>, 1.0E-10)
+
+snoc.que
+10 (0.00 ms, <0.00 ms, 0.01 ms>, 1.0E-10)
+100 (0.01 ms, <0.01 ms, 0.01 ms>, 1.0E-10)
+1000 (0.06 ms, <0.05 ms, 0.08 ms>, 1.0E-10)
+2000 (0.11 ms, <0.08 ms, 0.14 ms>, 1.0E-10)
+
+snoc.hque
+10 (0.00 ms, <0.00 ms, 0.00 ms>, 1.0E-10)
+100 (0.01 ms, <0.00 ms, 0.01 ms>, 1.0E-10)
+1000 (0.05 ms, <0.03 ms, 0.07 ms>, 1.0E-10)
+2000 (0.10 ms, <0.06 ms, 0.13 ms>, 1.0E-10)
+
+snoc.cat
+10 (0.00 ms, <0.00 ms, 0.00 ms>, 1.0E-10)
+100 (0.01 ms, <0.01 ms, 0.01 ms>, 1.0E-10)
+1000 (0.06 ms, <0.03 ms, 0.08 ms>, 1.0E-10)
+2000 (0.11 ms, <0.07 ms, 0.14 ms>, 1.0E-10)
+
+snoc.sque
+10 (0.00 ms, <0.00 ms, 0.00 ms>, 1.0E-10)
+100 (0.01 ms, <0.00 ms, 0.01 ms>, 1.0E-10)
+1000 (0.05 ms, <0.03 ms, 0.07 ms>, 1.0E-10)
+2000 (0.10 ms, <0.06 ms, 0.14 ms>, 1.0E-10)
+
+snoc.stream
+10 (0.01 ms, <0.00 ms, 0.03 ms>, 1.0E-10)
+100 (0.06 ms, <0.02 ms, 0.10 ms>, 1.0E-10)
+1000 (0.37 ms, <0.16 ms, 0.59 ms>, 1.0E-10)
+2000 (0.69 ms, <0.28 ms, 1.10 ms>, 1.0E-10)
+
+summing cons-constructed seq.list
+100 (0.02 ms, <0.01 ms, 0.02 ms>, 1.0E-10)
+1000 (0.15 ms, <0.11 ms, 0.18 ms>, 1.0E-10)
+
+summing cons-constructed seq.steq
+100 (0.03 ms, <0.02 ms, 0.04 ms>, 1.0E-10)
+1000 (0.22 ms, <0.15 ms, 0.29 ms>, 1.0E-10)
+
+summing cons-constructed seq.vec
+100 (0.02 ms, <0.01 ms, 0.03 ms>, 1.0E-10)
+1000 (0.10 ms, <0.07 ms, 0.13 ms>, 1.0E-10)
+
+summing cons-constructed seq.que
+100 (0.02 ms, <0.02 ms, 0.03 ms>, 1.0E-10)
+1000 (0.15 ms, <0.08 ms, 0.22 ms>, 1.0E-10)
+
+summing cons-constructed seq.hque
+100 (0.02 ms, <0.01 ms, 0.02 ms>, 1.0E-10)
+1000 (0.16 ms, <0.13 ms, 0.20 ms>, 1.0E-10)
+
+summing cons-constructed seq.cat
+100 (0.04 ms, <0.03 ms, 0.04 ms>, 1.0E-10)
+1000 (0.32 ms, <0.30 ms, 0.33 ms>, 1.0E-10)
+
+summing cons-constructed seq.sque
+100 (0.02 ms, <0.01 ms, 0.02 ms>, 1.0E-10)
+1000 (0.08 ms, <0.07 ms, 0.10 ms>, 1.0E-10)
+
+summing cons-constructed seq.stream
+100 (0.01 ms, <0.01 ms, 0.01 ms>, 1.0E-10)
+1000 (0.09 ms, <0.08 ms, 0.10 ms>, 1.0E-10)
+
+summing snoc-constructed seq.list
+100 (0.02 ms, <0.02 ms, 0.02 ms>, 1.0E-10)
+1000 (0.15 ms, <0.10 ms, 0.20 ms>, 1.0E-10)
+
+summing snoc-constructed seq.steq
+100 (0.04 ms, <0.03 ms, 0.04 ms>, 1.0E-10)
+1000 (0.23 ms, <0.15 ms, 0.32 ms>, 1.0E-10)
+
+summing snoc-constructed seq.vec
+100 (0.02 ms, <0.01 ms, 0.02 ms>, 1.0E-10)
+1000 (0.09 ms, <0.07 ms, 0.10 ms>, 1.0E-10)
+
+summing snoc-constructed seq.que
+100 (0.03 ms, <0.03 ms, 0.03 ms>, 1.0E-10)
+1000 (0.23 ms, <0.21 ms, 0.26 ms>, 1.0E-10)
+
+summing snoc-constructed seq.hque
+100 (0.03 ms, <0.02 ms, 0.03 ms>, 1.0E-10)
+1000 (0.23 ms, <0.21 ms, 0.26 ms>, 1.0E-10)
+
+summing snoc-constructed seq.cat
+100 (0.04 ms, <0.03 ms, 0.06 ms>, 1.0E-10)
+1000 (0.35 ms, <0.20 ms, 0.50 ms>, 1.0E-10)
+
+summing snoc-constructed seq.sque
+100 (0.02 ms, <0.02 ms, 0.03 ms>, 1.0E-10)
+1000 (0.15 ms, <0.15 ms, 0.16 ms>, 1.0E-10)
+
+summing snoc-constructed seq.stream
+100 (0.08 ms, <0.05 ms, 0.20 ms>, 1.0E-10)
+1000 (5.97 ms, <5.09 ms, 17.02 ms>, 1.0E-10)
+
+concatenating and summing cons-constructed seqs to the right.list
+(100,10) (0.04 ms, <0.00 ms, 0.08 ms>, 1.0E-10)
+(200,30) (0.11 ms, <0.02 ms, 0.19 ms>, 1.0E-10)
+
+concatenating and summing cons-constructed seqs to the right.vec
+(100,10) (0.27 ms, <0.06 ms, 0.48 ms>, 1.0E-10)
+(200,30) (1.04 ms, <0.30 ms, 1.78 ms>, 1.0E-10)
+
+concatenating and summing cons-constructed seqs to the right.que
+(100,10) (0.04 ms, <0.00 ms, 0.08 ms>, 1.0E-10)
+(200,30) (0.14 ms, <0.05 ms, 0.22 ms>, 1.0E-10)
+
+concatenating and summing cons-constructed seqs to the right.hque
+(100,10) (0.09 ms, <0.04 ms, 0.14 ms>, 1.0E-10)
+(200,30) (0.39 ms, <0.18 ms, 0.61 ms>, 1.0E-10)
+
+concatenating and summing cons-constructed seqs to the right.cat
+(100,10) (0.16 ms, <0.04 ms, 0.27 ms>, 1.0E-10)
+(200,30) (0.63 ms, <0.30 ms, 0.95 ms>, 1.0E-10)
+
+concatenating and summing cons-constructed seqs to the right.sque
+(100,10) (0.17 ms, <0.11 ms, 0.22 ms>, 1.0E-10)
+(200,30) (3.34 ms, <2.19 ms, 4.49 ms>, 1.0E-10)
+
+concatenating and summing cons-constructed seqs to the right.stream
+(100,10) (0.15 ms, <0.02 ms, 0.28 ms>, 1.0E-10)
+(200,30) (0.61 ms, <0.32 ms, 0.89 ms>, 1.0E-10)
+
+concatenating and summing snoc-constructed seqs to the right.list
+(100,10) (0.04 ms, <0.03 ms, 0.05 ms>, 1.0E-10)
+(200,30) (0.26 ms, <0.14 ms, 0.39 ms>, 1.0E-10)
+
+concatenating and summing snoc-constructed seqs to the right.vec
+(100,10) (0.25 ms, <0.05 ms, 0.44 ms>, 1.0E-10)
+(200,30) (0.85 ms, <0.24 ms, 1.46 ms>, 1.0E-10)
+
+concatenating and summing snoc-constructed seqs to the right.que
+(100,10) (0.02 ms, <0.02 ms, 0.03 ms>, 1.0E-10)
+(200,30) (0.13 ms, <0.06 ms, 0.20 ms>, 1.0E-10)
+
+concatenating and summing snoc-constructed seqs to the right.hque
+(100,10) (0.02 ms, <0.01 ms, 0.02 ms>, 1.0E-10)
+(200,30) (0.10 ms, <0.05 ms, 0.16 ms>, 1.0E-10)
+
+concatenating and summing snoc-constructed seqs to the right.cat
+(100,10) (0.12 ms, <0.07 ms, 0.17 ms>, 1.0E-10)
+(200,30) (0.45 ms, <0.32 ms, 0.58 ms>, 1.0E-10)
+
+concatenating and summing snoc-constructed seqs to the right.sque
+(100,10) (0.13 ms, <0.11 ms, 0.15 ms>, 1.0E-10)
+(200,30) (2.82 ms, <1.96 ms, 3.69 ms>, 1.0E-10)
+
+concatenating and summing snoc-constructed seqs to the right.stream
+(100,10) (0.11 ms, <0.01 ms, 0.22 ms>, 1.0E-10)
+(200,30) (0.49 ms, <0.06 ms, 0.91 ms>, 1.0E-10)
+
+concatenating and summing cons-constructed seqs to the left.list
+(100,10) (0.04 ms, <0.02 ms, 0.05 ms>, 1.0E-10)
+(200,30) (0.46 ms, <0.36 ms, 0.56 ms>, 1.0E-10)
+
+concatenating and summing cons-constructed seqs to the left.vec
+(100,10) (0.26 ms, <0.06 ms, 0.46 ms>, 1.0E-10)
+(200,30) (1.04 ms, <0.05 ms, 2.02 ms>, 1.0E-10)
+
+concatenating and summing cons-constructed seqs to the left.que
+(100,10) (0.04 ms, <0.02 ms, 0.05 ms>, 1.0E-10)
+(200,30) (0.52 ms, <0.28 ms, 0.77 ms>, 1.0E-10)
+
+concatenating and summing cons-constructed seqs to the left.hque
+(100,10) (0.10 ms, <0.07 ms, 0.12 ms>, 1.0E-10)
+(200,30) (2.35 ms, <1.17 ms, 3.53 ms>, 1.0E-10)
+
+concatenating and summing cons-constructed seqs to the left.cat
+(100,10) (0.15 ms, <0.09 ms, 0.22 ms>, 1.0E-10)
+(200,30) (0.52 ms, <0.47 ms, 0.56 ms>, 1.0E-10)
+
+concatenating and summing cons-constructed seqs to the left.sque
+(100,10) (0.14 ms, <0.11 ms, 0.16 ms>, 1.0E-10)
+(200,30) (2.54 ms, <1.66 ms, 3.42 ms>, 1.0E-10)
+
+concatenating and summing cons-constructed seqs to the left.stream
+(100,10) (0.29 ms, <0.25 ms, 0.34 ms>, 1.0E-10)
+(200,30) (5.65 ms, <4.11 ms, 7.19 ms>, 1.0E-10)
+
+concatenating and summing snoc-constructed seqs to the left.list
+(100,10) (0.03 ms, <0.02 ms, 0.04 ms>, 1.0E-10)
+(200,30) (0.45 ms, <0.34 ms, 0.55 ms>, 1.0E-10)
+
+concatenating and summing snoc-constructed seqs to the left.vec
+(100,10) (0.29 ms, <0.05 ms, 0.52 ms>, 1.0E-10)
+(200,30) (0.65 ms, <0.48 ms, 0.83 ms>, 1.0E-10)
+
+concatenating and summing snoc-constructed seqs to the left.que
+(100,10) (0.09 ms, <0.07 ms, 0.10 ms>, 1.0E-10)
+(200,30) (2.08 ms, <1.10 ms, 3.07 ms>, 1.0E-10)
+
+concatenating and summing snoc-constructed seqs to the left.hque
+(100,10) (0.04 ms, <0.03 ms, 0.05 ms>, 1.0E-10)
+(200,30) (0.52 ms, <0.34 ms, 0.71 ms>, 1.0E-10)
+
+concatenating and summing snoc-constructed seqs to the left.cat
+(100,10) (0.14 ms, <0.08 ms, 0.19 ms>, 1.0E-10)
+(200,30) (0.58 ms, <0.36 ms, 0.80 ms>, 1.0E-10)
+
+concatenating and summing snoc-constructed seqs to the left.sque
+(100,10) (0.14 ms, <0.10 ms, 0.18 ms>, 1.0E-10)
+(200,30) (2.93 ms, <1.97 ms, 3.88 ms>, 1.0E-10)
+
+concatenating and summing snoc-constructed seqs to the left.stream
+(100,10) (0.28 ms, <0.18 ms, 0.37 ms>, 1.0E-10)
+(200,30) (5.40 ms, <3.76 ms, 7.04 ms>, 1.0E-10)
+
+concatenating left-nested trees.list
+100 (0.08 ms, <0.06 ms, 0.10 ms>, 1.0E-10)
+500 (1.94 ms, <1.28 ms, 2.60 ms>, 1.0E-10)
+2000 (28.48 ms, <19.57 ms, 37.40 ms>, 1.0E-10)
+
+concatenating left-nested trees.vec
+100 (0.02 ms, <0.00 ms, 0.04 ms>, 1.0E-10)
+500 (0.08 ms, <0.06 ms, 0.10 ms>, 1.0E-10)
+2000 (0.21 ms, <0.16 ms, 0.26 ms>, 1.0E-10)
+
+concatenating left-nested trees.que
+100 (0.06 ms, <0.06 ms, 0.07 ms>, 1.0E-10)
+500 (1.60 ms, <1.16 ms, 2.04 ms>, 1.0E-10)
+2000 (22.80 ms, <21.10 ms, 24.50 ms>, 1.0E-10)
+
+concatenating left-nested trees.hque
+100 (0.22 ms, <0.18 ms, 0.26 ms>, 1.0E-10)
+500 (5.01 ms, <4.50 ms, 5.51 ms>, 1.0E-10)
+2000 (81.12 ms, <72.87 ms, 89.37 ms>, 1.0E-10)
+
+concatenating left-nested trees.cat
+100 (0.00 ms, <0.00 ms, 0.00 ms>, 1.0E-10)
+500 (0.01 ms, <0.01 ms, 0.01 ms>, 1.0E-10)
+2000 (0.04 ms, <0.04 ms, 0.05 ms>, 1.0E-10)
+
+concatenating left-nested trees.sque
+100 (0.10 ms, <0.09 ms, 0.12 ms>, 1.0E-10)
+500 (2.28 ms, <2.02 ms, 2.55 ms>, 1.0E-10)
+2000 (36.12 ms, <33.39 ms, 38.84 ms>, 1.0E-10)
+
+concatenating left-nested trees.stream
+100 (0.01 ms, <0.00 ms, 0.02 ms>, 1.0E-10)
+500 (0.03 ms, <0.03 ms, 0.03 ms>, 1.0E-10)
+2000 (0.11 ms, <0.10 ms, 0.12 ms>, 1.0E-10)
+
+concatenating right-nested trees.list
+100 (0.03 ms, <0.01 ms, 0.07 ms>, 1.0E-10)
+500 (0.08 ms, <0.00 ms, 0.17 ms>, 1.0E-10)
+2000 (0.14 ms, <0.04 ms, 0.25 ms>, 1.0E-10)
+
+concatenating right-nested trees.vec
+100 (0.12 ms, <0.07 ms, 0.16 ms>, 1.0E-10)
+500 (0.12 ms, <0.10 ms, 0.14 ms>, 1.0E-10)
+2000 (0.22 ms, <0.18 ms, 0.27 ms>, 1.0E-10)
+
+concatenating right-nested trees.que
+100 (0.03 ms, <0.02 ms, 0.04 ms>, 1.0E-10)
+500 (0.06 ms, <0.03 ms, 0.08 ms>, 1.0E-10)
+2000 (0.16 ms, <0.14 ms, 0.18 ms>, 1.0E-10)
+
+concatenating right-nested trees.hque
+100 (0.02 ms, <0.01 ms, 0.04 ms>, 1.0E-10)
+500 (0.11 ms, <0.04 ms, 0.17 ms>, 1.0E-10)
+2000 (0.26 ms, <0.13 ms, 0.40 ms>, 1.0E-10)
+
+concatenating right-nested trees.cat
+100 (0.00 ms, <0.00 ms, 0.00 ms>, 1.0E-10)
+500 (0.01 ms, <0.01 ms, 0.01 ms>, 1.0E-10)
+2000 (0.04 ms, <0.03 ms, 0.05 ms>, 1.0E-10)
+
+concatenating right-nested trees.sque
+100 (0.09 ms, <0.09 ms, 0.10 ms>, 1.0E-10)
+500 (2.17 ms, <2.04 ms, 2.31 ms>, 1.0E-10)
+2000 (34.99 ms, <32.43 ms, 37.55 ms>, 1.0E-10)
+
+concatenating right-nested trees.stream
+100 (0.01 ms, <0.00 ms, 0.01 ms>, 1.0E-10)
+500 (0.04 ms, <0.03 ms, 0.05 ms>, 1.0E-10)
+2000 (0.12 ms, <0.09 ms, 0.15 ms>, 1.0E-10)
+
+concatenating jagged trees.list
+100 (0.03 ms, <0.03 ms, 0.03 ms>, 1.0E-10)
+500 (0.54 ms, <0.52 ms, 0.57 ms>, 1.0E-10)
+2000 (9.08 ms, <7.73 ms, 10.43 ms>, 1.0E-10)
+
+concatenating jagged trees.vec
+100 (0.08 ms, <0.04 ms, 0.12 ms>, 1.0E-10)
+500 (0.10 ms, <0.07 ms, 0.12 ms>, 1.0E-10)
+2000 (0.28 ms, <0.23 ms, 0.34 ms>, 1.0E-10)
+
+concatenating jagged trees.que
+100 (0.03 ms, <0.03 ms, 0.04 ms>, 1.0E-10)
+500 (0.53 ms, <0.51 ms, 0.55 ms>, 1.0E-10)
+2000 (8.55 ms, <7.95 ms, 9.15 ms>, 1.0E-10)
+
+concatenating jagged trees.hque
+100 (0.11 ms, <0.10 ms, 0.12 ms>, 1.0E-10)
+500 (2.49 ms, <2.10 ms, 2.88 ms>, 1.0E-10)
+2000 (38.46 ms, <36.42 ms, 40.51 ms>, 1.0E-10)
+
+concatenating jagged trees.cat
+100 (0.00 ms, <0.00 ms, 0.00 ms>, 1.0E-10)
+500 (0.01 ms, <0.01 ms, 0.01 ms>, 1.0E-10)
+2000 (0.04 ms, <0.03 ms, 0.05 ms>, 1.0E-10)
+
+concatenating jagged trees.sque
+100 (0.11 ms, <0.06 ms, 0.16 ms>, 1.0E-10)
+500 (2.40 ms, <1.90 ms, 2.90 ms>, 1.0E-10)
+2000 (35.76 ms, <33.02 ms, 38.50 ms>, 1.0E-10)
+
+concatenating jagged trees.stream
+100 (0.01 ms, <0.00 ms, 0.03 ms>, 1.0E-10)
+500 (0.04 ms, <0.02 ms, 0.05 ms>, 1.0E-10)
+2000 (0.11 ms, <0.10 ms, 0.12 ms>, 1.0E-10)
+
+concatenating balanced trees.list
+15 (3.79 ms, <3.66 ms, 3.91 ms>, 1.0E-10)
+20 (151.41 ms, <141.15 ms, 161.66 ms>, 1.0E-10)
+
+concatenating balanced trees.vec
+15 (6.28 ms, <5.52 ms, 7.04 ms>, 1.0E-10)
+20 (239.17 ms, <228.49 ms, 249.85 ms>, 1.0E-10)
+
+concatenating balanced trees.que
+15 (3.74 ms, <3.63 ms, 3.85 ms>, 1.0E-10)
+20 (160.55 ms, <153.44 ms, 167.65 ms>, 1.0E-10)
+
+concatenating balanced trees.hque
+15 (9.91 ms, <8.90 ms, 10.92 ms>, 1.0E-10)
+20 (477.89 ms, <454.86 ms, 500.91 ms>, 1.0E-10)
+
+concatenating balanced trees.cat
+15 (0.37 ms, <0.31 ms, 0.44 ms>, 1.0E-10)
+20 (14.51 ms, <11.39 ms, 17.64 ms>, 1.0E-10)
+
+concatenating balanced trees.sque
+15 (11.34 ms, <10.78 ms, 11.91 ms>, 1.0E-10)
+20 (515.89 ms, <487.60 ms, 544.18 ms>, 1.0E-10)
+
+concatenating balanced trees.stream
+15 (1.54 ms, <1.40 ms, 1.68 ms>, 1.0E-10)
+20 (57.04 ms, <53.61 ms, 60.47 ms>, 1.0E-10)
+
+functionally concatenating left-nested trees.list
+100 (0.01 ms, <0.01 ms, 0.03 ms>, 1.0E-10)
+500 (0.02 ms, <0.01 ms, 0.02 ms>, 1.0E-10)
+2000 (0.06 ms, <0.05 ms, 0.08 ms>, 1.0E-10)
+
+functionally concatenating left-nested trees.vec
+100 (0.01 ms, <0.01 ms, 0.01 ms>, 1.0E-10)
+500 (0.03 ms, <0.02 ms, 0.03 ms>, 1.0E-10)
+2000 (0.09 ms, <0.09 ms, 0.10 ms>, 1.0E-10)
+
+functionally concatenating left-nested trees.que
+100 (0.01 ms, <0.00 ms, 0.02 ms>, 1.0E-10)
+500 (0.02 ms, <0.01 ms, 0.02 ms>, 1.0E-10)
+2000 (0.06 ms, <0.06 ms, 0.07 ms>, 1.0E-10)
+
+functionally concatenating left-nested trees.hque
+100 (0.01 ms, <0.00 ms, 0.03 ms>, 1.0E-10)
+500
+(0.02 ms, <0.01 ms, 0.03 ms>, 1.0E-10)
+2000 (0.07 ms, <0.06 ms, 0.07 ms>, 1.0E-10)
+
+functionally concatenating left-nested trees.cat
+100 (0.00 ms, <0.00 ms, 0.01 ms>, 1.0E-10)
+500 (0.01 ms, <0.01 ms, 0.01 ms>, 1.0E-10)
+2000 (0.05 ms, <0.05 ms, 0.06 ms>, 1.0E-10)
+
+functionally concatenating left-nested trees.sque
+100 (0.03 ms, <0.00 ms, 0.06 ms>, 1.0E-10)
+500 (0.02 ms, <0.01 ms, 0.04 ms>, 1.0E-10)
+2000 (0.07 ms, <0.06 ms, 0.08 ms>, 1.0E-10)
+
+functionally concatenating left-nested trees.stream
+100 (0.01 ms, <0.00 ms, 0.02 ms>, 1.0E-10)
+500 (0.04 ms, <0.02 ms, 0.05 ms>, 1.0E-10)
+2000 (0.12 ms, <0.08 ms, 0.15 ms>, 1.0E-10)
+
+functionally concatenating right-nested trees.list
+100 (0.01 ms, <0.01 ms, 0.03 ms>, 1.0E-10)
+500 (0.02 ms, <0.01 ms, 0.02 ms>, 1.0E-10)
+2000 (0.06 ms, <0.05 ms, 0.07 ms>, 1.0E-10)
+
+functionally concatenating right-nested trees.vec
+100 (0.01 ms, <0.00 ms, 0.01 ms>, 1.0E-10)
+500 (0.03 ms, <0.02 ms, 0.04 ms>, 1.0E-10)
+2000 (0.10 ms, <0.07 ms, 0.13 ms>, 1.0E-10)
+
+functionally concatenating right-nested trees.que
+100 (0.01 ms, <0.00 ms, 0.02 ms>, 1.0E-10)
+500 (0.02 ms, <0.01 ms, 0.03 ms>, 1.0E-10)
+2000 (0.06 ms, <0.06 ms, 0.07 ms>, 1.0E-10)
+
+functionally concatenating right-nested trees.hque
+100 (0.01 ms, <0.00 ms, 0.02 ms>, 1.0E-10)
+500 (0.02 ms, <0.01 ms, 0.03 ms>, 1.0E-10)
+2000 (0.06 ms, <0.06 ms, 0.07 ms>, 1.0E-10)
+
+functionally concatenating right-nested trees.cat
+100 (0.00 ms, <0.00 ms, 0.00 ms>, 1.0E-10)
+500 (0.01 ms, <0.01 ms, 0.02 ms>, 1.0E-10)
+2000 (0.05 ms, <0.04 ms, 0.05 ms>, 1.0E-10)
+
+functionally concatenating right-nested trees.sque
+100 (0.02 ms, <0.01 ms, 0.04 ms>, 1.0E-10)
+500 (0.02 ms, <0.01 ms, 0.04 ms>, 1.0E-10)
+2000 (0.08 ms, <0.07 ms, 0.10 ms>, 1.0E-10)
+
+functionally concatenating right-nested trees.stream
+100 (0.01 ms, <0.00 ms, 0.01 ms>, 1.0E-10)
+500 (0.03 ms, <0.02 ms, 0.03 ms>, 1.0E-10)
+2000 (0.09 ms, <0.09 ms, 0.10 ms>, 1.0E-10)
+
+functionally concatenating jagged trees.list
+100 (0.03 ms, <0.01 ms, 0.06 ms>, 1.0E-10)
+500 (0.02 ms, <0.02 ms, 0.03 ms>, 1.0E-10)
+2000 (0.07 ms, <0.06 ms, 0.08 ms>, 1.0E-10)
+
+functionally concatenating jagged trees.vec
+100 (0.01 ms, <0.01 ms, 0.02 ms>, 1.0E-10)
+500 (0.03 ms, <0.02 ms, 0.04 ms>, 1.0E-10)
+2000 (0.10 ms, <0.09 ms, 0.11 ms>, 1.0E-10)
+
+functionally concatenating jagged trees.vec
+100 (0.01 ms, <0.00 ms, 0.02 ms>, 1.0E-10)
+500 (0.03 ms, <0.02 ms, 0.03 ms>, 1.0E-10)
+2000 (0.11 ms, <0.09 ms, 0.12 ms>, 1.0E-10)
+
+functionally concatenating jagged trees.hque
+100 (0.01 ms, <0.00 ms, 0.03 ms>, 1.0E-10)
+500 (0.03 ms, <0.02 ms, 0.03 ms>, 1.0E-10)
+2000 (0.07 ms, <0.06 ms, 0.07 ms>, 1.0E-10)
+
+functionally concatenating jagged trees.cat
+100 (0.00 ms, <0.00 ms, 0.01 ms>, 1.0E-10)
+500 (0.01 ms, <0.01 ms, 0.01 ms>, 1.0E-10)
+2000 (0.05 ms, <0.04 ms, 0.05 ms>, 1.0E-10)
+
+functionally concatenating jagged trees.sque
+100 (0.02 ms, <0.00 ms, 0.05 ms>, 1.0E-10)
+500 (0.03 ms, <0.02 ms, 0.03 ms>, 1.0E-10)
+2000 (0.07 ms, <0.07 ms, 0.08 ms>, 1.0E-10)
+
+functionally concatenating jagged trees.stream
+100 (0.02 ms, <0.00 ms, 0.04 ms>, 1.0E-10)
+500 (0.04 ms, <0.03 ms, 0.05 ms>, 1.0E-10)
+2000 (0.11 ms, <0.09 ms, 0.14 ms>, 1.0E-10)
+
+functionally concatenating balanced trees.list
+15 (0.74 ms, <0.70 ms, 0.79 ms>, 1.0E-10)
+20 (19.46 ms, <17.64 ms, 21.27 ms>, 1.0E-10)
+
+functionally concatenating balanced trees.vec
+15 (1.16 ms, <1.04 ms, 1.28 ms>, 1.0E-10)
+20 (52.89 ms, <47.68 ms, 58.09 ms>, 1.0E-10)
+
+functionally concatenating balanced trees.que
+15 (0.65 ms, <0.34 ms, 0.96 ms>, 1.0E-10)
+20 (31.66 ms, <25.89 ms, 37.43 ms>, 1.0E-10)
+
+functionally concatenating balanced trees.hque
+15 (0.65 ms, <0.43 ms, 0.87 ms>, 1.0E-10)
+20 (33.49 ms, <28.79 ms, 38.19 ms>, 1.0E-10)
+
+functionally concatenating balanced trees.cat
+15 (0.52 ms, <0.47 ms, 0.58 ms>, 1.0E-10)
+20 (18.04 ms, <15.39 ms, 20.68 ms>, 1.0E-10)
+
+functionally concatenating balanced trees.sque
+15 (0.99 ms, <0.83 ms, 1.15 ms>, 1.0E-10)
+20 (24.77 ms, <22.77 ms, 26.76 ms>, 1.0E-10)
+
+functionally concatenating balanced trees.stream
+15 (1.12 ms, <1.01 ms, 1.22 ms>, 1.0E-10)
+20 (47.02 ms, <44.04 ms, 50.01 ms>, 1.0E-10)

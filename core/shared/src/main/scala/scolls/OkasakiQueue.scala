@@ -4,10 +4,12 @@ case class OkasakiQueue[A](left: List[A], right: List[A])
 
 object OkasakiQueue {
 
+  private val emptyQ: OkasakiQueue[Nothing] = OkasakiQueue[Nothing](Nil, Nil)
+
   implicit val okasakiQueueSequenceInstance = new Sequence[OkasakiQueue] {
 
     def empty[A]: OkasakiQueue[A] =
-      OkasakiQueue(Nil, Nil)
+      emptyQ.asInstanceOf[OkasakiQueue[A]]
 
     def isEmpty[A](q: OkasakiQueue[A]): Boolean =
       q.left.isEmpty
@@ -45,6 +47,15 @@ object OkasakiQueue {
 
     def fold[A, B](q: OkasakiQueue[A])(z: B)(f: (B, A) => B): B =
       q.right.reverse.foldLeft(q.left.foldLeft(z)(f))(f)
+
+    def uncons[A](s: OkasakiQueue[A]): Option[(A, OkasakiQueue[A])] =
+      if (isEmpty(s)) None else Some((head(s), tail(s)))
+
+    def unsnoc[A](s: OkasakiQueue[A]): Option[(OkasakiQueue[A], A)] = {
+      if (s.right.nonEmpty) Some((OkasakiQueue[A](s.left, s.right.tail), s.right.head))
+      else if (s.left.nonEmpty) StdlibInstances.listSequenceInstance.unsnoc[A](s.left).map { case (l, a) => (OkasakiQueue(l, Nil), a) }
+      else None
+    }
   }
 
   implicit val okasakiQueueCSequenceInstance = new CSequence[OkasakiQueue] {

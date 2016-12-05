@@ -22,6 +22,7 @@ object SeqBenchmarks
   }
 
   val constructSizes: Gen[Int] = Gen.enumeration("sizes")(10, 100, 1000, 2000)
+  val queueBenchSizes: Gen[Int] = Gen.enumeration("sizes")(4000)
   val destructSizes: Gen[Int] = Gen.enumeration("sizes")(100, 1000)
   val concatInnerOuterSizes: Gen[(Int, Int)] = Gen.enumeration("sizes")((100, 10), (200, 30))
   val treeSizes: Gen[Int] = Gen.enumeration("treeSizes")(100, 500, 2000)
@@ -151,6 +152,10 @@ object SeqBenchmarks
       case Bin(_, left, right) => S.concat(frontierRec[S, A](left), frontierRec[S, A](right))
     }
 
+  def queueBench[S[_]](start: S[Int], size: Int)(implicit S: Sequence[S]): S[Int] =
+    if (size == 0) start
+    else queueBench[S](S.tail(S.snoc(start, size)), size - 1)
+
   performance of "cons" in {
     measure method "list" in (using(constructSizes) in consRecBench[List])
     measure method "steq" in (using(constructSizes) in consRecBench[Steq])
@@ -193,6 +198,16 @@ object SeqBenchmarks
     measure method "cat" in (using(testSnocSeqOnes[Catenable]) in sumBench[Catenable])
     measure method "sque" in (using(testSnocSeqOnes[Queue]) in sumBench[Queue])
     measure method "stream" in (using(testSnocSeqOnes[Stream]) in sumBench[Stream])
+  }
+
+  performance of "queueing (alternate snoc and tail)" in {
+    measure method "list" in (using(testConsSeqOnes[List] zip queueBenchSizes) in (queueBench[List] _).tupled)
+    measure method "vec" in (using(testConsSeqOnes[Vector] zip queueBenchSizes) in (queueBench[Vector] _).tupled)
+    measure method "que" in (using(testConsSeqOnes[OkasakiQueue] zip queueBenchSizes) in (queueBench[OkasakiQueue] _).tupled)
+    measure method "hque" in (using(testConsSeqOnes[HQueue] zip queueBenchSizes) in (queueBench[HQueue] _).tupled)
+    measure method "cat" in (using(testConsSeqOnes[Catenable] zip queueBenchSizes) in (queueBench[Catenable] _).tupled)
+    measure method "sque" in (using(testConsSeqOnes[Queue] zip queueBenchSizes) in (queueBench[Queue] _).tupled)
+    measure method "stream" in (using(testConsSeqOnes[Stream] zip queueBenchSizes) in (queueBench[Stream] _).tupled)
   }
 
   performance of "concatenating and summing cons-constructed seqs to the right" in {
@@ -314,6 +329,5 @@ object SeqBenchmarks
     measure method "sque" in (using(balancedNestedTrees) in frontierCPS[Queue, Int])
     measure method "stream" in (using(balancedNestedTrees) in frontierCPS[Stream, Int])
   }
-
 
 }

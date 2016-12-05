@@ -86,6 +86,8 @@ object KaplanTarjanSteq {
       }
       q.cons.foldRight(z)(foldC)
     }
+    override def uncons[A](s: Steq[A]): Option[(A, Steq[A])] = ???
+    override def unsnoc[A](s: Steq[A]): Option[(Steq[A], A)] = ???
   }
 
   def popPS[A](cons: List[C[A]]): (PST[A], List[C[A]]) = {

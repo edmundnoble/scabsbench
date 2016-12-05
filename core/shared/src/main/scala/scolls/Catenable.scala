@@ -160,6 +160,12 @@ object Catenable {
     override def fold[A, B](q: Catenable[A])(z: B)(f: (B, A) => B): B = q.foldLeft(z)(f)
     override def toList[A](q: Catenable[A]): List[A] = q.toList
     override def toSeq[A](xs: List[A]): Catenable[A] = fromSeq(xs)
+    override def uncons[A](s: Catenable[A]): Option[(A, Catenable[A])] = s.uncons
+    override def unsnoc[A](s: Catenable[A]): Option[(Catenable[A], A)] =
+      if (s.isEmpty) None else {
+        val list = s.toList
+        Some((Catenable.fromSeq(list.init), list.last))
+    }
   }
 
   implicit val catenableCSequenceInstance = new CSequence[Catenable] {

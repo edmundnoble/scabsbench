@@ -1,6 +1,6 @@
 package scolls
 
-import scala.collection.immutable.{Queue, Stack}
+import scala.collection.immutable.Queue
 
 object StdlibInstances {
 
@@ -17,6 +17,10 @@ object StdlibInstances {
     override def toList[A](q: Vector[A]): List[A] = q.toList
     override def toSeq[A](xs: List[A]): Vector[A] = xs.toVector
     override def fold[A, B](q: Vector[A])(z: B)(f: (B, A) => B): B = q.foldLeft(z)(f)
+    override def uncons[A](s: Vector[A]): Option[(A, Vector[A])] =
+      if (s.nonEmpty) Some((s.head, s.tail)) else None
+    override def unsnoc[A](s: Vector[A]): Option[(Vector[A], A)] =
+      if (s.nonEmpty) Some((s.init, s.last)) else None
   }
 
   implicit val vectorCSequenceInstance: CSequence[Vector] = new CSequence[Vector] {
@@ -37,6 +41,22 @@ object StdlibInstances {
     override def toList[A](q: List[A]): List[A] = q
     override def toSeq[A](xs: List[A]): List[A] = xs
     override def fold[A, B](q: List[A])(z: B)(f: (B, A) => B): B = q.foldLeft(z)(f)
+    override def uncons[A](s: List[A]): Option[(A, List[A])] = s match {
+      case (x :: xs) => Some((x, xs))
+      case _ => None
+    }
+    override def unsnoc[A](s: List[A]): Option[(List[A], A)] = {
+      var init: List[A] = Nil
+      var tail = s
+      while (tail ne Nil) {
+        init = tail.head :: init
+        val newTail = tail.tail
+        if (newTail eq Nil)
+          return Some((init, tail.head))
+        tail = newTail
+      }
+      None
+    }
   }
 
   implicit val listCSequenceInstance: CSequence[List] = new CSequence[List] {
@@ -57,6 +77,8 @@ object StdlibInstances {
     override def toList[A](q: Queue[A]): List[A] = q.toList
     override def toSeq[A](xs: List[A]): Queue[A] = xs.to[Queue]
     override def fold[A, B](q: Queue[A])(z: B)(f: (B, A) => B): B = q.foldLeft(z)(f)
+    override def uncons[A](s: Queue[A]): Option[(A, Queue[A])] = if (s.nonEmpty) Some((s.head, s.tail)) else None
+    override def unsnoc[A](s: Queue[A]): Option[(Queue[A], A)] = if (s.isEmpty) None else Some(s.dequeue.swap)
   }
 
   implicit val queueCSequenceInstance: CSequence[Queue] = new CSequence[Queue] {
@@ -77,6 +99,9 @@ object StdlibInstances {
     override def toList[A](q: Stream[A]): List[A] = q.toList
     override def toSeq[A](xs: List[A]): Stream[A] = xs.to[Stream]
     override def fold[A, B](q: Stream[A])(z: B)(f: (B, A) => B): B = q.foldLeft(z)(f)
+    override def uncons[A](s: Stream[A]): Option[(A, Stream[A])] = if (s.nonEmpty) Some((s.head, s.tail)) else None
+    // not a lot of care put into this one
+    override def unsnoc[A](s: Stream[A]): Option[(Stream[A], A)] = if (s.nonEmpty) Some((s.init, s.last)) else None
   }
 
   implicit val streamCSequenceInstance: CSequence[Stream] = new CSequence[Stream] {

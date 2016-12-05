@@ -28,6 +28,10 @@ import simulacrum.typeclass
 
   def toSeq[A](xs: List[A]): S[A]
 
+  def uncons[A](s: S[A]): Option[(A, S[A])]
+
+  def unsnoc[A](s: S[A]): Option[(S[A], A)]
+
 }
 
 @typeclass trait CSequence[S[_]] {

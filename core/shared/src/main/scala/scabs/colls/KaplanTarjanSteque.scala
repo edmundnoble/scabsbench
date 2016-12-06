@@ -1,5 +1,5 @@
 /*
-package scolls
+package scabs.colls
 
 object KaplanTarjanSteque {
   sealed trait Buffer[+A]

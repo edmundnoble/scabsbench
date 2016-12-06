@@ -1,10 +1,10 @@
-package scolls
+package scabs.colls
 
 import scala.collection.immutable.Queue
 
 object StdlibInstances {
 
-  implicit val vectorSequenceInstance: Sequence[Vector] = new Sequence[Vector] {
+  val vectorSequenceInstance: Sequence[Vector] = new Sequence[Vector] {
     override def empty[A]: Vector[A] = Vector.empty[A]
     override def isEmpty[A](q: Vector[A]): Boolean = q.isEmpty
     override def head[A](queue: Vector[A]): A = queue.head
@@ -28,7 +28,7 @@ object StdlibInstances {
     override def concat[A](fst: Vector[A], snd: Vector[A]): Vector[A] = fst ++ snd
   }
 
-  implicit val listSequenceInstance: Sequence[List] = new Sequence[List] {
+  val listSequenceInstance: Sequence[List] = new Sequence[List] {
     override def empty[A]: List[A] = List.empty[A]
     override def isEmpty[A](q: List[A]): Boolean = q.isEmpty
     override def head[A](queue: List[A]): A = queue.head
@@ -64,7 +64,7 @@ object StdlibInstances {
     override def concat[A](fst: List[A], snd: List[A]): List[A] = fst ++ snd
   }
 
-  implicit val queueSequenceInstance: Sequence[Queue] = new Sequence[Queue] {
+  val queueSequenceInstance: Sequence[Queue] = new Sequence[Queue] {
     override def empty[A]: Queue[A] = Queue.empty[A]
     override def isEmpty[A](q: Queue[A]): Boolean = q.isEmpty
     override def head[A](queue: Queue[A]): A = queue.head
@@ -86,7 +86,7 @@ object StdlibInstances {
     override def concat[A](fst: Queue[A], snd: Queue[A]): Queue[A] = fst ++ snd
   }
 
-  implicit val streamSequenceInstance: Sequence[Stream] = new Sequence[Stream] {
+  val streamSequenceInstance: Sequence[Stream] = new Sequence[Stream] {
     override def empty[A]: Stream[A] = Stream.empty[A]
     override def isEmpty[A](q: Stream[A]): Boolean = q.isEmpty
     override def head[A](stream: Stream[A]): A = stream.head

@@ -1,4 +1,4 @@
-package scolls
+package scabs.colls
 
 object KaplanTarjanSteq {
   case class Steq[A](cons: List[C[A]])

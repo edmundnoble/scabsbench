@@ -1,11 +1,11 @@
-package scolls
+package scabs.colls
 
 case class HQueue[A](size: Int, left: List[A], right: List[A])
 
 object HQueue {
   val emptyQ: HQueue[Nothing] = new HQueue[Nothing](0, Nil, Nil)
 
-  implicit val hQueueSequenceInstance: Sequence[HQueue] = new Sequence[HQueue] {
+  val hQueueSequenceInstance: Sequence[HQueue] = new Sequence[HQueue] {
     override def empty[A]: HQueue[A] = emptyQ.asInstanceOf[HQueue[A]]
     override def isEmpty[A](q: HQueue[A]): Boolean = q.size == 0
     override def head[A](queue: HQueue[A]): A = if (queue.left.nonEmpty) queue.left.head else queue.right.last

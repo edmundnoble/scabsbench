@@ -1,4 +1,4 @@
-package scolls
+package scabs.colls
 
 import simulacrum.typeclass
 

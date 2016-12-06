@@ -1,4 +1,4 @@
-package scolls
+package scabs.colls
 
 case class OkasakiQueue[A](left: List[A], right: List[A])
 
@@ -6,7 +6,7 @@ object OkasakiQueue {
 
   private val emptyQ: OkasakiQueue[Nothing] = OkasakiQueue[Nothing](Nil, Nil)
 
-  implicit val okasakiQueueSequenceInstance = new Sequence[OkasakiQueue] {
+  val okasakiQueueSequenceInstance = new Sequence[OkasakiQueue] {
 
     def empty[A]: OkasakiQueue[A] =
       emptyQ.asInstanceOf[OkasakiQueue[A]]

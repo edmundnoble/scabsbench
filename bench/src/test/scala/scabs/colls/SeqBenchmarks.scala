@@ -4,6 +4,7 @@ import java.nio.ByteBuffer
 
 import org.scalameter.api._
 import org.scalameter.picklers.{IntPickler, PrimitivePickler}
+import scabs.Util.Id
 import scabs.colls.Hierarchy._
 import scabs.colls.StdlibInstances._
 
@@ -41,10 +42,6 @@ object SeqBenchmarks extends java.io.Serializable {
 
   import SeqManipulators._
 
-  type Const[A, B] = A
-  type Id[A] = A
-  type TupleRight[A, B] = (B, A)
-
   def consRecBench = new ConstBenchmark[Sequence, Int]("cons", constructSizes) {
     override def run[F[_] : Sequence](i: Int): Any = consRec[F](i)
   }
@@ -65,7 +62,7 @@ object SeqBenchmarks extends java.io.Serializable {
     override def gen[F[_] : Sequence]: Gen[F[Int]] = testSnocSeqOnes[F]
   }
 
-  def queueBench = new Benchmark[Sequence, TupleRight[Int, ?], Int] {
+  def queueBench = new Benchmark[Sequence, (?, Int), Int] {
     override def name: String = "queueing (alternating snoc and tail)"
     override def run[F[_] : Sequence](i: (F[Int], Int)): Any = queue[F](i._1, i._2)
     override def gen[F[_] : Sequence]: Gen[(F[Int], Int)] = testSnocSeqOnes[F] zip queueBenchSizes

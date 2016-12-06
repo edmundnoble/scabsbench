@@ -29,6 +29,6 @@ lazy val bench = project.in(file("bench"))
   .settings(testFrameworks += new TestFramework(
     "org.scalameter.ScalaMeterFramework"))
   .settings(scalacOptions ++= Seq(
-      "-optimize"
+      "-language:higherKinds"
   ))
   .dependsOn(coreJVM)

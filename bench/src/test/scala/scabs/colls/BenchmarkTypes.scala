@@ -1,6 +1,7 @@
 package scabs.colls
 
 import org.scalameter.api._
+import scabs.Util.Const
 
 final case class BenchVariety[S[_[_]], M[_]](
                                               instance: S[M],
@@ -19,7 +20,7 @@ abstract class Benchmark[S[_[_]], M[_], I] extends Serializable {
 }
 
 abstract class ConstBenchmark[S[_[_]], In](benchName: String, input: Gen[In])
-  extends Benchmark[S, Lambda[A => In], Nothing] {
+  extends Benchmark[S, Const[In, ?], Nothing] {
   override def name: String = benchName
   override def gen[F[_] : S]: Gen[In] = input
 }

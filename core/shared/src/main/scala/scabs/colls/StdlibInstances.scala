@@ -21,10 +21,11 @@ object StdlibInstances {
       if (s.nonEmpty) Some((s.head, s.tail)) else None
     override def unsnoc[A](s: Vector[A]): Option[(Vector[A], A)] =
       if (s.nonEmpty) Some((s.init, s.last)) else None
+    override def map[A, B](q: Vector[A])(f: (A) => B): Vector[B] = q.map(f)
   }
 
   implicit val vectorCSequenceInstance: CSequence[Vector] = new CSequence[Vector] {
-    override def sequence: Sequence[Vector] = vectorSequenceInstance
+    override val sequence: Sequence[Vector] = vectorSequenceInstance
     override def concat[A](fst: Vector[A], snd: Vector[A]): Vector[A] = fst ++ snd
   }
 
@@ -57,10 +58,11 @@ object StdlibInstances {
       }
       None
     }
+    override def map[A, B](q: List[A])(f: (A) => B): List[B] = q.map(f)
   }
 
   implicit val listCSequenceInstance: CSequence[List] = new CSequence[List] {
-    override def sequence: Sequence[List] = listSequenceInstance
+    override val sequence: Sequence[List] = listSequenceInstance
     override def concat[A](fst: List[A], snd: List[A]): List[A] = fst ++ snd
   }
 
@@ -79,10 +81,11 @@ object StdlibInstances {
     override def fold[A, B](q: Queue[A])(z: B)(f: (B, A) => B): B = q.foldLeft(z)(f)
     override def uncons[A](s: Queue[A]): Option[(A, Queue[A])] = if (s.nonEmpty) Some((s.head, s.tail)) else None
     override def unsnoc[A](s: Queue[A]): Option[(Queue[A], A)] = if (s.isEmpty) None else Some(s.dequeue.swap)
+    override def map[A, B](q: Queue[A])(f: (A) => B): Queue[B] = q.map(f)
   }
 
   implicit val queueCSequenceInstance: CSequence[Queue] = new CSequence[Queue] {
-    override def sequence: Sequence[Queue] = queueSequenceInstance
+    override val sequence: Sequence[Queue] = queueSequenceInstance
     override def concat[A](fst: Queue[A], snd: Queue[A]): Queue[A] = fst ++ snd
   }
 
@@ -102,10 +105,11 @@ object StdlibInstances {
     override def uncons[A](s: Stream[A]): Option[(A, Stream[A])] = if (s.nonEmpty) Some((s.head, s.tail)) else None
     // not a lot of care put into this one
     override def unsnoc[A](s: Stream[A]): Option[(Stream[A], A)] = if (s.nonEmpty) Some((s.init, s.last)) else None
+    override def map[A, B](q: Stream[A])(f: (A) => B): Stream[B] = q.map(f)
   }
 
   implicit val streamCSequenceInstance: CSequence[Stream] = new CSequence[Stream] {
-    override def sequence: Sequence[Stream] = streamSequenceInstance
+    override val sequence: Sequence[Stream] = streamSequenceInstance
     override def concat[A](fst: Stream[A], snd: Stream[A]): Stream[A] = fst ++ snd
   }
 

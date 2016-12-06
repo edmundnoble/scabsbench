@@ -20,7 +20,7 @@ object Constraint {
   }
   def append[A](fst: FreeMonoid0[A], snd: FreeMonoid0[A]): FreeMonoid0[A] = new FreeConstraint0[Monoid, A] {
     override def foldMap[B](trans: (A) => B)(implicit B: Monoid[B]): B =
-      B.mappend(trans(fst.foldMap(trans)), trans(snd.foldMap(trans)))
+      B.mappend(fst.foldMap(trans), snd.foldMap(trans))
   }
   type FreeFunctor1[F[_], A] = FreeConstraint1[Functor, F, A]
   def inj[F[_], A](fa: F[A]): FreeFunctor1[F, A] = new FreeConstraint1[Functor, F, A] {

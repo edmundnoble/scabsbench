@@ -1,7 +1,8 @@
 package scabs.free
 
 import scabs.Util._
-import scabs.colls.CSequence
+import scabs.colls.{CSequence, Sequence}
+import scabs.colls.Hierarchy._
 
 import scala.annotation.tailrec
 
@@ -45,7 +46,7 @@ sealed trait FreeMonadReflect[S[_], F[_], A] {
       }
   }
 
-  def foldMap[G[_]](trans: F ~> G)(implicit G: MonadBind[G]): G[A] = {
+  def foldMap[G[_]](trans: F ~> G)(implicit G: MonadBind[G], S: CSequence[S]): G[A] = {
     val result: G[Any] =
       G.tailRecM[FreeMonadReflect[S, F, Any], Any](this.asInstanceOf[FreeMonadReflect[S, F, Any]]) {
         case FreeMonadReflect.Pure(a) =>
@@ -65,7 +66,8 @@ object FreeMonadReflect {
 
 sealed trait FreeMonadReflectFuseMap[S[_], F[_], A] {
   @tailrec
-  final def run(v: Any, nexts: S[Any => FreeMonadReflectFuseMap[S, F, Any]])(implicit S: CSequence[S]): FreeMonadReflectFuseMap[S, F, Any] = S.sequence.uncons(nexts) match {
+  final def run(v: Any, nexts: S[Any => FreeMonadReflectFuseMap[S, F, Any]])(implicit S: CSequence[S]): FreeMonadReflectFuseMap[S, F, Any] =
+    S.sequence.uncons(nexts) match {
     case None => FreeMonadReflectFuseMap.Pure(v)
     case Some((head, tail)) =>
       head(v) match {
@@ -77,7 +79,7 @@ sealed trait FreeMonadReflectFuseMap[S[_], F[_], A] {
       }
   }
 
-  def foldMap[G[_]](trans: F ~> G)(implicit G: MonadBind[G]): G[A] = {
+  def foldMap[G[_]](trans: F ~> G)(implicit G: MonadBind[G], S: CSequence[S]): G[A] = {
     val result: G[Any] =
       G.tailRecM[FreeMonadReflectFuseMap[S, F, Any], Any](this.asInstanceOf[FreeMonadReflectFuseMap[S, F, Any]]) {
         case FreeMonadReflectFuseMap.Pure(a) =>

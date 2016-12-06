@@ -166,10 +166,11 @@ object Catenable {
         val list = s.toList
         Some((Catenable.fromSeq(list.init), list.last))
     }
+    override def map[A, B](q: Catenable[A])(f: (A) => B): Catenable[B] = q.map(f)
   }
 
   implicit val catenableCSequenceInstance = new CSequence[Catenable] {
-    override def sequence: Sequence[Catenable] = catenableSequenceInstance
+    override val sequence: Sequence[Catenable] = catenableSequenceInstance
     override def concat[A](fst: Catenable[A], snd: Catenable[A]): Catenable[A] = fst ++ snd
   }
 }

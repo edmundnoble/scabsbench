@@ -38,7 +38,7 @@ import simulacrum.typeclass
 
 @typeclass trait CSequence[S[_]] {
 
-  def sequence: Sequence[S]
+  val sequence: Sequence[S]
 
   def concat[A](fst: S[A], snd: S[A]): S[A]
 

@@ -45,10 +45,11 @@ object HQueue {
       } else {
         None
       }
+    override def map[A, B](q: HQueue[A])(f: (A) => B): HQueue[B] = HQueue(q.size, q.left.map(f), q.right.map(f))
   }
 
   implicit val hQueueCSequenceInstance: CSequence[HQueue] = new CSequence[HQueue] {
-    override def sequence: Sequence[HQueue] = hQueueSequenceInstance
+    override val sequence: Sequence[HQueue] = hQueueSequenceInstance
     override def concat[A](fst: HQueue[A], snd: HQueue[A]): HQueue[A] = {
       normD(fst.size + snd.size, fst.left ++ (fst.right.reverse ++ snd.left), snd.right)
     }

@@ -88,6 +88,7 @@ object KaplanTarjanSteq {
     }
     override def uncons[A](s: Steq[A]): Option[(A, Steq[A])] = ???
     override def unsnoc[A](s: Steq[A]): Option[(Steq[A], A)] = ???
+    override def map[A, B](q: Steq[A])(f: (A) => B): Steq[B] = ???
   }
 
   def popPS[A](cons: List[C[A]]): (PST[A], List[C[A]]) = {

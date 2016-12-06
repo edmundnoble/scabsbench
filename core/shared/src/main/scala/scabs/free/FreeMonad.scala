@@ -36,16 +36,13 @@ object FreeMonadADTCPS {
 
 sealed trait FreeMonadReflect[S[_], F[_], A] {
   @tailrec
-  final def run(v: Any, nexts: S[Any => FreeMonadReflect[S, F, Any]])(implicit S: CSequence[S]): FreeMonadReflect[S, F, Any] = {
-    if (S.sequence.isEmpty(nexts)) {
-      FreeMonadReflect.Pure(v)
-    } else {
-      val Some((head, tail)) = S.sequence.uncons(nexts)
+  final def run(v: Any, nexts: S[Any => FreeMonadReflect[S, F, Any]])(implicit S: CSequence[S]): FreeMonadReflect[S, F, Any] = S.sequence.uncons(nexts) match {
+    case None => FreeMonadReflect.Pure(v)
+    case Some((head, tail)) =>
       head(v) match {
         case FreeMonadReflect.Pure(a) => run(a, tail)
         case FreeMonadReflect.Seq(nv, s) => FreeMonadReflect.Seq[S, F, Any](nv, S.concat(s, tail))
       }
-    }
   }
 
   def foldMap[G[_]](trans: F ~> G)(implicit G: MonadBind[G]): G[A] = {
@@ -63,5 +60,40 @@ sealed trait FreeMonadReflect[S[_], F[_], A] {
 object FreeMonadReflect {
   case class Pure[S[_], F[_], A](a: A) extends FreeMonadReflect[S, F, A]
   case class Seq[S[_], F[_], A](value: F[A], continuations: S[Any => FreeMonadReflect[S, F, Any]]) extends FreeMonadReflect[S, F, A]
+}
+
+
+sealed trait FreeMonadReflectFuseMap[S[_], F[_], A] {
+  @tailrec
+  final def run(v: Any, nexts: S[Any => FreeMonadReflectFuseMap[S, F, Any]])(implicit S: CSequence[S]): FreeMonadReflectFuseMap[S, F, Any] = S.sequence.uncons(nexts) match {
+    case None => FreeMonadReflectFuseMap.Pure(v)
+    case Some((head, tail)) =>
+      head(v) match {
+        case FreeMonadReflectFuseMap.Pure(a) => run(a, tail)
+        case FreeMonadReflectFuseMap.Seq(nv, s) => FreeMonadReflectFuseMap.Seq[S, F, Any](nv, S.concat(s, tail))
+        case FreeMonadReflectFuseMap.Map(nv, s) =>
+          FreeMonadReflectFuseMap.Seq[S, F, Any](nv,
+            S.sequence.cons((a: Any) => FreeMonadReflectFuseMap.Pure(Util.seqRecurse(a, s)), tail))
+      }
+  }
+
+  def foldMap[G[_]](trans: F ~> G)(implicit G: MonadBind[G]): G[A] = {
+    val result: G[Any] =
+      G.tailRecM[FreeMonadReflectFuseMap[S, F, Any], Any](this.asInstanceOf[FreeMonadReflectFuseMap[S, F, Any]]) {
+        case FreeMonadReflectFuseMap.Pure(a) =>
+          G.pure(Right[FreeMonadReflectFuseMap[S, F, Any], Any](a.asInstanceOf[Any]))
+        case FreeMonadReflectFuseMap.Seq(nv, s) =>
+          G.fmap(trans(nv))(b => Left[FreeMonadReflectFuseMap[S, F, Any], Any](run(b, s)))
+        case FreeMonadReflectFuseMap.Map(nv, maps) =>
+          G.fmap(trans(nv))(b => Right[FreeMonadReflectFuseMap[S, F, Any], Any](Util.seqRecurse[S](b, maps)))
+      }
+    result.asInstanceOf[G[A]]
+  }
+}
+
+object FreeMonadReflectFuseMap {
+  case class Pure[S[_], F[_], A](a: A) extends FreeMonadReflectFuseMap[S, F, A]
+  case class Seq[S[_], F[_], A](value: F[A], continuations: S[Any => FreeMonadReflectFuseMap[S, F, Any]]) extends FreeMonadReflectFuseMap[S, F, A]
+  case class Map[S[_], F[_], A](value: F[A], maps: S[Any => Any]) extends FreeMonadReflectFuseMap[S, F, A]
 }
 

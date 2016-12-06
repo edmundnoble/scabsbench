@@ -32,6 +32,8 @@ import simulacrum.typeclass
 
   def unsnoc[A](s: S[A]): Option[(S[A], A)]
 
+  def map[A, B](q: S[A])(f: A => B): S[B]
+
 }
 
 @typeclass trait CSequence[S[_]] {

@@ -2,17 +2,6 @@ package scabs.colls
 
 import org.scalameter.api._
 
-trait ConstrainedFunctionI0[S[_[_]], O] {
-  def apply[F[_] : S](): O
-}
-
-
-object ConstrainedFunctionI0 {
-  def const[S[_[_]], O](o: O) = new ConstrainedFunctionI0[S, O] {
-    override def apply[F[_] : S](): O = o
-  }
-}
-
 final case class BenchVariety[S[_[_]], M[_]](
                                               instance: S[M],
                                               name: String

@@ -30,7 +30,8 @@ object Util {
 
   @typeclass trait Applicative[F[_]] {
     def ap[A, B](fa: F[A])(f: F[A => B]): F[B]
-    def map2[A, B, C](fa: F[A])(f: (A, B) => C): F[C]
+    def map2[A, B, C](fa: F[A], fb: F[B])(f: (A, B) => C): F[C]
+    def fmap[A, B](fa: F[A])(f: A => B): F[B]
   }
 
   @typeclass trait Monad[F[_]] {

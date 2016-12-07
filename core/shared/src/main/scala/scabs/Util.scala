@@ -28,16 +28,16 @@ object Util {
     def tailRecF[A, B](fa: F[A])(f: A => A Either B): F[B]
   }
 
-  @typeclass trait MonadBind[F[_]] {
+  @typeclass trait Applicative[F[_]] {
+    def ap[A, B](fa: F[A])(f: F[A => B]): F[B]
+    def map2[A, B, C](fa: F[A])(f: (A, B) => C): F[C]
+  }
+
+  @typeclass trait Monad[F[_]] {
     def pure[A](a: A): F[A]
     def fmap[A, B](fa: F[A])(f: A => B): F[B]
     def bind[A, B](fa: F[A])(f: A => F[B]): F[B]
     def tailRecM[A, B](a: A)(f: A => F[A Either B]): F[B]
-  }
-
-  @typeclass trait MonadJoin[F[_]] {
-    def fmap[A, B](fa: F[A])(f: A => B): F[B]
-    def pure[A](a: A): F[A]
     def join[A](ffa: F[F[A]]): F[A]
   }
 

@@ -1,6 +1,6 @@
 package scabs.free
 
-import scabs.colls.{CSequence, Sequence}
+import scabs.colls.Sequence
 
 import scala.annotation.tailrec
 

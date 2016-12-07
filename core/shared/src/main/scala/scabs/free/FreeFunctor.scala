@@ -3,12 +3,13 @@ package scabs.free
 import scabs.Util.{Functor, ~>}
 import scabs.colls.Sequence
 
-import scala.annotation.tailrec
-
 final case class FreeFunctorADT[F[_], I, A](fi: F[I], f: I => A) {
   def map[B](ab: A => B): FreeFunctorADT[F, I, B] = FreeFunctorADT(fi, ab compose f)
   def foldMap[G[_]](trans: F ~> G)(implicit G: Functor[G]): G[A] = {
     G.fmap(trans(fi))(f)
+  }
+  def retract(implicit F: Functor[F]): F[A] = {
+    F.fmap(fi)(f)
   }
 }
 

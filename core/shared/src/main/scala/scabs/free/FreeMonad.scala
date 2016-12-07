@@ -8,30 +8,32 @@ import scala.annotation.tailrec
 
 case class FreeMonadEither[F[_], A](run: Either[F[FreeMonadEither[F, A]], A]) extends AnyVal
 sealed trait FreeMonadADT[F[_], A] {
-  def foldMap[G[_] : MonadBind](trans: F ~> G): G[A]
+  def foldMap[G[_] : Monad](trans: F ~> G): G[A]
 }
 object FreeMonadADT {
   case class PureMonadADT[F[_], A](value: A) extends FreeMonadADT[F, A] {
-    override def foldMap[G[_] : MonadBind](trans: ~>[F, G]): G[A] = MonadBind[G].pure(value)
+    override def foldMap[G[_] : Monad](trans: ~>[F, G]): G[A] = Monad[G].pure(value)
   }
   case class RollMonadADT[F[_], A](roll: F[FreeMonadADT[F, A]]) extends FreeMonadADT[F, A] {
-    override def foldMap[G[_] : MonadBind](trans: ~>[F, G]): G[A] = MonadBind[G].bind(trans(roll))(_.foldMap[G](trans))
+    override def foldMap[G[_] : Monad](trans: ~>[F, G]): G[A] = Monad[G].bind(trans(roll))(_.foldMap[G](trans))
   }
 }
 
 sealed trait FreeMonadADTCPS[F[_], A] {
-  def foldMap[G[_] : MonadBind](trans: F ~> G): G[A]
+  def foldMap[G[_] : Monad](trans: F ~> G): G[A]
 }
 object FreeMonadADTCPS {
   case class Pure[F[_], A](value: A) extends FreeMonadADTCPS[F, A] {
-    override def foldMap[G[_] : MonadBind](trans: ~>[F, G]): G[A] = MonadBind[G].pure(value)
+    override def foldMap[G[_]](trans: ~>[F, G])(implicit G: Monad[G]): G[A] =
+      G.pure(value)
   }
   case class Roll[F[_], A](roll: F[A]) extends FreeMonadADTCPS[F, A] {
-    override def foldMap[G[_] : MonadBind](trans: ~>[F, G]): G[A] = trans(roll)
+    override def foldMap[G[_]](trans: ~>[F, G])(implicit G: Monad[G]): G[A] =
+      trans(roll)
   }
   case class Bind[F[_], A, B](free: FreeMonadADTCPS[F, A], bind: A => F[B]) extends FreeMonadADTCPS[F, B] {
-    override def foldMap[G[_] : MonadBind](trans: ~>[F, G]): G[B] =
-      MonadBind[G].bind(free.foldMap(trans))(a => trans(bind(a)))
+    override def foldMap[G[_]](trans: ~>[F, G])(implicit G: Monad[G]): G[B] =
+      G.bind(free.foldMap(trans))(a => trans(bind(a)))
   }
 }
 
@@ -46,7 +48,7 @@ sealed trait FreeMonadReflect[S[_], F[_], A] {
       }
   }
 
-  def foldMap[G[_]](trans: F ~> G)(implicit G: MonadBind[G], S: CSequence[S]): G[A] = {
+  def foldMap[G[_]](trans: F ~> G)(implicit G: Monad[G], S: CSequence[S]): G[A] = {
     val result: G[Any] =
       G.tailRecM[FreeMonadReflect[S, F, Any], Any](this.asInstanceOf[FreeMonadReflect[S, F, Any]]) {
         case FreeMonadReflect.Pure(a) =>
@@ -79,7 +81,7 @@ sealed trait FreeMonadReflectFuseMap[S[_], F[_], A] {
       }
   }
 
-  def foldMap[G[_]](trans: F ~> G)(implicit G: MonadBind[G], S: CSequence[S]): G[A] = {
+  def foldMap[G[_]](trans: F ~> G)(implicit G: Monad[G], S: CSequence[S]): G[A] = {
     val result: G[Any] =
       G.tailRecM[FreeMonadReflectFuseMap[S, F, Any], Any](this.asInstanceOf[FreeMonadReflectFuseMap[S, F, Any]]) {
         case FreeMonadReflectFuseMap.Pure(a) =>

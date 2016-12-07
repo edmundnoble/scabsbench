@@ -12,10 +12,12 @@ sealed trait FreeMonadADT[F[_], A] {
 }
 object FreeMonadADT {
   case class PureMonadADT[F[_], A](value: A) extends FreeMonadADT[F, A] {
-    override def foldMap[G[_] : Monad](trans: ~>[F, G]): G[A] = Monad[G].pure(value)
+    override def foldMap[G[_]](trans: ~>[F, G])(implicit G: Monad[G]): G[A] =
+      G.pure(value)
   }
   case class RollMonadADT[F[_], A](roll: F[FreeMonadADT[F, A]]) extends FreeMonadADT[F, A] {
-    override def foldMap[G[_] : Monad](trans: ~>[F, G]): G[A] = Monad[G].bind(trans(roll))(_.foldMap[G](trans))
+    override def foldMap[G[_]](trans: ~>[F, G])(implicit G: Monad[G]): G[A] =
+      G.bind(trans(roll))(_.foldMap[G](trans))
   }
 }
 

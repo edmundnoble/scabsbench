@@ -6,16 +6,15 @@ import scabs.colls.Hierarchy._
 
 import scala.annotation.tailrec
 
-case class FreeMonadEither[F[_], A](run: Either[F[FreeMonadEither[F, A]], A]) extends AnyVal
 sealed trait FreeMonadADT[F[_], A] {
   def foldMap[G[_] : Monad](trans: F ~> G): G[A]
 }
 object FreeMonadADT {
-  case class PureMonadADT[F[_], A](value: A) extends FreeMonadADT[F, A] {
+  case class Pure[F[_], A](value: A) extends FreeMonadADT[F, A] {
     override def foldMap[G[_]](trans: ~>[F, G])(implicit G: Monad[G]): G[A] =
       G.pure(value)
   }
-  case class RollMonadADT[F[_], A](roll: F[FreeMonadADT[F, A]]) extends FreeMonadADT[F, A] {
+  case class Roll[F[_], A](roll: F[FreeMonadADT[F, A]]) extends FreeMonadADT[F, A] {
     override def foldMap[G[_]](trans: ~>[F, G])(implicit G: Monad[G]): G[A] =
       G.bind(trans(roll))(_.foldMap[G](trans))
   }

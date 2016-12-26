@@ -29,8 +29,10 @@ object Util {
   }
 
   @typeclass trait Applicative[F[_]] {
+    def pure[A](a: A): F[A]
     def ap[A, B](fa: F[A])(f: F[A => B]): F[B]
     def map2[A, B, C](fa: F[A], fb: F[B])(f: (A, B) => C): F[C]
+    def tuple2[A, B](fa: F[A], fb: F[B]): F[(A, B)]
     def fmap[A, B](fa: F[A])(f: A => B): F[B]
   }
 

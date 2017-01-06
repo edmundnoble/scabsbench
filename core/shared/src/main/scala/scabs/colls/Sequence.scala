@@ -34,12 +34,7 @@ import simulacrum.typeclass
 
   def map[A, B](q: S[A])(f: A => B): S[B]
 
-}
-
-@typeclass trait CSequence[S[_]] {
-
-  val sequence: Sequence[S]
-
   def concat[A](fst: S[A], snd: S[A]): S[A]
 
 }
+

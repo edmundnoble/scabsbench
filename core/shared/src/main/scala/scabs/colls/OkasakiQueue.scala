@@ -6,7 +6,7 @@ object OkasakiQueue {
 
   private val emptyQ: OkasakiQueue[Nothing] = OkasakiQueue[Nothing](Nil, Nil)
 
-  val okasakiQueueSequenceInstance = new Sequence[OkasakiQueue] {
+  implicit val okasakiQueueSequenceInstance = new Sequence[OkasakiQueue] {
 
     def empty[A]: OkasakiQueue[A] =
       emptyQ.asInstanceOf[OkasakiQueue[A]]
@@ -56,15 +56,12 @@ object OkasakiQueue {
       else if (s.left.nonEmpty) StdlibInstances.listSequenceInstance.unsnoc[A](s.left).map { case (l, a) => (OkasakiQueue(l, Nil), a) }
       else None
     }
+
     override def map[A, B](q: OkasakiQueue[A])(f: (A) => B): OkasakiQueue[B] =
       OkasakiQueue(q.left.map(f), q.right.map(f))
-  }
 
-  implicit val okasakiQueueCSequenceInstance = new CSequence[OkasakiQueue] {
     def concat[A](fst: OkasakiQueue[A], snd: OkasakiQueue[A]): OkasakiQueue[A] =
       OkasakiQueue(fst.left ++ fst.right.reverse ++ snd.left, snd.right)
-
-    override val sequence: Sequence[OkasakiQueue] = okasakiQueueSequenceInstance
   }
 
 }

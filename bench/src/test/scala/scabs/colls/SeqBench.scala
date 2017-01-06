@@ -6,6 +6,6 @@ object SeqBench
   extends Bench.OfflineReport with java.io.Serializable {
 
   // actually run everything (important step)
-  SeqBenchmarks.benchSuites.foreach(ScalameterRunner.runSuite[Nothing](this, _))
+  SeqBenchmarks.benchSuites.foreach(TCScalameterRunner.runSuite[Nothing](this, _))
 
 }

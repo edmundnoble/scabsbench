@@ -20,128 +20,115 @@ object SeqBenchmarks extends java.io.Serializable {
     override def pickle(x: (Int, Int)): Array[Byte] = byteBuffer.putInt(x._1).putInt(x._2).array()
   }
 
-  def cSequenceVarieties = Seq(
-    BenchVariety(CSequence[List], "list").forget,
-    BenchVariety(CSequence[Vector], "vec").forget,
-    BenchVariety(CSequence[OkasakiQueue], "que").forget,
-    BenchVariety(CSequence[HQueue], "hque").forget,
-    BenchVariety(CSequence[Catenable], "cat").forget,
-    BenchVariety(CSequence[Queue], "sque").forget,
-    BenchVariety(CSequence[Stream], "stream").forget
-  )
-
   def sequenceVarieties = Seq(
-    BenchVariety(Sequence[List], "list").forget,
-    BenchVariety(Sequence[Vector], "vec").forget,
-    BenchVariety(Sequence[OkasakiQueue], "que").forget,
-    BenchVariety(Sequence[HQueue], "hque").forget,
-    BenchVariety(Sequence[Catenable], "cat").forget,
-    BenchVariety(Sequence[Queue], "sque").forget,
-    BenchVariety(Sequence[Stream], "stream").forget
+    TCBenchVariety[Sequence, List]("list").forget,
+    TCBenchVariety[Sequence, Vector]("vec").forget,
+    TCBenchVariety[Sequence, OkasakiQueue]("que").forget,
+    TCBenchVariety[Sequence, HQueue]("hque").forget,
+    TCBenchVariety[Sequence, Catenable]("cat").forget,
+    TCBenchVariety[Sequence, Queue]("sque").forget,
+    TCBenchVariety[Sequence, Stream]("stream").forget
   )
 
   import SeqManipulators._
 
-  def consRecBench = new ConstBenchmark[Sequence, Int]("cons", constructSizes) {
-    override def run[F[_] : Sequence](i: Int): Any = consRec[F](i)
+  def consRecBench = new ConstTCBenchmark[Sequence, Int]("cons", constructSizes) {
+    override def run[F[_] : Sequence]: Int => Any = consRec[F]
   }
 
-  def snocRecBench = new ConstBenchmark[Sequence, Int]("snoc", constructSizes) {
-    override def run[F[_] : Sequence](i: Int): Any = snocRec[F](i)
+  def snocRecBench = new ConstTCBenchmark[Sequence, Int]("snoc", constructSizes) {
+    override def run[F[_] : Sequence]: Int => Any = snocRec[F]
   }
 
-  def sumConsBench = new Benchmark[Sequence, Id, Int] {
+  def sumConsBench = new TCBenchmark[Sequence, Id, Int] {
     override def name = "summing cons-constructed seq"
-    override def run[F[_] : Sequence](i: F[Int]): Any = sum[F](i)
+    override def run[F[_] : Sequence]: F[Int] => Any = sum[F]
     override def gen[F[_] : Sequence]: Gen[F[Int]] = testConsSeqOnes[F]
   }
 
-  def sumSnocBench = new Benchmark[Sequence, Id, Int] {
+  def sumSnocBench = new TCBenchmark[Sequence, Id, Int] {
     override def name: String = "summing snoc-constructed seq"
-    override def run[F[_] : Sequence](i: F[Int]): Any = sum[F](i)
+    override def run[F[_] : Sequence]: F[Int] => Any = sum[F]
     override def gen[F[_] : Sequence]: Gen[F[Int]] = testSnocSeqOnes[F]
   }
 
-  def queueBench = new Benchmark[Sequence, (?, Int), Int] {
+  def queueBench = new TCBenchmark[Sequence, (?, Int), Int] {
     override def name: String = "queueing (alternating snoc and tail)"
-    override def run[F[_] : Sequence](i: (F[Int], Int)): Any = queue[F](i._1, i._2)
+    override def run[F[_] : Sequence]: ((F[Int], Int)) => Any = (queue[F] _).tupled
     override def gen[F[_] : Sequence]: Gen[(F[Int], Int)] = testSnocSeqOnes[F] zip queueBenchSizes
   }
 
-  def consConcatBenchRight = new Benchmark[CSequence, List, Int] {
+  def consConcatBenchRight = new TCBenchmark[Sequence, List, Int] {
     override def name: String = "concatenating and summing cons-constructed seqs to the right"
-    override def run[F[_] : CSequence](i: List[F[Int]]): Any = concatRight[F](i)
-    override def gen[F[_] : CSequence]: Gen[List[F[Int]]] = consStructsToConcat[F]
+    override def run[F[_] : Sequence]: List[F[Int]] => Any = concatRight[F]
+    override def gen[F[_] : Sequence]: Gen[List[F[Int]]] = consStructsToConcat[F]
   }
 
-  def snocConcatBenchRight = new Benchmark[CSequence, List, Int] {
+  def snocConcatBenchRight = new TCBenchmark[Sequence, List, Int] {
     override def name: String = "concatenating and summing snoc-constructed seqs to the right"
-    override def run[F[_] : CSequence](i: List[F[Int]]): Any = concatRight[F](i)
-    override def gen[F[_] : CSequence]: Gen[List[F[Int]]] = snocStructsToConcat[F]
+    override def run[F[_] : Sequence]: List[F[Int]] => Any = concatRight[F]
+    override def gen[F[_] : Sequence]: Gen[List[F[Int]]] = snocStructsToConcat[F]
   }
 
-  def consConcatBenchLeft = new Benchmark[CSequence, List, Int] {
+  def consConcatBenchLeft = new TCBenchmark[Sequence, List, Int] {
     override def name: String = "concatenating and summing cons-constructed seqs to the left"
-    override def run[F[_] : CSequence](i: List[F[Int]]): Any = concatLeft[F](i)
-    override def gen[F[_] : CSequence]: Gen[List[F[Int]]] = consStructsToConcat[F]
+    override def run[F[_] : Sequence]: List[F[Int]] => Any = concatLeft[F]
+    override def gen[F[_] : Sequence]: Gen[List[F[Int]]] = consStructsToConcat[F]
   }
 
-  def snocConcatBenchLeft = new Benchmark[CSequence, List, Int] {
+  def snocConcatBenchLeft = new TCBenchmark[Sequence, List, Int] {
     override def name: String = "concatenating and summing snoc-constructed seqs to the left"
-    override def run[F[_] : CSequence](i: List[F[Int]]): Any = concatLeft[F](i)
-    override def gen[F[_] : CSequence]: Gen[List[F[Int]]] = snocStructsToConcat[F]
+    override def run[F[_] : Sequence]: List[F[Int]] => Any = concatLeft[F]
+    override def gen[F[_] : Sequence]: Gen[List[F[Int]]] = snocStructsToConcat[F]
   }
 
   def concatLeftNestedBench =
-    new ConstBenchmark[CSequence, LTree[Int]]("concatenating left-nested trees", leftNestedTrees) {
-      override def run[F[_] : CSequence](i: LTree[Int]): Any = frontierRec[F, Int](i)
+    new ConstTCBenchmark[Sequence, LTree[Int]]("concatenating and summing left-nested trees", leftNestedTrees) {
+      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierRec[F, Int]
     }
 
   def concatRightNestedBench =
-    new ConstBenchmark[CSequence, LTree[Int]]("concatenating right-nested trees", rightNestedTrees) {
-      override def run[F[_] : CSequence](i: LTree[Int]): Any = frontierRec[F, Int](i)
+    new ConstTCBenchmark[Sequence, LTree[Int]]("concatenating and summing right-nested trees", rightNestedTrees) {
+      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierRec[F, Int]
     }
 
   def concatJaggedNestedBench =
-    new ConstBenchmark[CSequence, LTree[Int]]("concatenating jagged trees", jaggedNestedTrees) {
-      override def run[F[_] : CSequence](i: LTree[Int]): Any = frontierRec[F, Int](i)
+    new ConstTCBenchmark[Sequence, LTree[Int]]("concatenating and summing jagged trees", jaggedNestedTrees) {
+      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierRec[F, Int]
     }
 
   def concatBalancedNestedBench =
-    new ConstBenchmark[CSequence, LTree[Int]]("concatenating balanced trees", balancedNestedTrees) {
-      override def run[F[_] : CSequence](i: LTree[Int]): Any = frontierRec[F, Int](i)
+    new ConstTCBenchmark[Sequence, LTree[Int]]("concatenating and summing balanced trees", balancedNestedTrees) {
+      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierRec[F, Int]
     }
 
   def funConcatLeftNestedBench =
-    new ConstBenchmark[Sequence, LTree[Int]]("functionally concatenating left-nested trees", leftNestedTrees) {
-      override def run[F[_] : Sequence](i: LTree[Int]): Any = frontierCPS[F, Int](i)
+    new ConstTCBenchmark[Sequence, LTree[Int]]("functionally concatenating and summing left-nested trees", leftNestedTrees) {
+      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierCPS[F, Int]
     }
 
   def funConcatRightNestedBench =
-    new ConstBenchmark[Sequence, LTree[Int]]("functionally concatenating right-nested trees", rightNestedTrees) {
-      override def run[F[_] : Sequence](i: LTree[Int]): Any = frontierCPS[F, Int](i)
+    new ConstTCBenchmark[Sequence, LTree[Int]]("functionally concatenating and summing right-nested trees", rightNestedTrees) {
+      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierCPS[F, Int]
     }
 
   def funConcatJaggedNestedBench =
-    new ConstBenchmark[Sequence, LTree[Int]]("functionally concatenating jagged trees", jaggedNestedTrees) {
-      override def run[F[_] : Sequence](i: LTree[Int]): Any = frontierCPS[F, Int](i)
+    new ConstTCBenchmark[Sequence, LTree[Int]]("functionally concatenating jagged trees", jaggedNestedTrees) {
+      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierCPS[F, Int]
     }
 
   def funConcatBalancedNestedBench =
-    new ConstBenchmark[Sequence, LTree[Int]]("functionally concatenating balanced trees", balancedNestedTrees) {
-      override def run[F[_] : Sequence](i: LTree[Int]): Any = frontierCPS[F, Int](i)
+    new ConstTCBenchmark[Sequence, LTree[Int]]("functionally concatenating balanced trees", balancedNestedTrees) {
+      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierCPS[F, Int]
     }
 
-  def allSeqBenchmarks: Seq[Benchmark[Sequence, Nothing, Nothing]] = Seq(
+  def allSeqBenchmarks: Seq[TCBenchmark[Sequence, Nothing, Nothing]] = Seq(
     consRecBench.forget, snocRecBench.forget,
     sumConsBench.forget, sumSnocBench.forget,
     queueBench.forget,
     funConcatLeftNestedBench.forget, funConcatRightNestedBench.forget,
     funConcatJaggedNestedBench.forget,
-    funConcatBalancedNestedBench.forget
-  )
-
-  def allCSeqBenchmarks: Seq[Benchmark[CSequence, Nothing, Nothing]] = Seq(
+    funConcatBalancedNestedBench.forget,
     consConcatBenchLeft.forget, consConcatBenchRight.forget,
     snocConcatBenchLeft.forget, snocConcatBenchRight.forget,
     concatLeftNestedBench.forget, concatRightNestedBench.forget,
@@ -149,15 +136,10 @@ object SeqBenchmarks extends java.io.Serializable {
     concatBalancedNestedBench.forget
   )
 
-  val seqBenchSuite: BenchSuite[Sequence] = new BenchSuite[Sequence] {
-    override def varieties: Seq[BenchVariety[Sequence, Nothing]] = sequenceVarieties
-    override def benchmarks: Seq[Benchmark[Sequence, Nothing, Nothing]] = allSeqBenchmarks
+  val seqBenchSuite: TCBenchSuite[Sequence] = new TCBenchSuite[Sequence] {
+    override def varieties = sequenceVarieties
+    override def benchmarks = allSeqBenchmarks
   }
 
-  val cSeqBenchSuite: BenchSuite[CSequence] = new BenchSuite[CSequence] {
-    override def varieties: Seq[BenchVariety[CSequence, Nothing]] = cSequenceVarieties
-    override def benchmarks: Seq[Benchmark[CSequence, Nothing, Nothing]] = allCSeqBenchmarks
-  }
-
-  val benchSuites = Seq(seqBenchSuite.forget, cSeqBenchSuite.forget)
+  val benchSuites = Seq[TCBenchSuite[Nothing]](seqBenchSuite.forget)
 }

@@ -90,7 +90,7 @@ object SeqManipulators {
     generate(Lf(size), size)
   }
 
-  def testConsSeqOnes[S[_] : Sequence]: Gen[S[Int]] = for {
+  def testConsSeqOnes[S[_]: Sequence]: Gen[S[Int]] = for {
     size <- destructSizes
     seq = consRec[S](size)
   } yield seq
@@ -126,11 +126,11 @@ object SeqManipulators {
   def sum[S[_]](seq: S[Int])(implicit S: Sequence[S]): Int =
     S.fold(seq)(0)(_ + _)
 
-  def concatRight[S[_]](seq: List[S[Int]])(implicit S: CSequence[S]): Int =
-    sum[S](seq.reduceRight(S.concat))(S.sequence)
+  def concatRight[S[_]](seq: List[S[Int]])(implicit S: Sequence[S]): Int =
+    sum[S](seq.reduceRight(S.concat))
 
-  def concatLeft[S[_]](seq: List[S[Int]])(implicit S: CSequence[S]): Int =
-    sum[S](seq.reduceLeft(S.concat))(S.sequence)
+  def concatLeft[S[_]](seq: List[S[Int]])(implicit S: Sequence[S]): Int =
+    sum[S](seq.reduceLeft(S.concat))
 
   def frontierCPS[S[_], A](tree: LTree[A])(implicit S: Sequence[S]): S[A] = {
     def helper(innerTree: LTree[A]): S[A] => S[A] = innerTree match {
@@ -140,12 +140,13 @@ object SeqManipulators {
     helper(tree)(S.empty)
   }
 
-  def frontierRec[S[_], A](tree: LTree[A])(implicit S: CSequence[S]): S[A] =
+  def frontierRec[S[_], A](tree: LTree[A])(implicit S: Sequence[S]): S[A] =
     tree match {
-      case Lf(a) => S.sequence.cons(a, S.sequence.empty)
+      case Lf(a) => S.cons(a, S.empty)
       case Bin(_, left, right) => S.concat(frontierRec[S, A](left), frontierRec[S, A](right))
     }
 
+  @tailrec
   def queue[S[_]](start: S[Int], size: Int)(implicit S: Sequence[S]): S[Int] =
     if (size == 0) start
     else queue[S](S.tail(S.snoc(start, size)), size - 1)

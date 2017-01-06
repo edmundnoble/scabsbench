@@ -5,7 +5,7 @@ case class HQueue[A](size: Int, left: List[A], right: List[A])
 object HQueue {
   val emptyQ: HQueue[Nothing] = new HQueue[Nothing](0, Nil, Nil)
 
-  val hQueueSequenceInstance: Sequence[HQueue] = new Sequence[HQueue] {
+  implicit val hQueueSequenceInstance: Sequence[HQueue] = new Sequence[HQueue] {
     override def empty[A]: HQueue[A] = emptyQ.asInstanceOf[HQueue[A]]
     override def isEmpty[A](q: HQueue[A]): Boolean = q.size == 0
     override def head[A](queue: HQueue[A]): A = if (queue.left.nonEmpty) queue.left.head else queue.right.last
@@ -46,10 +46,6 @@ object HQueue {
         None
       }
     override def map[A, B](q: HQueue[A])(f: (A) => B): HQueue[B] = HQueue(q.size, q.left.map(f), q.right.map(f))
-  }
-
-  implicit val hQueueCSequenceInstance: CSequence[HQueue] = new CSequence[HQueue] {
-    override val sequence: Sequence[HQueue] = hQueueSequenceInstance
     override def concat[A](fst: HQueue[A], snd: HQueue[A]): HQueue[A] = {
       normD(fst.size + snd.size, fst.left ++ (fst.right.reverse ++ snd.left), snd.right)
     }

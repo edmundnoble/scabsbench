@@ -147,7 +147,7 @@ object Catenable {
     }
   }
 
-  val catenableSequenceInstance = new Sequence[Catenable] {
+  implicit val catenableSequenceInstance = new Sequence[Catenable] {
     override def empty[A]: Catenable[A] = Catenable.empty
     override def isEmpty[A](q: Catenable[A]): Boolean = q.isEmpty
     override def head[A](queue: Catenable[A]): A = queue.uncons.get._1
@@ -167,10 +167,6 @@ object Catenable {
         Some((Catenable.fromSeq(list.init), list.last))
     }
     override def map[A, B](q: Catenable[A])(f: (A) => B): Catenable[B] = q.map(f)
-  }
-
-  implicit val catenableCSequenceInstance = new CSequence[Catenable] {
-    override val sequence: Sequence[Catenable] = catenableSequenceInstance
     override def concat[A](fst: Catenable[A], snd: Catenable[A]): Catenable[A] = fst ++ snd
   }
 }

@@ -14,6 +14,10 @@ object Util {
   type Algebra[F[_], A] = A => F[A]
   type Colgebra[F[_], A] = F[A] => A
 
+  trait Lub1[F[_], G[_]] {
+    def ev[A]: F[A] <:< G[A]
+  }
+
   trait FunctionK[F[_], G[_]] {
     def apply[A](fa: F[A]): G[A]
   }

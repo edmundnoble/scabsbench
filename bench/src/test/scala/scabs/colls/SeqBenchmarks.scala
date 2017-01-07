@@ -6,7 +6,6 @@ import org.scalameter.api._
 import org.scalameter.picklers.{IntPickler, PrimitivePickler}
 import scabs.Util.Id
 import scabs.colls.Hierarchy._
-import scabs.colls.StdlibInstances._
 
 import scala.collection.immutable.Queue
 
@@ -136,10 +135,8 @@ object SeqBenchmarks extends java.io.Serializable {
     concatBalancedNestedBench.forget
   )
 
-  val seqBenchSuite: TCBenchSuite[Sequence] = new TCBenchSuite[Sequence] {
-    override def varieties = sequenceVarieties
-    override def benchmarks = allSeqBenchmarks
-  }
+  val seqBenchSuite: TCBenchSuite[Sequence] =
+    TCBenchSuite(sequenceVarieties, allSeqBenchmarks)
 
   val benchSuites = Seq[TCBenchSuite[Nothing]](seqBenchSuite.forget)
 }

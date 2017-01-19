@@ -1,4 +1,4 @@
-package scabs.colls
+package scabs.seq
 
 import Catenable._
 

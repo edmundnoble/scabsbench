@@ -1,4 +1,4 @@
-package scabs.colls
+package scabs.seq
 
 import java.nio.ByteBuffer
 
@@ -6,11 +6,11 @@ import org.scalameter.api._
 import org.scalameter.picklers.{IntPickler, PrimitivePickler}
 import scabs.{ConstTCBenchmark, TCBenchSuite, TCBenchVariety, TCBenchmark}
 import scabs.Util.Id
-import scabs.colls.Hierarchy._
+import scabs.seq.Hierarchy._
 
 import scala.collection.immutable.Queue
 
-object SeqBenchmarks extends java.io.Serializable {
+object Benchmarks extends java.io.Serializable {
 
   implicit def intPickler = IntPickler
 
@@ -138,6 +138,4 @@ object SeqBenchmarks extends java.io.Serializable {
 
   val seqBenchSuite: TCBenchSuite[Sequence] =
     TCBenchSuite(sequenceVarieties, allSeqBenchmarks)
-
-  val benchSuites = Seq[TCBenchSuite[Nothing]](seqBenchSuite.forget)
 }

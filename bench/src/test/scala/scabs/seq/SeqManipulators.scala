@@ -1,4 +1,4 @@
-package scabs.colls
+package scabs.seq
 
 import java.nio.ByteBuffer
 

@@ -1,7 +1,7 @@
 package scabs.free.monad
 
 import scabs.Util._
-import scabs.colls.Sequence
+import scabs.seq.Sequence
 import scabs.free.Util
 
 import scala.annotation.tailrec

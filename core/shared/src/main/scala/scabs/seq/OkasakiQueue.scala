@@ -1,4 +1,4 @@
-package scabs.colls
+package scabs.seq
 
 case class OkasakiQueue[A](left: List[A], right: List[A])
 

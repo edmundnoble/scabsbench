@@ -1,4 +1,4 @@
-package scabs.colls
+package scabs.seq
 
 case class HQueue[A](size: Int, left: List[A], right: List[A])
 

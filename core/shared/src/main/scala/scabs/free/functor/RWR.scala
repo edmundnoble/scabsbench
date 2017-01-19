@@ -1,7 +1,7 @@
 package scabs.free.functor
 
 import scabs.Util.{Functor, ~>}
-import scabs.colls.Sequence
+import scabs.seq.Sequence
 import scabs.free.Util
 
 final case class RWR[S[_], F[_], I, A](fi: F[I], funs: S[Any => Any]) {

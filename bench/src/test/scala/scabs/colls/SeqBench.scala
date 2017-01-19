@@ -1,6 +1,7 @@
 package scabs.colls
 
 import org.scalameter.api._
+import scabs.TCScalameterRunner
 
 object SeqBench
   extends Bench.OfflineReport with java.io.Serializable {

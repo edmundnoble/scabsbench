@@ -4,6 +4,7 @@ import java.nio.ByteBuffer
 
 import org.scalameter.api._
 import org.scalameter.picklers.{IntPickler, PrimitivePickler}
+import scabs.{ConstTCBenchmark, TCBenchSuite, TCBenchVariety, TCBenchmark}
 import scabs.Util.Id
 import scabs.colls.Hierarchy._
 

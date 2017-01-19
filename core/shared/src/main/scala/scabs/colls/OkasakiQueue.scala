@@ -61,7 +61,7 @@ object OkasakiQueue {
       OkasakiQueue(q.left.map(f), q.right.map(f))
 
     def concat[A](fst: OkasakiQueue[A], snd: OkasakiQueue[A]): OkasakiQueue[A] =
-      OkasakiQueue(fst.left ++ fst.right.reverse ++ snd.left, snd.right)
+      OkasakiQueue(fst.left ++ (fst.right reverse_::: snd.left), snd.right)
   }
 
 }

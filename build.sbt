@@ -32,3 +32,12 @@ lazy val bench = project.in(file("bench"))
       "-language:higherKinds"
   ))
   .dependsOn(coreJVM)
+
+lazy val test = project.in(file("test"))
+  .settings(libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test")
+  .settings(resolvers += Resolver.sonatypeRepo("releases"))
+  .settings(addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3"))
+  .settings(scalacOptions ++= Seq(
+      "-language:higherKinds"
+  ))
+  .dependsOn(coreJVM)

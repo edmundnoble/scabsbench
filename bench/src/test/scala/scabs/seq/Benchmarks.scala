@@ -1,10 +1,11 @@
-package scabs.seq
+package scabs
+package seq
 
 import java.nio.ByteBuffer
 
 import org.scalameter.api._
 import org.scalameter.picklers.{IntPickler, PrimitivePickler}
-import scabs.{ConstTCBenchmark, TCBenchSuite, TCBenchVariety, TCBenchmark}
+import StdlibInstances._
 import scabs.Util.Id
 import scabs.seq.Hierarchy._
 
@@ -30,7 +31,7 @@ object Benchmarks extends java.io.Serializable {
     TCBenchVariety[Sequence, Stream]("stream").forget
   )
 
-  import SeqManipulators._
+  import Manipulators._
 
   def consRecBench = new ConstTCBenchmark[Sequence, Int]("cons", constructSizes) {
     override def run[F[_] : Sequence]: Int => Any = consRec[F]
@@ -84,42 +85,42 @@ object Benchmarks extends java.io.Serializable {
 
   def concatLeftNestedBench =
     new ConstTCBenchmark[Sequence, LTree[Int]]("concatenating and summing left-nested trees", leftNestedTrees) {
-      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierRec[F, Int]
+      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierRec[F, Int] _ andThen sum[F]
     }
 
   def concatRightNestedBench =
     new ConstTCBenchmark[Sequence, LTree[Int]]("concatenating and summing right-nested trees", rightNestedTrees) {
-      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierRec[F, Int]
+      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierRec[F, Int] _ andThen sum[F]
     }
 
   def concatJaggedNestedBench =
     new ConstTCBenchmark[Sequence, LTree[Int]]("concatenating and summing jagged trees", jaggedNestedTrees) {
-      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierRec[F, Int]
+      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierRec[F, Int] _ andThen sum[F]
     }
 
   def concatBalancedNestedBench =
     new ConstTCBenchmark[Sequence, LTree[Int]]("concatenating and summing balanced trees", balancedNestedTrees) {
-      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierRec[F, Int]
+      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierRec[F, Int] _ andThen sum[F]
     }
 
   def funConcatLeftNestedBench =
     new ConstTCBenchmark[Sequence, LTree[Int]]("functionally concatenating and summing left-nested trees", leftNestedTrees) {
-      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierCPS[F, Int]
+      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierCPS[F, Int] _ andThen sum[F]
     }
 
   def funConcatRightNestedBench =
     new ConstTCBenchmark[Sequence, LTree[Int]]("functionally concatenating and summing right-nested trees", rightNestedTrees) {
-      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierCPS[F, Int]
+      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierCPS[F, Int] _ andThen sum[F]
     }
 
   def funConcatJaggedNestedBench =
     new ConstTCBenchmark[Sequence, LTree[Int]]("functionally concatenating jagged trees", jaggedNestedTrees) {
-      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierCPS[F, Int]
+      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierCPS[F, Int] _ andThen sum[F]
     }
 
   def funConcatBalancedNestedBench =
     new ConstTCBenchmark[Sequence, LTree[Int]]("functionally concatenating balanced trees", balancedNestedTrees) {
-      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierCPS[F, Int]
+      override def run[F[_] : Sequence]: LTree[Int] => Any = frontierCPS[F, Int] _ andThen sum[F]
     }
 
   def allSeqBenchmarks: Seq[TCBenchmark[Sequence, Nothing, Nothing]] = Seq(

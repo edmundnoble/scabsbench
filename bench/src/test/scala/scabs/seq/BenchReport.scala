@@ -1,5 +1,4 @@
-package scabs.seq
-
-import scabs.TCBenchmarkReport
+package scabs
+package seq
 
 object BenchReport extends TCBenchmarkReport[Sequence](Benchmarks.seqBenchSuite)

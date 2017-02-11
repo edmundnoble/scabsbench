@@ -61,8 +61,13 @@ object OkasakiQueue {
     override def map[A, B](q: OkasakiQueue[A])(f: (A) => B): OkasakiQueue[B] =
       OkasakiQueue(q.left.map(f), q.right.map(f))
 
-    def concat[A](fst: OkasakiQueue[A], snd: OkasakiQueue[A]): OkasakiQueue[A] =
+    override def concat[A](fst: OkasakiQueue[A], snd: OkasakiQueue[A]): OkasakiQueue[A] =
       OkasakiQueue(fst.left ++ (fst.right reverse_::: snd.left), snd.right)
+
+    override def foreach[A, U](q: OkasakiQueue[A])(f: (A) => U): Unit = {
+      q.left.foreach(f)
+      q.right.reverse.foreach(f)
+    }
   }
 
 }

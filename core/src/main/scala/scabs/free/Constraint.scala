@@ -6,7 +6,7 @@ import scabs.Util._
 object Constraint {
 
   trait FreeConstraint0[F[_], A, V] {
-    val generated: F[V]
+    implicit val generated: F[V]
 
     def foldMap[B](v: V)(trans: A => B)(implicit ev: F[B]): B
 
@@ -18,7 +18,7 @@ object Constraint {
   }
 
   trait FreeConstraint1[S[_[_]], F[_], V[_]] {
-    val generated: S[V]
+    implicit val generated: S[V]
 
     def foldMap[A, G[_]](fv: V[A])(trans: F ~> G)(implicit ev: S[G]): G[A]
 

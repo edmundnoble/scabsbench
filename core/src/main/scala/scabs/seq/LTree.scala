@@ -1,6 +1,8 @@
 package scabs
 package seq
 
+import scabs.Util.Monad
+
 import scala.annotation.tailrec
 
 sealed trait LTree[A] {
@@ -51,6 +53,21 @@ object LTree {
       else t :: ts
     }
     list.map(Lf(_)).foldRight(Nil: List[LTree[A]]) (insComp)
+  }
+
+  implicit val ltreeMonad: Monad[LTree] = new Monad[LTree] {
+    override def pure[A](a: A): LTree[A] = Lf(a)
+
+    override def bind[A, B](fa: LTree[A])(f: (A) => LTree[B]): LTree[B] = fa match {
+      case Lf(a) => f(a)
+      case Bin(_, l, r) => LTree.join(bind(l)(f), bind(r)(f))
+    }
+
+    override def fmap[A, B](fa: LTree[A])(f: (A) => B): LTree[B] = ???
+
+    override def join[A](ffa: LTree[LTree[A]]): LTree[A] = ???
+
+    override def tailRecM[A, B](a: A)(f: (A) => LTree[Either[A, B]]): LTree[B] = ???
   }
 
 }

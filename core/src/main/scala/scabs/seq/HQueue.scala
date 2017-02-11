@@ -50,7 +50,10 @@ object HQueue {
     override def concat[A](fst: HQueue[A], snd: HQueue[A]): HQueue[A] = {
       normD(fst.size + snd.size, fst.left ++ (fst.right.reverse ++ snd.left), snd.right)
     }
-
+    override def foreach[A, U](q: HQueue[A])(f: (A) => U): Unit = {
+      q.left.foreach(f)
+      q.right.reverse.foreach(f)
+    }
   }
 
   def normD[A](size: Int, left: List[A], right: List[A]): HQueue[A] = {

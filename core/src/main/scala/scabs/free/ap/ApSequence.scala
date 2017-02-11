@@ -30,7 +30,7 @@ final case class ApSequence[S[_], F[_], U <: HList](seq: S[F[Any]]) extends AnyV
 
   def length(implicit S: Sequence[S]): Int = S.lengthSeq(seq)
 
-  def transform[G[_, _]](trans: F ~> G)(implicit S: Sequence[S]): ApSequence[S, G, U] =
+  def transform[G[_]](trans: F ~> G)(implicit S: Sequence[S]): ApSequence[S, G, U] =
     ApSequence[S, G, U](S.map(seq)(trans(_)))
 
   def andThen[B](next: F[B])(implicit S: Sequence[S]): ApSequence[S, F, B :: U] =

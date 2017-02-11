@@ -2,6 +2,10 @@ name in ThisBuild := "scabsbench"
 
 scalaVersion in ThisBuild := "2.11.8"
 
+scalaOrganization in ThisBuild := "org.typelevel"
+
+scalacOptions in ThisBuild += "-Ypartial-unification"
+
 lazy val scabsbench = project.in(file("."))
   .dependsOn(coreJVM, coreJS, bench, test)
   .aggregate(coreJVM, coreJS, bench, test)
@@ -10,7 +14,7 @@ lazy val core = crossProject
   .crossType(CrossType.Pure)
   .in(file("core"))
   .settings(libraryDependencies += "com.chuusai" %%% "shapeless" % "2.3.2")
-  .settings(libraryDependencies += "org.atnos" %%% "eff" % "2.3.0")
+  .settings(libraryDependencies += "org.atnos" %%% "eff" % "3.0.0")
   .settings(libraryDependencies += "com.github.mpilquist" %%% "simulacrum" % "0.10.0")
   .settings(addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full))
   .settings(resolvers += Resolver.sonatypeRepo("releases"))

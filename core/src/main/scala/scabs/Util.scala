@@ -13,6 +13,10 @@ object Util {
   type <~>[F[_], G[_]] = (F ~> G, G ~> F)
   type Kleisli[F[_], A, B] = A => F[B]
   type KleisliC[F[_]] = {type l[A, B] = A => F[B]}
+  type Static[F[_], A, B] = F[A => B]
+  type StaticC[F[_]] = {type l[A, B] = F[A => B]}
+  type Stetic[F[_], A, B] = F[A => B] Either (A => B)
+  type SteticC[F[_]] = {type l[A, B] = F[A => B] Either (A => B)}
   type Cokleisli[F[_], A, B] = F[A] => B
   type CokleisliC[F[_]] = {type l[A, B] = F[A] => B}
   type Algebra[F[_], A] = A => F[A]
@@ -60,9 +64,9 @@ object Util {
     def tuple2[A, B](fa: F[A], fb: F[B]): F[(A, B)] =
       map2(fa, fb)((a, b) => (a, b))
 
-    def traverse[S[_] : Traverse, G[_], A, B](fa: S[A])(f: A => G[B]): G[S[B]]
+    def traverse[S[_] : Traverse, A, B](fa: S[A])(f: A => F[B]): F[S[B]]
 
-    def sequence[S[_] : Traverse, G[_], A](fa: S[G[A]]): G[S[A]]
+    def sequence[S[_] : Traverse, A](fa: S[F[A]]): F[S[A]]
   }
 
   @typeclass trait Traverse[F[_]] {
@@ -76,9 +80,9 @@ object Util {
     def fmap[A, B](fa: F[A])(f: A => B): F[B] =
       ap(fa)(pure(f))
 
-    def traverse[S[_] : Traverse, G[_], A, B](fa: S[A])(f: A => G[B]): G[S[B]]
+    def traverse[G[_]: Applicative, A, B](fa: F[A])(f: A => G[B]): G[F[B]]
 
-    def sequence[S[_] : Traverse, G[_], A](fa: S[G[A]]): G[S[A]]
+    def sequence[G[_]: Applicative, A](fa: F[G[A]]): G[F[A]]
   }
 
   @typeclass trait Monad[F[_]] {
@@ -101,6 +105,19 @@ object Util {
     def compose[A, B, C](ab: F[A, B], bc: F[B, C]): F[A, C]
 
     def id[A]: F[A, A]
+  }
+
+  trait Evaluable[F[_, _], G[_]] {
+    def eval[A, B](a: G[A], arr: F[A, B]): G[B]
+  }
+
+  object Evaluable {
+    def tailRecEval[F[_, _], S[_], G[_], A, B](input: G[A], taSequence: TASequence[S, F, A, B])(implicit S: Sequence[S], C: Evaluable[F, G]): G[B] = {
+      taSequence.uncons match {
+        case Some((head, tail)) => tailRecEval(C.eval(input, head.asInstanceOf[F[A, Any]]), tail)
+        case None => input.asInstanceOf[G[B]]
+      }
+    }
   }
 
   trait Prearrow[F[_, _]] {

@@ -69,7 +69,7 @@ sealed abstract class Catenable[+A] {
   }
 
   /** Applies the supplied function to each element, left to right. */
-  final def foreach(f: A => Unit): Unit = {
+  final def foreach[U](f: A => U): Unit = {
     var c: Catenable[A] = this
     val rights = new collection.mutable.ArrayBuffer[Catenable[A]]
     while (c ne null) {
@@ -169,6 +169,7 @@ object Catenable {
     }
     override def map[A, B](q: Catenable[A])(f: (A) => B): Catenable[B] = q.map(f)
     override def concat[A](fst: Catenable[A], snd: Catenable[A]): Catenable[A] = fst ++ snd
+    override def foreach[A, U](q: Catenable[A])(f: (A) => U): Unit = q.foreach(f)
   }
 }
 

@@ -13,9 +13,9 @@ import scala.collection.immutable.Queue
 
 object Benchmarks extends java.io.Serializable {
 
-  implicit def intPickler = IntPickler
+  implicit val intPickler = IntPickler
 
-  implicit def twoIntPickler = new PrimitivePickler[(Int, Int)] {
+  implicit val twoIntPickler = new PrimitivePickler[(Int, Int)] {
     override protected def bits: Int = java.lang.Integer.SIZE * 2
     override protected def unwrap(from: ByteBuffer): (Int, Int) = (from.getInt(), from.getInt())
     override def pickle(x: (Int, Int)): Array[Byte] = byteBuffer.putInt(x._1).putInt(x._2).array()

@@ -28,6 +28,7 @@ object Manipulators {
   val rightNestedTrees: Gen[LTree[Int]] = treeSizes.map(generateRightNestedTree)
   val jaggedNestedTrees: Gen[LTree[Int]] = treeSizes.map(generateJaggedTree)
   val balancedNestedTrees: Gen[LTree[Int]] = balancedTreeSizes.map(generateBalancedTree)
+
   def consStructsToConcat[S[_] : Sequence]: Gen[List[S[Int]]] =
     for {
       innerOuterSizes <- concatInnerOuterSizes

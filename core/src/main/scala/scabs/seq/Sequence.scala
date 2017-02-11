@@ -41,7 +41,8 @@ import simulacrum.typeclass
 
   def one[A](a: A): S[A] = cons(a, empty)
 
-  def rebuild[R[_]: Sequence, A](rs: S[A]): R[A]
+  def rebuild[R[_], A](rs: S[A])(implicit R: Sequence[R]): R[A] =
+    fold[A, R[A]](rs)(R.empty)(R.snoc)
 
 }
 

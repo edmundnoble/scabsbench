@@ -39,11 +39,13 @@ object LTree {
   def delLast[A](lTree: LTree[A]): LTree[A] = lTree match {
     case Bin(_, left, Lf(_)) => left
     case Bin(n, l, r) => Bin(n - 1, l, delLast(r))
+    case _ => lTree
   }
 
   def delFirst[A](lTree: LTree[A]): LTree[A] = lTree match {
     case Bin(_, Lf(_), right) => right
     case Bin(n, l, r) => Bin(n - 1, delFirst(l), r)
+    case _ => lTree
   }
 
   def forestOfComp[A](list: List[A]): List[LTree[A]] = {

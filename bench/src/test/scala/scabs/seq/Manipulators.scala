@@ -18,12 +18,12 @@ object Manipulators {
     override def pickle(x: (Int, Int)): Array[Byte] = byteBuffer.putInt(x._1).putInt(x._2).array()
   }
 
-  val constructSizes: Gen[Int] = Gen.enumeration("sizes")(10, 100, 1000, 2000)
-  val queueBenchSizes: Gen[Int] = Gen.enumeration("sizes")(4000)
-  val destructSizes: Gen[Int] = Gen.enumeration("sizes")(100, 1000, 2000)
-  val concatInnerOuterSizes: Gen[(Int, Int)] = Gen.enumeration("sizes")((100, 10), (200, 30))
+  val constructSizes: Gen[Int] = Gen.enumeration("constructSizes")(10, 100, 1000, 2000)
+  val queueBenchSizes: Gen[Int] = Gen.enumeration("queueBenchSizes")(4000)
+  val destructSizes: Gen[Int] = Gen.enumeration("destructSizes")(100, 1000, 2000)
+  val concatInnerOuterSizes: Gen[(Int, Int)] = Gen.enumeration("concatInnerOuterSizes")((100, 10), (200, 30))
   val treeSizes: Gen[Int] = Gen.enumeration("treeSizes")(100, 500, 2000)
-  val balancedTreeSizes: Gen[Int] = Gen.enumeration("treeSizes")(15, 20)
+  val balancedTreeSizes: Gen[Int] = Gen.enumeration("balancedTreeSizes")(15, 20)
   val leftNestedTrees: Gen[LTree[Int]] = treeSizes.map(generateLeftNestedTree)
   val rightNestedTrees: Gen[LTree[Int]] = treeSizes.map(generateRightNestedTree)
   val jaggedNestedTrees: Gen[LTree[Int]] = treeSizes.map(generateJaggedTree)

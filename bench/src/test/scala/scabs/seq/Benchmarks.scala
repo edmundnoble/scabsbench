@@ -27,19 +27,13 @@ object Benchmarks extends java.io.Serializable {
     TCBenchVariety[Sequence, OkasakiQueue]("que").forget,
     TCBenchVariety[Sequence, HQueue]("hque").forget,
     TCBenchVariety[Sequence, Catenable]("cat").forget,
+    TCBenchVariety[Sequence, CatenableArrLeaves]("catarr").forget,
+    TCBenchVariety[Sequence, PQueue]("pque").forget,
     TCBenchVariety[Sequence, Queue]("sque").forget,
     TCBenchVariety[Sequence, Stream]("stream").forget
   )
 
   import Manipulators._
-
-  def consRecBench = new ConstTCBenchmark[Sequence, Int]("cons", constructSizes) {
-    override def run[F[_] : Sequence]: Int => Any = consRec[F]
-  }
-
-  def snocRecBench = new ConstTCBenchmark[Sequence, Int]("snoc", constructSizes) {
-    override def run[F[_] : Sequence]: Int => Any = snocRec[F]
-  }
 
   def sumConsBench = new TCBenchmark[Sequence, Id, Int] {
     override def name = "summing cons-constructed seq"
@@ -124,7 +118,6 @@ object Benchmarks extends java.io.Serializable {
     }
 
   def allSeqBenchmarks: Seq[TCBenchmark[Sequence, Nothing, Nothing]] = Seq(
-    consRecBench.forget, snocRecBench.forget,
     sumConsBench.forget, sumSnocBench.forget,
     queueBench.forget,
     funConcatLeftNestedBench.forget, funConcatRightNestedBench.forget,

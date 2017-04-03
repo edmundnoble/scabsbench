@@ -28,7 +28,6 @@ object Benchmarks extends java.io.Serializable {
     TCBenchVariety[Sequence, HQueue]("hque").forget,
     TCBenchVariety[Sequence, Catenable]("cat").forget,
     TCBenchVariety[Sequence, CatenableArrLeaves]("catarr").forget,
-    TCBenchVariety[Sequence, PQueue]("pque").forget,
     TCBenchVariety[Sequence, Queue]("sque").forget,
     TCBenchVariety[Sequence, Stream]("stream").forget
   )

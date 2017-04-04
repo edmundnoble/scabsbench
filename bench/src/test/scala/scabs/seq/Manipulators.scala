@@ -19,11 +19,12 @@ object Manipulators {
   }
 
   val constructSizes: Gen[Int] = Gen.enumeration("constructSizes")(10, 100, 1000, 2000)
-  val queueBenchSizes: Gen[Int] = Gen.enumeration("queueBenchSizes")(4000)
-  val destructSizes: Gen[Int] = Gen.enumeration("destructSizes")(100, 1000, 2000)
-  val concatInnerOuterSizes: Gen[(Int, Int)] = Gen.enumeration("concatInnerOuterSizes")((100, 10), (200, 30))
+  val queueBenchSizes: Gen[Int] = Gen.enumeration("queueBenchSizes")(6000)
+  val stackBenchSizes: Gen[Int] = Gen.enumeration("stackBenchSizes")(6000)
+  val destructSizes: Gen[Int] = Gen.enumeration("destructSizes")(1000, 2000)
+  val concatInnerOuterSizes: Gen[(Int, Int)] = Gen.enumeration("concatInnerOuterSizes")((200, 30), (500, 50))
   val treeSizes: Gen[Int] = Gen.enumeration("treeSizes")(100, 500, 2000)
-  val balancedTreeSizes: Gen[Int] = Gen.enumeration("balancedTreeSizes")(15, 20)
+  val balancedTreeSizes: Gen[Int] = Gen.enumeration("balancedTreeSizes")(15, 21)
   val leftNestedTrees: Gen[LTree[Int]] = treeSizes.map(generateLeftNestedTree)
   val rightNestedTrees: Gen[LTree[Int]] = treeSizes.map(generateRightNestedTree)
   val jaggedNestedTrees: Gen[LTree[Int]] = treeSizes.map(generateJaggedTree)
@@ -152,5 +153,11 @@ object Manipulators {
   def queue[S[_]](start: S[Int], size: Int)(implicit S: Sequence[S]): S[Int] =
     if (size == 0) start
     else queue[S](S.tail(S.snoc(start, size)), size - 1)
+
+  @tailrec
+  def stack[S[_]](start: S[Int], size: Int)(implicit S: Sequence[S]): S[Int] =
+    if (size == 0) start
+    else stack[S](S.tail(S.cons(size, start)), size - 1)
+
 
 }

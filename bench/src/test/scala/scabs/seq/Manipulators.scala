@@ -25,10 +25,10 @@ object Manipulators {
   val concatInnerOuterSizes: Gen[(Int, Int)] = Gen.enumeration("concatInnerOuterSizes")((300, 30), (500, 50))
   val treeSizes: Gen[Int] = Gen.enumeration("treeSizes")(500, 1000, 2000)
   val balancedTreeSizes: Gen[Int] = Gen.enumeration("balancedTreeSizes")(16, 19)
-  val leftNestedTrees: Gen[LTree[Int]] = treeSizes.map(generateLeftNestedTree)
-  val rightNestedTrees: Gen[LTree[Int]] = treeSizes.map(generateRightNestedTree)
-  val jaggedNestedTrees: Gen[LTree[Int]] = treeSizes.map(generateJaggedTree)
-  val balancedNestedTrees: Gen[LTree[Int]] = balancedTreeSizes.map(generateBalancedTree)
+  val leftNestedTrees: Gen[LTree[Int]] = treeSizes.map(TreeManipulators.generateLeftNestedTree)
+  val rightNestedTrees: Gen[LTree[Int]] = treeSizes.map(TreeManipulators.generateRightNestedTree)
+  val jaggedNestedTrees: Gen[LTree[Int]] = treeSizes.map(TreeManipulators.generateJaggedTree)
+  val balancedNestedTrees: Gen[LTree[Int]] = balancedTreeSizes.map(TreeManipulators.generateBalancedTree)
 
   def consStructsToConcat[S[_] : Sequence]: Gen[List[S[Int]]] =
     for {
@@ -44,54 +44,6 @@ object Manipulators {
       innerSeq = snocRec[S](innerSize)
       outerSeq = List.fill(outerSize)(innerSeq)
     } yield outerSeq
-
-  def generateLeftNestedTree(size: Int): LTree[Int] = {
-    @tailrec def generate(acc: LTree[Int], cnt: Int): LTree[Int] = {
-      if (cnt == 0) {
-        acc
-      } else {
-        val newLeaf = Lf(cnt)
-        generate(Bin(acc.size + 1, acc, newLeaf), cnt - 1)
-      }
-    }
-    generate(Lf(size), size)
-  }
-
-  def generateRightNestedTree(size: Int): LTree[Int] = {
-    @tailrec def generate(acc: LTree[Int], cnt: Int): LTree[Int] = {
-      if (cnt == 0) {
-        acc
-      } else {
-        val newLeaf = Lf(cnt)
-        generate(Bin(acc.size + 1, newLeaf, acc), cnt - 1)
-      }
-    }
-    generate(Lf(size), size)
-  }
-
-  def generateJaggedTree(size: Int): LTree[Int] = {
-    @tailrec def generate(acc: LTree[Int], cnt: Int): LTree[Int] = {
-      if (cnt == 0) {
-        acc
-      } else if (cnt % 2 == 0) {
-        generate(Bin(acc.size + 1, Lf(cnt), acc), cnt - 1)
-      } else {
-        generate(Bin(acc.size + 1, acc, Lf(cnt)), cnt - 1)
-      }
-    }
-    generate(Lf(size), size)
-  }
-
-  def generateBalancedTree(size: Int): LTree[Int] = {
-    @tailrec def generate(acc: LTree[Int], cnt: Int): LTree[Int] = {
-      if (cnt == 0) {
-        acc
-      } else {
-        generate(Bin(acc.size * 2, acc, acc), cnt - 1)
-      }
-    }
-    generate(Lf(size), size)
-  }
 
   def testConsSeqOnes[S[_]: Sequence]: Gen[S[Int]] = for {
     size <- destructSizes

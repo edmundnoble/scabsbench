@@ -13,11 +13,17 @@ lazy val scabsbench = project.in(file("."))
 lazy val scalacheck =
   libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.13.4"
 
+lazy val cats = Seq(
+  libraryDependencies += "org.typelevel" %% "cats" % "0.9.0",
+  libraryDependencies += "org.typelevel" %% "cats-free" % "0.9.0"
+)
+
 lazy val core = crossProject
   .crossType(CrossType.Pure)
   .in(file("core"))
+  .settings(cats)
   .settings(libraryDependencies += "com.chuusai" %%% "shapeless" % "2.3.2")
-  .settings(libraryDependencies += "org.atnos" %%% "eff" % "3.0.0")
+  .settings(libraryDependencies += "org.atnos" %%% "eff" % "4.2.0")
   .settings(libraryDependencies += "com.github.mpilquist" %%% "simulacrum" % "0.10.0")
   .settings(addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full))
   .settings(resolvers += Resolver.sonatypeRepo("releases"))
@@ -34,6 +40,7 @@ lazy val coreJS = core.js
 enablePlugins(JmhPlugin)
 
 lazy val bench = project.in(file("bench"))
+  .settings(cats)
   .settings(libraryDependencies += "com.storm-enroute" %% "scalameter" % "0.8.2")
   .settings(resolvers += Resolver.sonatypeRepo("releases"))
   .settings(parallelExecution in Test := false)
@@ -41,16 +48,17 @@ lazy val bench = project.in(file("bench"))
   .settings(testFrameworks += new TestFramework(
     "org.scalameter.ScalaMeterFramework"))
   .settings(scalacOptions ++= Seq(
-      "-language:higherKinds"
+    "-language:higherKinds"
   ))
   .dependsOn(coreJVM)
 
 lazy val test = project.in(file("test"))
+  .settings(cats)
   .settings(libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1")
   .settings(scalacheck)
   .settings(resolvers += Resolver.sonatypeRepo("releases"))
   .settings(addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3"))
   .settings(scalacOptions ++= Seq(
-      "-language:higherKinds"
+    "-language:higherKinds"
   ))
   .dependsOn(coreJVM)

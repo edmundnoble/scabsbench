@@ -1,7 +1,10 @@
 package scabs
 
+import cats.Eq
 import scabs.seq.{Sequence, TASequence}
-import simulacrum.typeclass
+import simulacrum.{op, typeclass}
+
+import scala.annotation.tailrec
 
 object Util {
 
@@ -26,6 +29,10 @@ object Util {
     override def apply[A, B](fa: (A) => B): (A) => F[B] = fa.andThen(pure(_))
   }
 
+  def eqByRef[A <: AnyRef]: Eq[A] = new Eq[A] {
+    override def eqv(x: A, y: A): Boolean = x eq y
+  }
+
   trait Lub1[F[_], G[_]] {
     def ev[A]: F[A] <:< G[A]
   }
@@ -46,8 +53,6 @@ object Util {
 
   @typeclass trait Functor[F[_]] {
     def fmap[A, B](fa: F[A])(f: A => B): F[B]
-
-    def tailRecF[A, B](fa: F[A])(f: A => A Either B): F[B]
   }
 
   @typeclass trait Applicative[F[_]] {
@@ -134,28 +139,6 @@ object Util {
     def id[A]: F[A, A]
 
     def tailRecP[S[_] : Sequence, A, B](seq: TASequence[S, F, A, B]): F[A, B]
-  }
-
-  trait Arrow[F[_, _]] {
-    def compose[A, B, C](ab: F[A, B], bc: F[B, C]): F[A, C]
-
-    def id[A]: F[A, A]
-
-    def arr[A, B](f: A => B): F[A, B]
-
-    def zip[A, B, C, D](fst: F[A, B], snd: F[C, D]): F[(A, C), (B, D)]
-  }
-
-  trait ArrowApply[F[_, _]] {
-    def compose[A, B, C](ab: F[A, B], bc: F[B, C]): F[A, C]
-
-    def id[A]: F[A, A]
-
-    def arr[A, B](f: A => B): F[A, B]
-
-    def zip[A, B, C, D](fst: F[A, B], snd: F[C, D]): F[(A, C), (B, D)]
-
-    def app[A, B]: F[F[A, B], F[Unit, A => B]]
   }
 
   trait HFunctor[F[_[_], _]] {

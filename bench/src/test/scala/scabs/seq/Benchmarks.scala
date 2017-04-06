@@ -40,14 +40,14 @@ object Benchmarks {
 
   val queueBench =
     new Benchmark.AuxC[Sequence, (?, Int), Int]("queueing (alternating snoc and tail)") {
-      def runBenchmark[Type[_] : Sequence](input: ((Type[Int], Int))): Any = Function.tupled(queue[Type])(input)
+      def runBenchmark[Type[_] : Sequence](input: ((Type[Int], Int))): Any = Function.tupled(queue[Type] _)(input)
 
       def generateInput[Type[_] : Sequence]: Gen[(Type[Int], Int)] = testSnocSeqOnes[Type] zip queueBenchSizes
     }
 
   val stackBench =
     new Benchmark.AuxC[Sequence, (?, Int), Int]("stack (alternating cons and tail)") {
-      def runBenchmark[Type[_] : Sequence](input: ((Type[Int], Int))): Any = Function.tupled(stack[Type])(input)
+      def runBenchmark[Type[_] : Sequence](input: ((Type[Int], Int))): Any = Function.tupled(stack[Type] _)(input)
 
       def generateInput[Type[_] : Sequence]: Gen[(Type[Int], Int)] = testSnocSeqOnes[Type] zip stackBenchSizes
     }
@@ -82,12 +82,7 @@ object Benchmarks {
 
   final case class ConcatAndSumTreeBenchmark(name0: String, input0: Gen[LTree[Int]])
     extends ConstantInputBenchmark[Sequence, LTree[Int]](name0, input0) {
-    def runBenchmark[Type[_] : Sequence](input: LTree[Int]): Any = sum(frontierRec(input))
-  }
-
-  object ConcatAndSumTreeBenchmark {
-    def apply(name: String, input: Gen[LTree[Int]]): ConcatAndSumTreeBenchmark =
-      new ConcatAndSumTreeBenchmark(name, input)
+    def runBenchmark[Type[_] : Sequence](input: LTree[Int]): Any = sum(frontierRec[Type, Int](input))
   }
 
   val concatLeftNestedBench =

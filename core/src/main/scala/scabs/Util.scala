@@ -26,11 +26,11 @@ object Util {
   type Coalgebra[F[_], A] = F[A] => A
 
   def FunctionToKleisli[F[_]](pure: Id ~> F): Function1 ~~> KleisliC[F]#l = new (Function1 ~~> KleisliC[F]#l) {
-    override def apply[A, B](fa: (A) => B): (A) => F[B] = fa.andThen(pure(_))
+    def apply[A, B](fa: (A) => B): (A) => F[B] = fa.andThen(pure(_))
   }
 
   def eqByRef[A <: AnyRef]: Eq[A] = new Eq[A] {
-    override def eqv(x: A, y: A): Boolean = x eq y
+    def eqv(x: A, y: A): Boolean = x eq y
   }
 
   trait Lub1[F[_], G[_]] {
@@ -85,9 +85,9 @@ object Util {
     def fmap[A, B](fa: F[A])(f: A => B): F[B] =
       ap(fa)(pure(f))
 
-    def traverse[G[_]: Applicative, A, B](fa: F[A])(f: A => G[B]): G[F[B]]
+    def traverse[G[_] : Applicative, A, B](fa: F[A])(f: A => G[B]): G[F[B]]
 
-    def sequence[G[_]: Applicative, A](fa: F[G[A]]): G[F[A]]
+    def sequence[G[_] : Applicative, A](fa: F[G[A]]): G[F[A]]
   }
 
   @typeclass trait Monad[F[_]] {

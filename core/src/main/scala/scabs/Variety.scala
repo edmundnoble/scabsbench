@@ -18,7 +18,7 @@ object Variety {
   def apply[Typeclass[_[_]], Type0[_]](name: String)
                                       (implicit instance0: Typeclass[Type0]): Variety[Typeclass] =
     new Variety[Typeclass](name) {
-    type Type[A] = Type0[A]
-    implicit val instance: Typeclass[Type] = instance0
-  }
+      type Type[A] = Type0[A]
+      implicit val instance: Typeclass[Type] = instance0
+    }
 }

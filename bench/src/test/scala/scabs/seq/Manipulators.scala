@@ -18,13 +18,13 @@ object Manipulators {
     override def pickle(x: (Int, Int)): Array[Byte] = byteBuffer.putInt(x._1).putInt(x._2).array()
   }
 
-  val constructSizes: Gen[Int] = Gen.enumeration("constructSizes")(10, 100, 1000, 2000)
+  val constructSizes: Gen[Int] = Gen.enumeration("constructSizes")(10, 100, 2000, 3000)
   val queueBenchSizes: Gen[Int] = Gen.enumeration("queueBenchSizes")(6000)
   val stackBenchSizes: Gen[Int] = Gen.enumeration("stackBenchSizes")(6000)
-  val destructSizes: Gen[Int] = Gen.enumeration("destructSizes")(1000, 2000)
-  val concatInnerOuterSizes: Gen[(Int, Int)] = Gen.enumeration("concatInnerOuterSizes")((200, 30), (500, 50))
-  val treeSizes: Gen[Int] = Gen.enumeration("treeSizes")(100, 500, 2000)
-  val balancedTreeSizes: Gen[Int] = Gen.enumeration("balancedTreeSizes")(15, 21)
+  val destructSizes: Gen[Int] = Gen.enumeration("destructSizes")(1500, 3000)
+  val concatInnerOuterSizes: Gen[(Int, Int)] = Gen.enumeration("concatInnerOuterSizes")((300, 30), (500, 50))
+  val treeSizes: Gen[Int] = Gen.enumeration("treeSizes")(500, 1000, 2000)
+  val balancedTreeSizes: Gen[Int] = Gen.enumeration("balancedTreeSizes")(16, 19)
   val leftNestedTrees: Gen[LTree[Int]] = treeSizes.map(generateLeftNestedTree)
   val rightNestedTrees: Gen[LTree[Int]] = treeSizes.map(generateRightNestedTree)
   val jaggedNestedTrees: Gen[LTree[Int]] = treeSizes.map(generateJaggedTree)
@@ -134,14 +134,6 @@ object Manipulators {
 
   def concatLeft[S[_]](seq: List[S[Int]])(implicit S: Sequence[S]): Int =
     sum[S](seq.reduceLeft(S.concat))
-
-  def frontierCPS[S[_], A](tree: LTree[A])(implicit S: Sequence[S]): S[A] = {
-    def helper(innerTree: LTree[A]): S[A] => S[A] = innerTree match {
-      case Lf(a) => S.cons(a, _)
-      case Bin(_, left, right) => helper(left) compose helper(right)
-    }
-    helper(tree)(S.empty)
-  }
 
   def frontierRec[S[_], A](tree: LTree[A])(implicit S: Sequence[S]): S[A] =
     tree match {

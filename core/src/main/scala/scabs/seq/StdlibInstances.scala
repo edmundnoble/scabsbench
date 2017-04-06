@@ -1,6 +1,7 @@
 package scabs
 package seq
 
+import cats.Eq
 import scabs.Util._
 
 import scala.collection.immutable.Queue

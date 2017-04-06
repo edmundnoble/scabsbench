@@ -10,6 +10,9 @@ lazy val scabsbench = project.in(file("."))
   .dependsOn(coreJVM, coreJS, bench, test)
   .aggregate(coreJVM, coreJS, bench, test)
 
+lazy val scalacheck =
+  libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.13.4"
+
 lazy val core = crossProject
   .crossType(CrossType.Pure)
   .in(file("core"))
@@ -44,6 +47,7 @@ lazy val bench = project.in(file("bench"))
 
 lazy val test = project.in(file("test"))
   .settings(libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1")
+  .settings(scalacheck)
   .settings(resolvers += Resolver.sonatypeRepo("releases"))
   .settings(addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3"))
   .settings(scalacOptions ++= Seq(

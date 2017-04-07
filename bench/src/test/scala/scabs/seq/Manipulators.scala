@@ -25,10 +25,10 @@ object Manipulators {
   val concatInnerOuterSizes: Gen[(Int, Int)] = Gen.enumeration("concatInnerOuterSizes")((300, 30), (500, 50))
   val treeSizes: Gen[Int] = Gen.enumeration("treeSizes")(500, 1000, 2000)
   val balancedTreeSizes: Gen[Int] = Gen.enumeration("balancedTreeSizes")(16, 19)
-  val leftNestedTrees: Gen[LTree[Int]] = treeSizes.map(TreeManipulators.generateLeftNestedTree)
-  val rightNestedTrees: Gen[LTree[Int]] = treeSizes.map(TreeManipulators.generateRightNestedTree)
-  val jaggedNestedTrees: Gen[LTree[Int]] = treeSizes.map(TreeManipulators.generateJaggedTree)
-  val balancedNestedTrees: Gen[LTree[Int]] = balancedTreeSizes.map(TreeManipulators.generateBalancedTree)
+  val leftNestedTrees: Gen[LTree[Int]] = treeSizes.map(TreeManipulators.generateLeftNestedTree(0, _))
+  val rightNestedTrees: Gen[LTree[Int]] = treeSizes.map(TreeManipulators.generateRightNestedTree(0, _))
+  val jaggedNestedTrees: Gen[LTree[Int]] = treeSizes.map(TreeManipulators.generateJaggedTree(0, _))
+  val balancedNestedTrees: Gen[LTree[Int]] = balancedTreeSizes.map(TreeManipulators.generateBalancedTree(0, _))
 
   def consStructsToConcat[S[_] : Sequence]: Gen[List[S[Int]]] =
     for {

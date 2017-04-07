@@ -22,12 +22,16 @@ object Benchmarks extends java.io.Serializable {
   }
 
   def sequenceVarieties = Seq(
-    TCBenchVariety[Sequence, List]("list").forget,
-    TCBenchVariety[Sequence, Vector]("vec").forget,
-    TCBenchVariety[Sequence, Queue]("que").forget,
-    TCBenchVariety[Sequence, Catenable]("cat").forget,
-    TCBenchVariety[Sequence, CatenableArrLeaves]("catarr").forget,
-    TCBenchVariety[Sequence, TurtleQ]("turtle").forget
+//    TCBenchVariety[Sequence, List]("list").forget,
+//    TCBenchVariety[Sequence, Vector]("vec").forget,
+//    TCBenchVariety[Sequence, Queue]("que").forget,
+//    TCBenchVariety[Sequence, Catenable]("cat").forget,
+//    TCBenchVariety[Sequence, CatenableArrLeaves]("catarr").forget,
+    TCBenchVariety[Sequence, TurtleQ]("turtle").forget,
+    TCBenchVariety[Sequence, TurtleQI]("turtleI").forget,
+    TCBenchVariety[Sequence, TurtleQS]("turtleS").forget,
+    TCBenchVariety[Sequence, TurtleQS2]("turtleS2").forget,
+    TCBenchVariety[Sequence, TurtleQS2]("turtleS3").forget
   )
 
   import Manipulators._

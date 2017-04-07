@@ -7,17 +7,18 @@ import org.scalameter.api._
 import org.scalameter.picklers.{IntPickler, PrimitivePickler}
 import StdlibInstances._
 import scabs.Util.Id
-import scabs.seq.Hierarchy._
 
 import scala.collection.immutable.Queue
 
-object Benchmarks extends java.io.Serializable {
+object Benchmarks {
 
   implicit val intPickler = IntPickler
 
   implicit val twoIntPickler = new PrimitivePickler[(Int, Int)] {
     protected def bits: Int = java.lang.Integer.SIZE * 2
+
     protected def unwrap(from: ByteBuffer): (Int, Int) = (from.getInt(), from.getInt())
+
     def pickle(x: (Int, Int)): Array[Byte] = byteBuffer.putInt(x._1).putInt(x._2).array()
   }
 
@@ -36,84 +37,98 @@ object Benchmarks extends java.io.Serializable {
 
   import Manipulators._
 
-  def sumConsBench = new TCBenchmark[Sequence, Id, Int] {
-    def name = "summing cons-constructed seq"
-    def run[F[_] : Sequence]: F[Int] => Any = sum[F]
-    def gen[F[_] : Sequence]: Gen[F[Int]] = testConsSeqOnes[F]
-  }
+  val sumConsBench =
+    new Benchmark.AuxC[Sequence, Id, Int]("summing cons-constructed seq") {
+      def runBenchmark[Type[_] : Sequence](input: Type[Int]): Any = sum(input)
 
-  def sumSnocBench = new TCBenchmark[Sequence, Id, Int] {
-    def name: String = "summing snoc-constructed seq"
-    def run[F[_] : Sequence]: F[Int] => Any = sum[F]
-    def gen[F[_] : Sequence]: Gen[F[Int]] = testSnocSeqOnes[F]
-  }
-
-  def queueBench = new TCBenchmark[Sequence, (?, Int), Int] {
-    def name: String = "queueing (alternating snoc and tail)"
-    def run[F[_] : Sequence]: ((F[Int], Int)) => Any = (queue[F] _).tupled
-    def gen[F[_] : Sequence]: Gen[(F[Int], Int)] = testSnocSeqOnes[F] zip queueBenchSizes
-  }
-
-  def stackBench = new TCBenchmark[Sequence, (?, Int), Int] {
-    def name: String = "stack (alternating cons and tail)"
-    def run[F[_] : Sequence]: ((F[Int], Int)) => Any = (stack[F] _).tupled
-    def gen[F[_] : Sequence]: Gen[(F[Int], Int)] = testSnocSeqOnes[F] zip stackBenchSizes
-  }
-
-  def consConcatBenchRight = new TCBenchmark[Sequence, List, Int] {
-    def name: String = "concatenating and summing cons-constructed seqs to the right"
-    def run[F[_] : Sequence]: List[F[Int]] => Any = concatRight[F]
-    def gen[F[_] : Sequence]: Gen[List[F[Int]]] = consStructsToConcat[F]
-  }
-
-  def snocConcatBenchRight = new TCBenchmark[Sequence, List, Int] {
-    def name: String = "concatenating and summing snoc-constructed seqs to the right"
-    def run[F[_] : Sequence]: List[F[Int]] => Any = concatRight[F]
-    def gen[F[_] : Sequence]: Gen[List[F[Int]]] = snocStructsToConcat[F]
-  }
-
-  def consConcatBenchLeft = new TCBenchmark[Sequence, List, Int] {
-    def name: String = "concatenating and summing cons-constructed seqs to the left"
-    def run[F[_] : Sequence]: List[F[Int]] => Any = concatLeft[F]
-    def gen[F[_] : Sequence]: Gen[List[F[Int]]] = consStructsToConcat[F]
-  }
-
-  def snocConcatBenchLeft = new TCBenchmark[Sequence, List, Int] {
-    def name: String = "concatenating and summing snoc-constructed seqs to the left"
-    def run[F[_] : Sequence]: List[F[Int]] => Any = concatLeft[F]
-    def gen[F[_] : Sequence]: Gen[List[F[Int]]] = snocStructsToConcat[F]
-  }
-
-  def concatLeftNestedBench =
-    new ConstTCBenchmark[Sequence, LTree[Int]]("concatenating and summing left-nested trees", leftNestedTrees) {
-      def run[F[_] : Sequence]: LTree[Int] => Any = frontierRec[F, Int] _ andThen sum[F]
+      def generateInput[Type[_] : Sequence]: Gen[Type[Int]] = testConsSeqOnes[Type]
     }
 
-  def concatRightNestedBench =
-    new ConstTCBenchmark[Sequence, LTree[Int]]("concatenating and summing right-nested trees", rightNestedTrees) {
-      def run[F[_] : Sequence]: LTree[Int] => Any = frontierRec[F, Int] _ andThen sum[F]
+  val sumSnocBench =
+    new Benchmark.AuxC[Sequence, Id, Int]("summing snoc-constructed seq") {
+      def runBenchmark[Type[_] : Sequence](input: Type[Int]): Any = sum(input)
+
+      def generateInput[Type[_] : Sequence]: Gen[Type[Int]] = testSnocSeqOnes[Type]
     }
 
-  def concatJaggedNestedBench =
-    new ConstTCBenchmark[Sequence, LTree[Int]]("concatenating and summing jagged trees", jaggedNestedTrees) {
-      def run[F[_] : Sequence]: LTree[Int] => Any = frontierRec[F, Int] _ andThen sum[F]
+  val queueBench =
+    new Benchmark.AuxC[Sequence, (?, Int), Int]("queueing (alternating snoc and tail)") {
+      def runBenchmark[Type[_] : Sequence](input: ((Type[Int], Int))): Any = Function.tupled(queue[Type] _)(input)
+
+      def generateInput[Type[_] : Sequence]: Gen[(Type[Int], Int)] = testSnocSeqOnes[Type] zip queueBenchSizes
     }
 
-  def concatBalancedNestedBench =
-    new ConstTCBenchmark[Sequence, LTree[Int]]("concatenating and summing balanced trees", balancedNestedTrees) {
-      def run[F[_] : Sequence]: LTree[Int] => Any = frontierRec[F, Int] _ andThen sum[F]
+  val stackBench =
+    new Benchmark.AuxC[Sequence, (?, Int), Int]("stack (alternating cons and tail)") {
+      def runBenchmark[Type[_] : Sequence](input: ((Type[Int], Int))): Any = Function.tupled(stack[Type] _)(input)
+
+      def generateInput[Type[_] : Sequence]: Gen[(Type[Int], Int)] = testSnocSeqOnes[Type] zip stackBenchSizes
     }
 
-  def allSeqBenchmarks: Seq[TCBenchmark[Sequence, Nothing, Nothing]] = Seq(
-    sumConsBench.forget, sumSnocBench.forget,
-    queueBench.forget, stackBench.forget,
-    consConcatBenchLeft.forget, consConcatBenchRight.forget,
-    snocConcatBenchLeft.forget, snocConcatBenchRight.forget,
-    concatLeftNestedBench.forget, concatRightNestedBench.forget,
-    concatJaggedNestedBench.forget,
-    concatBalancedNestedBench.forget
+  val consConcatBenchRight =
+    new Benchmark.AuxC[Sequence, List, Int]("concatenating and summing cons-constructed seqs to the right") {
+      def runBenchmark[Type[_] : Sequence](input: List[Type[Int]]): Any = concatRight(input)
+
+      def generateInput[Type[_] : Sequence]: Gen[List[Type[Int]]] = consStructsToConcat[Type]
+    }
+
+  val snocConcatBenchRight =
+    new Benchmark.AuxC[Sequence, List, Int]("concatenating and summing snoc-constructed seqs to the right") {
+      def runBenchmark[Type[_] : Sequence](input: List[Type[Int]]): Any = concatRight(input)
+
+      def generateInput[Type[_] : Sequence]: Gen[List[Type[Int]]] = snocStructsToConcat[Type]
+    }
+
+  val consConcatBenchLeft =
+    new Benchmark.AuxC[Sequence, List, Int]("concatenating and summing cons-constructed seqs to the left") {
+      def runBenchmark[Type[_] : Sequence](input: List[Type[Int]]): Any = concatLeft(input)
+
+      def generateInput[Type[_] : Sequence]: Gen[List[Type[Int]]] = consStructsToConcat[Type]
+    }
+
+  val snocConcatBenchLeft =
+    new Benchmark.AuxC[Sequence, List, Int]("concatenating and summing snoc-constructed seqs to the left") {
+      def runBenchmark[Type[_] : Sequence](input: List[Type[Int]]): Any = concatLeft(input)
+
+      def generateInput[Type[_] : Sequence]: Gen[List[Type[Int]]] = snocStructsToConcat[Type]
+    }
+
+  final case class ConcatAndSumTreeBenchmark(name0: String, input0: Gen[LTree[Int]])
+    extends ConstantInputBenchmark[Sequence, LTree[Int]](name0, input0) {
+    def runBenchmark[Type[_] : Sequence](input: LTree[Int]): Any = sum(frontierRec[Type, Int](input))
+  }
+
+  val concatLeftNestedBench =
+    ConcatAndSumTreeBenchmark("concatenating and summing left-nested trees", leftNestedTrees)
+
+  val concatRightNestedBench =
+    ConcatAndSumTreeBenchmark("concatenating and summing right-nested trees", rightNestedTrees)
+
+  val concatJaggedNestedBench =
+    ConcatAndSumTreeBenchmark("concatenating and summing jagged trees", jaggedNestedTrees)
+
+  val concatBalancedNestedBench =
+    ConcatAndSumTreeBenchmark("concatenating and summing balanced trees", balancedNestedTrees)
+
+  val sequenceVarieties: Seq[Variety[Sequence]] = Seq(
+    Variety[Sequence, List]("list"),
+    Variety[Sequence, Vector]("vec"),
+    Variety[Sequence, Queue]("que"),
+    Variety[Sequence, Catenable]("cat"),
+    Variety[Sequence, CatenableArrLeaves]("catarr"),
+    Variety[Sequence, TurtleQ]("turtle")
   )
 
-  val seqBenchSuite: TCBenchSuite[Sequence] =
-    TCBenchSuite(sequenceVarieties, allSeqBenchmarks)
+  val allSeqBenchmarks: Seq[Benchmark[Sequence]] = Seq(
+    sumConsBench, sumSnocBench,
+    queueBench, stackBench,
+    consConcatBenchLeft, consConcatBenchRight,
+    snocConcatBenchLeft, snocConcatBenchRight,
+    concatLeftNestedBench, concatRightNestedBench,
+    concatJaggedNestedBench,
+    concatBalancedNestedBench
+  )
+
+  val seqBenchSuite: BenchmarkSuite[Sequence] =
+    BenchmarkSuite[Sequence](sequenceVarieties, allSeqBenchmarks)
 }

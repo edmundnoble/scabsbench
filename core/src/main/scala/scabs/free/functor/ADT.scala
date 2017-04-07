@@ -22,11 +22,6 @@ object ADT {
     override val generated: Functor[Curried[F]#l] = new Functor[Curried[F]#l] {
       override def fmap[A, B](fa: ADT[F, _, A])(f: (A) => B): ADT[F, _, B] =
         fa.map(f)
-
-      override def tailRecF[A, B](fa: ADT[F, _, A])(f: (A) => Either[A, B]): ADT[F, _, B] = {
-        def loop(a: A): B = f(a).fold(loop, identity)
-        fmap(fa)(loop)
-      }
     }
 
     override def foldMap[A, G[_]](fv: ADT[F, _, A])(trans: F ~> G)(implicit ev: Functor[G]): G[A] =

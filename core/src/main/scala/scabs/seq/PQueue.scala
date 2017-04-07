@@ -48,6 +48,7 @@ final case class PHeads[A](heads: List[A]) extends PQueue[A] {
   override def +:(a: A): PQueue[A] = PHeads(a :: heads)
 
   override def headTail: Option[(A, PQueue[A])] = heads match {
+    case Nil => None
     case h :: Nil =>
       Some((h, PNil()))
     case h :: t =>
@@ -83,6 +84,7 @@ final case class PTails[A](tails: List[A]) extends PQueue[A] {
   override def headTail: Option[(A, PQueue[A])] = PHeads(tails.reverse).headTail
 
   override def initsLast: Option[(PQueue[A], A)] = tails match {
+    case Nil => None
     case l :: Nil =>
       Some((PNil(), l))
     case l :: i =>
@@ -112,6 +114,7 @@ final case class PQ[A](heads: List[A], tails: List[A]) extends PQueue[A] {
   override def +:(a: A): PQueue[A] = PQ(a :: heads, tails)
 
   override def headTail: Option[(A, PQueue[A])] = heads match {
+    case Nil => None
     case h :: Nil =>
       Some((h, PTails(tails)))
     case h :: t =>
@@ -119,6 +122,7 @@ final case class PQ[A](heads: List[A], tails: List[A]) extends PQueue[A] {
   }
 
   override def initsLast: Option[(PQueue[A], A)] = tails match {
+    case Nil => None
     case l :: Nil =>
       Some((PHeads(heads), l))
     case l :: i =>

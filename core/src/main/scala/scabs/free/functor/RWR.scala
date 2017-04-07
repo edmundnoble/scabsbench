@@ -5,7 +5,6 @@ package functor
 import scabs.Util.{Functor, ~>}
 import scabs.free.Constraint.{FreeConstraint1, FreeFunctor}
 import scabs.seq.Sequence
-import scabs.free.Util
 
 final case class RWR[S[_], F[_], I, A](fi: F[I], funs: S[Any => Any]) {
   def map[B](ab: A => B)(implicit S: Sequence[S]): RWR[S, F, I, B] =
@@ -29,11 +28,6 @@ object RWR {
     override val generated: Functor[Curried[S, F]#l] = new Functor[Curried[S, F]#l] {
       override def fmap[A, B](fa: RWR[S, F, _, A])(f: (A) => B): RWR[S, F, _, B] =
         fa.map(f)
-
-      override def tailRecF[A, B](fa: RWR[S, F, _, A])(f: (A) => Either[A, B]): RWR[S, F, _, B] = {
-        def loop(a: A): B = f(a).fold(loop, identity)
-        fmap(fa)(loop)
-      }
     }
 
     override def foldMap[A, G[_]](fv: RWR[S, F, _, A])(trans: F ~> G)(implicit ev: Functor[G]): G[A] =

@@ -1,7 +1,10 @@
 package scabs
 
+import cats.Eq
 import scabs.seq.{Sequence, TASequence}
-import simulacrum.typeclass
+import simulacrum.{op, typeclass}
+
+import scala.annotation.tailrec
 
 object Util {
 
@@ -23,7 +26,11 @@ object Util {
   type Coalgebra[F[_], A] = F[A] => A
 
   def FunctionToKleisli[F[_]](pure: Id ~> F): Function1 ~~> KleisliC[F]#l = new (Function1 ~~> KleisliC[F]#l) {
-    override def apply[A, B](fa: (A) => B): (A) => F[B] = fa.andThen(pure(_))
+    def apply[A, B](fa: (A) => B): (A) => F[B] = fa.andThen(pure(_))
+  }
+
+  def eqByRef[A <: AnyRef]: Eq[A] = new Eq[A] {
+    def eqv(x: A, y: A): Boolean = x eq y
   }
 
   trait Lub1[F[_], G[_]] {
@@ -46,8 +53,6 @@ object Util {
 
   @typeclass trait Functor[F[_]] {
     def fmap[A, B](fa: F[A])(f: A => B): F[B]
-
-    def tailRecF[A, B](fa: F[A])(f: A => A Either B): F[B]
   }
 
   @typeclass trait Applicative[F[_]] {
@@ -80,9 +85,9 @@ object Util {
     def fmap[A, B](fa: F[A])(f: A => B): F[B] =
       ap(fa)(pure(f))
 
-    def traverse[G[_]: Applicative, A, B](fa: F[A])(f: A => G[B]): G[F[B]]
+    def traverse[G[_] : Applicative, A, B](fa: F[A])(f: A => G[B]): G[F[B]]
 
-    def sequence[G[_]: Applicative, A](fa: F[G[A]]): G[F[A]]
+    def sequence[G[_] : Applicative, A](fa: F[G[A]]): G[F[A]]
   }
 
   @typeclass trait Monad[F[_]] {
@@ -134,28 +139,6 @@ object Util {
     def id[A]: F[A, A]
 
     def tailRecP[S[_] : Sequence, A, B](seq: TASequence[S, F, A, B]): F[A, B]
-  }
-
-  trait Arrow[F[_, _]] {
-    def compose[A, B, C](ab: F[A, B], bc: F[B, C]): F[A, C]
-
-    def id[A]: F[A, A]
-
-    def arr[A, B](f: A => B): F[A, B]
-
-    def zip[A, B, C, D](fst: F[A, B], snd: F[C, D]): F[(A, C), (B, D)]
-  }
-
-  trait ArrowApply[F[_, _]] {
-    def compose[A, B, C](ab: F[A, B], bc: F[B, C]): F[A, C]
-
-    def id[A]: F[A, A]
-
-    def arr[A, B](f: A => B): F[A, B]
-
-    def zip[A, B, C, D](fst: F[A, B], snd: F[C, D]): F[(A, C), (B, D)]
-
-    def app[A, B]: F[F[A, B], F[Unit, A => B]]
   }
 
   trait HFunctor[F[_[_], _]] {

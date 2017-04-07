@@ -2,10 +2,10 @@ package scabs
 package free
 package functor
 
-import scabs.Util.{Functor, Traverse, ~>}
+import scabs.Util.{Functor, ~>}
 import scabs.free.Constraint.{FreeConstraint1, FreeFunctor}
 
-trait Tagless[F[_], A] {
+sealed abstract class Tagless[F[_], A] {
   def foldMap[G[_]](trans: ~>[F, G])(implicit G: Functor[G]): G[A]
   def retract(implicit F: Functor[F]): F[A]
 }
@@ -29,11 +29,6 @@ object Tagless {
     override val generated: Functor[Curried[F]#l] = new Functor[Curried[F]#l] {
       override def fmap[A, B](fa: Tagless[F, A])(f: (A) => B): Tagless[F, B] =
         Tagless.fmap(fa)(f)
-
-      override def tailRecF[A, B](fa: Tagless[F, A])(f: (A) => Either[A, B]): Tagless[F, B] = {
-        def loop(a: A): B = f(a).fold(loop, identity)
-        fmap(fa)(loop)
-      }
     }
 
     override def foldMap[A, G[_]](fv: Tagless[F, A])(trans: F ~> G)(implicit ev: Functor[G]): G[A] =

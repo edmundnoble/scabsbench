@@ -18,17 +18,17 @@ object Manipulators {
     override def pickle(x: (Int, Int)): Array[Byte] = byteBuffer.putInt(x._1).putInt(x._2).array()
   }
 
-  val constructSizes: Gen[Int] = Gen.enumeration("constructSizes")(10, 100, 1000, 2000)
+  val constructSizes: Gen[Int] = Gen.enumeration("constructSizes")(10, 100, 2000, 3000)
   val queueBenchSizes: Gen[Int] = Gen.enumeration("queueBenchSizes")(6000)
   val stackBenchSizes: Gen[Int] = Gen.enumeration("stackBenchSizes")(6000)
-  val destructSizes: Gen[Int] = Gen.enumeration("destructSizes")(1000, 2000)
-  val concatInnerOuterSizes: Gen[(Int, Int)] = Gen.enumeration("concatInnerOuterSizes")((200, 30), (500, 50))
-  val treeSizes: Gen[Int] = Gen.enumeration("treeSizes")(100, 500, 2000)
-  val balancedTreeSizes: Gen[Int] = Gen.enumeration("balancedTreeSizes")(15, 21)
-  val leftNestedTrees: Gen[LTree[Int]] = treeSizes.map(generateLeftNestedTree)
-  val rightNestedTrees: Gen[LTree[Int]] = treeSizes.map(generateRightNestedTree)
-  val jaggedNestedTrees: Gen[LTree[Int]] = treeSizes.map(generateJaggedTree)
-  val balancedNestedTrees: Gen[LTree[Int]] = balancedTreeSizes.map(generateBalancedTree)
+  val destructSizes: Gen[Int] = Gen.enumeration("destructSizes")(1500, 3000)
+  val concatInnerOuterSizes: Gen[(Int, Int)] = Gen.enumeration("concatInnerOuterSizes")((300, 30), (500, 50))
+  val treeSizes: Gen[Int] = Gen.enumeration("treeSizes")(500, 1000, 2000)
+  val balancedTreeSizes: Gen[Int] = Gen.enumeration("balancedTreeSizes")(16, 19)
+  val leftNestedTrees: Gen[LTree[Int]] = treeSizes.map(TreeManipulators.generateLeftNestedTree)
+  val rightNestedTrees: Gen[LTree[Int]] = treeSizes.map(TreeManipulators.generateRightNestedTree)
+  val jaggedNestedTrees: Gen[LTree[Int]] = treeSizes.map(TreeManipulators.generateJaggedTree)
+  val balancedNestedTrees: Gen[LTree[Int]] = balancedTreeSizes.map(TreeManipulators.generateBalancedTree)
 
   def consStructsToConcat[S[_] : Sequence]: Gen[List[S[Int]]] =
     for {
@@ -44,54 +44,6 @@ object Manipulators {
       innerSeq = snocRec[S](innerSize)
       outerSeq = List.fill(outerSize)(innerSeq)
     } yield outerSeq
-
-  def generateLeftNestedTree(size: Int): LTree[Int] = {
-    @tailrec def generate(acc: LTree[Int], cnt: Int): LTree[Int] = {
-      if (cnt == 0) {
-        acc
-      } else {
-        val newLeaf = Lf(cnt)
-        generate(Bin(acc.size + 1, acc, newLeaf), cnt - 1)
-      }
-    }
-    generate(Lf(size), size)
-  }
-
-  def generateRightNestedTree(size: Int): LTree[Int] = {
-    @tailrec def generate(acc: LTree[Int], cnt: Int): LTree[Int] = {
-      if (cnt == 0) {
-        acc
-      } else {
-        val newLeaf = Lf(cnt)
-        generate(Bin(acc.size + 1, newLeaf, acc), cnt - 1)
-      }
-    }
-    generate(Lf(size), size)
-  }
-
-  def generateJaggedTree(size: Int): LTree[Int] = {
-    @tailrec def generate(acc: LTree[Int], cnt: Int): LTree[Int] = {
-      if (cnt == 0) {
-        acc
-      } else if (cnt % 2 == 0) {
-        generate(Bin(acc.size + 1, Lf(cnt), acc), cnt - 1)
-      } else {
-        generate(Bin(acc.size + 1, acc, Lf(cnt)), cnt - 1)
-      }
-    }
-    generate(Lf(size), size)
-  }
-
-  def generateBalancedTree(size: Int): LTree[Int] = {
-    @tailrec def generate(acc: LTree[Int], cnt: Int): LTree[Int] = {
-      if (cnt == 0) {
-        acc
-      } else {
-        generate(Bin(acc.size * 2, acc, acc), cnt - 1)
-      }
-    }
-    generate(Lf(size), size)
-  }
 
   def testConsSeqOnes[S[_]: Sequence]: Gen[S[Int]] = for {
     size <- destructSizes
@@ -134,14 +86,6 @@ object Manipulators {
 
   def concatLeft[S[_]](seq: List[S[Int]])(implicit S: Sequence[S]): Int =
     sum[S](seq.reduceLeft(S.concat))
-
-  def frontierCPS[S[_], A](tree: LTree[A])(implicit S: Sequence[S]): S[A] = {
-    def helper(innerTree: LTree[A]): S[A] => S[A] = innerTree match {
-      case Lf(a) => S.cons(a, _)
-      case Bin(_, left, right) => helper(left) compose helper(right)
-    }
-    helper(tree)(S.empty)
-  }
 
   def frontierRec[S[_], A](tree: LTree[A])(implicit S: Sequence[S]): S[A] =
     tree match {

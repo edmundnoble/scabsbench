@@ -51,6 +51,10 @@ object Util {
     def mappend(fst: A, snd: A): A
   }
 
+  @typeclass trait SemigroupK[F[_]] {
+    def mappend[A](fst: F[A], snd: F[A]): F[A]
+  }
+
   @typeclass trait Functor[F[_]] {
     def fmap[A, B](fa: F[A])(f: A => B): F[B]
   }

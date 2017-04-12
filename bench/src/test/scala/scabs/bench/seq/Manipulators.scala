@@ -1,10 +1,13 @@
 package scabs
+package bench
 package seq
 
 import java.nio.ByteBuffer
 
 import org.scalameter.api._
 import org.scalameter.picklers.{IntPickler, PrimitivePickler}
+import scabs.Util.SemigroupK
+import scabs.seq.{Bin, LTree, Lf, Sequence}
 
 import scala.annotation.tailrec
 
@@ -45,7 +48,7 @@ object Manipulators {
       outerSeq = List.fill(outerSize)(innerSeq)
     } yield outerSeq
 
-  def testConsSeqOnes[S[_]: Sequence]: Gen[S[Int]] = for {
+  def testConsSeqOnes[S[_] : Sequence]: Gen[S[Int]] = for {
     size <- destructSizes
     seq = consRec[S](size)
   } yield seq
@@ -91,6 +94,12 @@ object Manipulators {
     tree match {
       case Lf(a) => S.one(a)
       case Bin(_, left, right) => S.concat(frontierRec[S, A](left), frontierRec[S, A](right))
+    }
+
+  def foldMap[S[_], A](tree: LTree[S[A]])(implicit S: SemigroupK[S]): S[A] =
+    tree match {
+      case Lf(a) => a
+      case Bin(_, left, right) => S.mappend(foldMap[S, A](left), foldMap[S, A](right))
     }
 
   @tailrec

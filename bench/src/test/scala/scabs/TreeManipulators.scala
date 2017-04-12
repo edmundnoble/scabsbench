@@ -1,7 +1,5 @@
 package scabs
 
-import cats.free.Cofree
-import scabs.Util.Id
 import scabs.seq.{Bin, LTree, Lf}
 
 import scala.annotation.tailrec
@@ -9,7 +7,7 @@ import scala.annotation.tailrec
 object TreeManipulators {
 
   def generateLeftNestedTree[A](filler: A, size: Int): LTree[A] = {
-    @tailrec def generate( acc: LTree[A], cnt: Int): LTree[A] = {
+    @tailrec def generate(acc: LTree[A], cnt: Int): LTree[A] = {
       if (cnt == 0) {
         acc
       } else {
@@ -21,7 +19,7 @@ object TreeManipulators {
   }
 
   def generateRightNestedTree[A](filler: A, size: Int): LTree[A] = {
-    @tailrec def generate( acc: LTree[A], cnt: Int): LTree[A] = {
+    @tailrec def generate(acc: LTree[A], cnt: Int): LTree[A] = {
       if (cnt == 0) {
         acc
       } else {
@@ -33,7 +31,7 @@ object TreeManipulators {
   }
 
   def generateJaggedTree[A](filler: A, size: Int): LTree[A] = {
-    @tailrec def generate( acc: LTree[A], cnt: Int): LTree[A] = {
+    @tailrec def generate(acc: LTree[A], cnt: Int): LTree[A] = {
       if (cnt == 0) {
         acc
       } else if (cnt % 2 == 0) {
@@ -46,7 +44,7 @@ object TreeManipulators {
   }
 
   def generateBalancedTree[A](filler: A, size: Int): LTree[A] = {
-    @tailrec def generate( acc: LTree[A], cnt: Int): LTree[A] = {
+    @tailrec def generate(acc: LTree[A], cnt: Int): LTree[A] = {
       if (cnt == 0) {
         acc
       } else {

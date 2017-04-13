@@ -2,7 +2,8 @@ package scabs
 package test
 package seq
 
-import org.scalacheck.Gen
+import org.scalacheck.{Arbitrary, Gen, Prop}
+import org.scalatest.prop.Checkers
 import scabs.Util._
 import scabs.seq.Sequence
 import scabs.seq.StdlibInstances._
@@ -16,12 +17,19 @@ object Tests {
     Variety[Sequence, Queue]("que"),
     Variety[Sequence, scabs.seq.Catenable]("cat"),
     Variety[Sequence, scabs.seq.CatenableArrLeaves]("catarr"),
-    Variety[Sequence, scabs.seq.TurtleQ]("turtle")
+    Variety[Sequence, scabs.seq.TurtleQ]("turtle"),
+    Variety[Sequence, scabs.seq.InceptionQ]("inceptionQ")
   )
 
   abstract class StringInputTest(name0: String) extends Test.AuxC[Sequence, Id, String](name0) {
     def generateInput[F[_] : Sequence]: Gen[String] =
       Gen.alphaNumStr
+  }
+
+  abstract class StackOpsTest(name0: String) extends Test.AuxC[Sequence, Id, StackOps[String]](name0) {
+    override def generateInput[F[_] : Sequence]: Gen[StackOps[String]] = {
+      StackOps.genOps(Arbitrary(Gen.alphaStr))
+    }
   }
 
   def consUncons = new StringInputTest("uncons(cons(s, x)) == (s, x)") {
@@ -40,8 +48,22 @@ object Tests {
       )
   }
 
+  def arbStackOps = new StackOpsTest("stack size") {
+    override def runTest[F[_] : Sequence](input: StackOps[String]): Assertion = {
+      val S = implicitly[Sequence[F]]
+
+      val asList = StackOps.taglessFinal.replay[List, String](input)
+      val asSeq = StackOps.taglessFinal.replay[F, String](input)
+
+      println(input)
+
+      equal(asList.size,
+        S.lengthSeq(asSeq))
+    }
+  }
+
   def tests: Seq[Test[Sequence]] = Seq(
-    consUncons, snocUnsnoc
+    consUncons, snocUnsnoc, arbStackOps
   )
 
   val suite =

@@ -1,4 +1,5 @@
-package scabs.seq
+package scabs
+package seq
 
 import scabs.Util._
 import scabs.free.Constraint.FreeConstraint2
@@ -69,6 +70,8 @@ object TASequence {
 
       override def retract[A, B](fv: TASequence[R, F, A, B])(implicit F: CategoryTailrec[F]): F[A, B] =
         fv.retract
+      override def lift[A, B](a: F[A, B]): TASequence[R, F, A, B] =
+        TASequence.one(a)
     }
 
   def empty[S[_], F[_, _], A](implicit S: Sequence[S]): TASequence[S, F, A, A] =

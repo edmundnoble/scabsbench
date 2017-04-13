@@ -13,30 +13,32 @@ sealed abstract class Tagless[F[_], A] {
 object Tagless {
   type Curried[F[_]] = {type l[A] = Tagless[F, A]}
   def fmap[F[_], A, B](self: Tagless[F, A])(fun: A => B): Tagless[F, B] = new Tagless[F, B] {
-    override def foldMap[G[_]](trans: ~>[F, G])(implicit G: Functor[G]): G[B] =
+    def foldMap[G[_]](trans: ~>[F, G])(implicit G: Functor[G]): G[B] =
       G.fmap(self.foldMap(trans))(fun)
-    override def retract(implicit F: Functor[F]): F[B] =
+    def retract(implicit F: Functor[F]): F[B] =
       F.fmap(self.retract)(fun)
   }
   def lift[F[_], A](value: F[A]): Tagless[F, A] = new Tagless[F, A] {
-    override def foldMap[G[_]](trans: ~>[F, G])(implicit G: Functor[G]): G[A] =
+    def foldMap[G[_]](trans: ~>[F, G])(implicit G: Functor[G]): G[A] =
       trans(value)
-    override def retract(implicit F: Functor[F]): F[A] =
+    def retract(implicit F: Functor[F]): F[A] =
       value
   }
 
   implicit def freeFunctorTagless[F[_]]: FreeFunctor[F, Curried[F]#l] = new FreeConstraint1[Functor, F, Curried[F]#l] {
-    override val generated: Functor[Curried[F]#l] = new Functor[Curried[F]#l] {
-      override def fmap[A, B](fa: Tagless[F, A])(f: (A) => B): Tagless[F, B] =
+    val generated: Functor[Curried[F]#l] = new Functor[Curried[F]#l] {
+      def fmap[A, B](fa: Tagless[F, A])(f: (A) => B): Tagless[F, B] =
         Tagless.fmap(fa)(f)
     }
 
-    override def foldMap[A, G[_]](fv: Tagless[F, A])(trans: F ~> G)(implicit ev: Functor[G]): G[A] =
+    def foldMap[A, G[_]](fv: Tagless[F, A])(trans: F ~> G)(implicit ev: Functor[G]): G[A] =
       fv.foldMap(trans)
 
-    override def retract[A](fv: Tagless[F, A])(implicit ev: Functor[F]): F[A] =
+    def retract[A](fv: Tagless[F, A])(implicit ev: Functor[F]): F[A] =
       fv.retract
 
+    def lift[A](a: F[A]): Tagless[F, A] =
+      Tagless.lift(a)
   }
 }
 

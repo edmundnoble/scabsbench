@@ -24,18 +24,21 @@ final case class RWR[S[_], F[_], I, A](fi: F[I], funs: S[Any => Any]) {
 object RWR {
   type Curried[S[_], F[_]] = {type l[A] = RWR[S, F, _, A]}
 
-  implicit def freeFunctorRWR[S[_], F[_]](implicit S: Sequence[S]): FreeFunctor[F, Curried[S, F]#l] = new FreeConstraint1[Functor, F, Curried[S, F]#l] {
-    override val generated: Functor[Curried[S, F]#l] = new Functor[Curried[S, F]#l] {
-      override def fmap[A, B](fa: RWR[S, F, _, A])(f: (A) => B): RWR[S, F, _, B] =
-        fa.map(f)
+  implicit def freeFunctorRWR[S[_], F[_]](implicit S: Sequence[S]): FreeFunctor[F, Curried[S, F]#l] =
+    new FreeConstraint1[Functor, F, Curried[S, F]#l] {
+      val generated: Functor[Curried[S, F]#l] = new Functor[Curried[S, F]#l] {
+        def fmap[A, B](fa: RWR[S, F, _, A])(f: (A) => B): RWR[S, F, _, B] =
+          fa.map(f)
+      }
+
+      def foldMap[A, G[_]](fv: RWR[S, F, _, A])(trans: F ~> G)(implicit ev: Functor[G]): G[A] =
+        fv.foldMap(trans)
+
+      def retract[A](fv: RWR[S, F, _, A])(implicit ev: Functor[F]): F[A] =
+        fv.retract
+
+      def lift[A](a: F[A]): RWR[S, F, _, A] =
+        RWR(a, S.empty)
     }
-
-    override def foldMap[A, G[_]](fv: RWR[S, F, _, A])(trans: F ~> G)(implicit ev: Functor[G]): G[A] =
-      fv.foldMap(trans)
-
-    override def retract[A](fv: RWR[S, F, _, A])(implicit ev: Functor[F]): F[A] =
-      fv.retract
-
-  }
 
 }

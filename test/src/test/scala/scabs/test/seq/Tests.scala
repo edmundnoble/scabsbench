@@ -1,21 +1,22 @@
 package scabs
-package seq
 package test
+package seq
 
 import org.scalacheck.Gen
-import StdlibInstances._
 import scabs.Util._
+import scabs.seq.Sequence
+import scabs.seq.StdlibInstances._
 
 import scala.collection.immutable.Queue
 
-final class Tests extends ScabsScalatestSuiteK[Sequence] {
+object Tests {
   def varieties: Seq[Variety[Sequence]] = Seq(
     Variety[Sequence, List]("list"),
     Variety[Sequence, Vector]("vec"),
     Variety[Sequence, Queue]("que"),
-    Variety[Sequence, Catenable]("cat"),
-    Variety[Sequence, CatenableArrLeaves]("catarr"),
-    Variety[Sequence, TurtleQ]("turtle")
+    Variety[Sequence, scabs.seq.Catenable]("cat"),
+    Variety[Sequence, scabs.seq.CatenableArrLeaves]("catarr"),
+    Variety[Sequence, scabs.seq.TurtleQ]("turtle")
   )
 
   abstract class StringInputTest(name0: String) extends Test.AuxC[Sequence, Id, String](name0) {
@@ -42,4 +43,7 @@ final class Tests extends ScabsScalatestSuiteK[Sequence] {
   def tests: Seq[Test[Sequence]] = Seq(
     consUncons, snocUnsnoc
   )
+
+  val suite =
+    TestSuiteK(varieties, tests)
 }

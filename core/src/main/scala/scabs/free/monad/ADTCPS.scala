@@ -30,12 +30,19 @@ object ADTCPS {
     }
     def foldMap[A, G[_]](fv: ADTCPS[F, A])(trans: F ~> G)(implicit ev: Monad[G]): G[A] = fv.foldMap(trans)
     def retract[A](fv: ADTCPS[F, A])(implicit ev: Monad[F]): F[A] = fv.retract
+    def lift[A](a: F[A]): ADTCPS[F, A] = ADTCPS.Lift(a)
   }
   case class Pure[F[_], A](value: A) extends ADTCPS[F, A] {
     override def foldMap[G[_]](trans: ~>[F, G])(implicit G: Monad[G]): G[A] =
       G.pure(value)
     override def retract(implicit F: Monad[F]): F[A] =
       F.pure(value)
+  }
+  case class Lift[F[_], A](value: F[A]) extends ADTCPS[F, A] {
+    override def foldMap[G[_]](trans: ~>[F, G])(implicit G: Monad[G]): G[A] =
+      trans(value)
+    override def retract(implicit F: Monad[F]): F[A] =
+      value
   }
   case class Bind[F[_], A, B](free: ADTCPS[F, A], bind: A => ADTCPS[F, B]) extends ADTCPS[F, B] {
     override def foldMap[G[_]](trans: ~>[F, G])(implicit G: Monad[G]): G[B] =

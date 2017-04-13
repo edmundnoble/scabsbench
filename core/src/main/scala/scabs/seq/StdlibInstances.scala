@@ -8,6 +8,12 @@ import scala.collection.immutable.Queue
 
 object StdlibInstances {
 
+  type Endo[A] = A => A
+
+  implicit val funSemiK: SemigroupK[Endo] = new SemigroupK[Endo] {
+    override def mappend[A](fst: Endo[A], snd: Endo[A]): Endo[A] = fst andThen snd
+  }
+
   implicit val vectorSequenceInstance: Sequence[Vector] = new Sequence[Vector] {
     override def empty[A]: Vector[A] = Vector.empty[A]
 

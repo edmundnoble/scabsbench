@@ -1,12 +1,14 @@
 package scabs
+package bench
 package seq
 
 import java.nio.ByteBuffer
 
-import org.scalameter.api._
+import org.scalameter.api.Gen
 import org.scalameter.picklers.{IntPickler, PrimitivePickler}
-import StdlibInstances._
 import scabs.Util.Id
+import scabs.seq.Sequence
+import scabs.{Benchmark, BenchmarkSuite, ConstantInputBenchmark, Variety}
 
 import scala.collection.immutable.Queue
 
@@ -21,8 +23,6 @@ object Benchmarks {
 
     def pickle(x: (Int, Int)): Array[Byte] = byteBuffer.putInt(x._1).putInt(x._2).array()
   }
-
-  import Manipulators._
 
   val sumConsBench =
     new Benchmark.AuxC[Sequence, Id, Int]("summing cons-constructed seq") {

@@ -1,8 +1,7 @@
-package scabs
-package seq
-package test
+package scabs.test.seq
 
 import org.scalacheck.Gen
+import scabs.seq.Sequence
 
 object Manipulators {
 

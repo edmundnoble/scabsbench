@@ -21,6 +21,8 @@ object Tagless {
 
       override def mappend(fst: Tagless[A], snd: Tagless[A]): Tagless[A] = Tagless.mappend(fst, snd)
     }
+
+    override def lift(a: A): Tagless[A] = Tagless.inj(a)
   }
 
   def empty[A]: Tagless[A] = new Tagless[A] {

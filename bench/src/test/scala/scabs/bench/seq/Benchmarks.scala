@@ -7,8 +7,9 @@ import java.nio.ByteBuffer
 import org.scalameter.api.Gen
 import org.scalameter.picklers.{IntPickler, PrimitivePickler}
 import scabs.Util.Id
-import scabs.seq.Sequence
-import scabs.{Benchmark, BenchmarkSuite, ConstantInputBenchmark, Variety}
+import scabs.seq._
+import Manipulators._
+import StdlibInstances._
 
 import scala.collection.immutable.Queue
 

@@ -69,55 +69,58 @@ object RWRPlusMap {
 
   implicit def rwrPlusMapFreeMonad[S[_], F[_]](implicit S: Sequence[S]): FreeMonad[F, Curried[S, F]#l] =
     new FreeConstraint1[Monad, F, Curried[S, F]#l] {
-      override val generated: Monad[Curried[S, F]#l] = new Monad[Curried[S, F]#l] {
-        override def pure[A](a: A): RWRPlusMap[S, F, A] =
+      val generated: Monad[Curried[S, F]#l] = new Monad[Curried[S, F]#l] {
+        def pure[A](a: A): RWRPlusMap[S, F, A] =
           RWRPlusMap.pure(a)
 
-        override def fmap[A, B](fa: RWRPlusMap[S, F, A])(f: (A) => B): RWRPlusMap[S, F, B] =
+        def fmap[A, B](fa: RWRPlusMap[S, F, A])(f: (A) => B): RWRPlusMap[S, F, B] =
           fa.map(f)
 
-        override def bind[A, B](fa: RWRPlusMap[S, F, A])(f: (A) => RWRPlusMap[S, F, B]): RWRPlusMap[S, F, B] =
+        def bind[A, B](fa: RWRPlusMap[S, F, A])(f: (A) => RWRPlusMap[S, F, B]): RWRPlusMap[S, F, B] =
           fa.flatMap(f)
 
-        override def join[A](ffa: RWRPlusMap[S, F, RWRPlusMap[S, F, A]]): RWRPlusMap[S, F, A] =
+        def join[A](ffa: RWRPlusMap[S, F, RWRPlusMap[S, F, A]]): RWRPlusMap[S, F, A] =
           ffa.flatMap(identity)
 
-        override def tailRecM[A, B](a: A)(f: (A) => RWRPlusMap[S, F, Either[A, B]]): RWRPlusMap[S, F, B] =
+        def tailRecM[A, B](a: A)(f: (A) => RWRPlusMap[S, F, Either[A, B]]): RWRPlusMap[S, F, B] =
           bind(f(a)) {
             case Right(b) => pure(b)
             case Left(next) => tailRecM(next)(f)
           }
       }
 
-      override def foldMap[A, G[_]](fv: RWRPlusMap[S, F, A])(trans: ~>[F, G])(implicit ev: Monad[G]): G[A] =
+      def foldMap[A, G[_]](fv: RWRPlusMap[S, F, A])(trans: ~>[F, G])(implicit ev: Monad[G]): G[A] =
         RWRPlusMap.foldMap(fv)(trans)
 
-      override def retract[A](fv: RWRPlusMap[S, F, A])(implicit ev: Monad[F]): F[A] =
+      def retract[A](fv: RWRPlusMap[S, F, A])(implicit ev: Monad[F]): F[A] =
         RWRPlusMap.retract(fv)
+
+      def lift[A](a: F[A]): RWRPlusMap[S, F, A] =
+        Seq[S, F, A, A](a, TASequence.empty[S, KleisliC[Curried[S, F]#l]#l, A])
     }
 
   final case class Pure[S[_], F[_], A](a: A) extends RWRPlusMap[S, F, A] {
-    override def flatMap[B](f: A => RWRPlusMap[S, F, B])(implicit S: Sequence[S]): RWRPlusMap[S, F, B] =
+    def flatMap[B](f: A => RWRPlusMap[S, F, B])(implicit S: Sequence[S]): RWRPlusMap[S, F, B] =
       f(a)
 
-    override def map[B](f: A => B)(implicit S: Sequence[S]): RWRPlusMap[S, F, B] =
+    def map[B](f: A => B)(implicit S: Sequence[S]): RWRPlusMap[S, F, B] =
       Pure(f(a))
   }
 
   final case class Seq[S[_], F[_], A, B](value: F[A], continuations: TASequence[S, KleisliC[Curried[S, F]#l]#l, A, B]) extends RWRPlusMap[S, F, B] {
-    override def flatMap[C](f: B => RWRPlusMap[S, F, C])(implicit S: Sequence[S]): RWRPlusMap[S, F, C] =
+    def flatMap[C](f: B => RWRPlusMap[S, F, C])(implicit S: Sequence[S]): RWRPlusMap[S, F, C] =
       RWRPlusMap.Seq(value, continuations.andThen(f))
 
-    override def map[C](f: B => C)(implicit S: Sequence[S]): RWRPlusMap[S, F, C] =
+    def map[C](f: B => C)(implicit S: Sequence[S]): RWRPlusMap[S, F, C] =
       RWRPlusMap.Seq(value, continuations.andThen(f.andThen(RWRPlusMap.Pure[S, F, C])))
   }
 
   final case class Map[S[_], F[_], A, B](value: F[A], maps: TASequence[S, Function1, A, B]) extends RWRPlusMap[S, F, B] {
-    override def flatMap[C](f: B => RWRPlusMap[S, F, C])(implicit S: Sequence[S]): RWRPlusMap[S, F, C] =
+    def flatMap[C](f: B => RWRPlusMap[S, F, C])(implicit S: Sequence[S]): RWRPlusMap[S, F, C] =
       RWRPlusMap.Seq[S, F, A, C](value,
         maps.retract.andThen(RWRPlusMap.Pure[S, F, B](_)) +: TASequence.one[S, KleisliC[Curried[S, F]#l]#l, B, C](f))
 
-    override def map[C](f: B => C)(implicit S: Sequence[S]): RWRPlusMap[S, F, C] =
+    def map[C](f: B => C)(implicit S: Sequence[S]): RWRPlusMap[S, F, C] =
       RWRPlusMap.Map(value, maps.andThen(f))
   }
 

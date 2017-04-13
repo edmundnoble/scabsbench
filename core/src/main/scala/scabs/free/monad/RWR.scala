@@ -52,40 +52,42 @@ object RWR {
 
   implicit def rwrFreeMonad[S[_], F[_]](implicit S: Sequence[S]): FreeMonad[F, Curried[S, F]#l] =
     new FreeConstraint1[Monad, F, Curried[S, F]#l] {
-      override val generated: Monad[Curried[S, F]#l] = new Monad[Curried[S, F]#l] {
-        override def pure[A](a: A): RWR[S, F, A] = RWR.Pure(a)
+      val generated: Monad[Curried[S, F]#l] = new Monad[Curried[S, F]#l] {
+        def pure[A](a: A): RWR[S, F, A] = RWR.Pure(a)
 
-        override def fmap[A, B](fa: RWR[S, F, A])(f: (A) => B): RWR[S, F, B] =
+        def fmap[A, B](fa: RWR[S, F, A])(f: (A) => B): RWR[S, F, B] =
           bind(fa)(f.andThen(RWR.Pure[S, F, B]))
 
-        override def bind[A, B](fa: RWR[S, F, A])(f: (A) => RWR[S, F, B]): RWR[S, F, B] =
+        def bind[A, B](fa: RWR[S, F, A])(f: (A) => RWR[S, F, B]): RWR[S, F, B] =
           fa.flatMap(f)
 
-        override def join[A](ffa: RWR[S, F, RWR[S, F, A]]): RWR[S, F, A] =
+        def join[A](ffa: RWR[S, F, RWR[S, F, A]]): RWR[S, F, A] =
           bind(ffa)(identity)
 
-        override def tailRecM[A, B](a: A)(f: (A) => RWR[S, F, Either[A, B]]): RWR[S, F, B] =
+        def tailRecM[A, B](a: A)(f: (A) => RWR[S, F, Either[A, B]]): RWR[S, F, B] =
           bind(f(a)) {
             case Right(b)   => pure(b)
             case Left(next) => tailRecM(next)(f)
           }
       }
 
-      override def foldMap[A, G[_]](fv: RWR[S, F, A])(trans: ~>[F, G])(implicit ev: Monad[G]): G[A] =
+      def foldMap[A, G[_]](fv: RWR[S, F, A])(trans: ~>[F, G])(implicit ev: Monad[G]): G[A] =
         RWR.foldMap(fv)(trans)
 
-      override def retract[A](fv: RWR[S, F, A])(implicit ev: Monad[F]): F[A] =
+      def retract[A](fv: RWR[S, F, A])(implicit ev: Monad[F]): F[A] =
         RWR.retract(fv)
 
+      def lift[A](a: F[A]): RWR[S, F, A] =
+        Seq[S, F, A](a.asInstanceOf[F[Any]], S.empty)
     }
 
   case class Pure[S[_], F[_], A](a: A) extends RWR[S, F, A] {
-    override def flatMap[B](f: A => RWR[S, F, B])(implicit S: Sequence[S]): RWR[S, F, B] =
+    def flatMap[B](f: A => RWR[S, F, B])(implicit S: Sequence[S]): RWR[S, F, B] =
       f(a)
   }
 
   case class Seq[S[_], F[_], A](value: F[Any], continuations: S[Any => RWR[S, F, Any]]) extends RWR[S, F, A] {
-    override def flatMap[B](f: A => RWR[S, F, B])(implicit S: Sequence[S]): RWR[S, F, B] =
+    def flatMap[B](f: A => RWR[S, F, B])(implicit S: Sequence[S]): RWR[S, F, B] =
       RWR.Seq[S, F, B](value, S.snoc(continuations, f.asInstanceOf[Any => RWR[S, F, Any]]))
   }
 

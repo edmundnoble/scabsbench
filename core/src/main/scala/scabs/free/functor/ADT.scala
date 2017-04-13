@@ -19,17 +19,19 @@ object ADT {
   type Curried[F[_]] = {type l[A] = ADT[F, _, A]}
 
   implicit def freeFunctorADT[F[_]]: FreeFunctor[F, Curried[F]#l] = new FreeConstraint1[Functor, F, Curried[F]#l] {
-    override val generated: Functor[Curried[F]#l] = new Functor[Curried[F]#l] {
-      override def fmap[A, B](fa: ADT[F, _, A])(f: (A) => B): ADT[F, _, B] =
+    val generated: Functor[Curried[F]#l] = new Functor[Curried[F]#l] {
+      def fmap[A, B](fa: ADT[F, _, A])(f: (A) => B): ADT[F, _, B] =
         fa.map(f)
     }
 
-    override def foldMap[A, G[_]](fv: ADT[F, _, A])(trans: F ~> G)(implicit ev: Functor[G]): G[A] =
+    def foldMap[A, G[_]](fv: ADT[F, _, A])(trans: F ~> G)(implicit ev: Functor[G]): G[A] =
       fv.foldMap(trans)
 
-    override def retract[A](fv: ADT[F, _, A])(implicit ev: Functor[F]): F[A] =
+    def retract[A](fv: ADT[F, _, A])(implicit ev: Functor[F]): F[A] =
       fv.retract
 
+    def lift[A](a: F[A]): ADT[F, _, A] =
+      ADT(a, identity[A])
   }
 
 }

@@ -8,6 +8,8 @@ object Constraint {
   trait FreeConstraint0[F[_], A, V] {
     implicit val generated: F[V]
 
+    def lift(a: A): V
+
     def foldMap[B](v: V)(trans: A => B)(implicit ev: F[B]): B
 
     def retract(v: V)(implicit ev: F[A]): A
@@ -20,6 +22,8 @@ object Constraint {
   trait FreeConstraint1[S[_[_]], F[_], V[_]] {
     implicit val generated: S[V]
 
+    def lift[A](a: F[A]): V[A]
+
     def foldMap[A, G[_]](fv: V[A])(trans: F ~> G)(implicit ev: S[G]): G[A]
 
     def retract[A](fv: V[A])(implicit ev: S[F]): F[A]
@@ -31,6 +35,8 @@ object Constraint {
 
   trait FreeConstraint2[S[_[_, _]], F[_, _], V[_, _]] {
     val generated: S[V]
+
+    def lift[A, B](a: F[A, B]): V[A, B]
 
     def foldMap[A, B, G[_, _]](fv: V[A, B])(trans: F ~~> G)(implicit ev: S[G]): G[A, B]
 

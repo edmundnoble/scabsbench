@@ -1,4 +1,6 @@
-package scabs.free.ap
+package scabs
+package free
+package ap
 
 //import scabs.Util._
 //import scabs.free.Constraint.{FreeApplicative, FreeConstraint1}

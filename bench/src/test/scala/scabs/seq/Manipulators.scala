@@ -103,5 +103,8 @@ object Manipulators {
     if (size == 0) start
     else stack[S](S.tail(S.cons(size, start)), size - 1)
 
+  def noop[S[_]](seq: S[Int])(implicit S: Sequence[S]): Unit = {
+    // do nothing -- just testing building speed
+  }
 
 }

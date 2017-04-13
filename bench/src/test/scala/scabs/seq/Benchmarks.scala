@@ -22,19 +22,6 @@ object Benchmarks {
     def pickle(x: (Int, Int)): Array[Byte] = byteBuffer.putInt(x._1).putInt(x._2).array()
   }
 
-  def sequenceVarieties = Seq(
-//    TCBenchVariety[Sequence, List]("list").forget,
-//    TCBenchVariety[Sequence, Vector]("vec").forget,
-//    TCBenchVariety[Sequence, Queue]("que").forget,
-//    TCBenchVariety[Sequence, Catenable]("cat").forget,
-//    TCBenchVariety[Sequence, CatenableArrLeaves]("catarr").forget,
-    TCBenchVariety[Sequence, TurtleQ]("turtle").forget,
-    TCBenchVariety[Sequence, TurtleQI]("turtleI").forget,
-    TCBenchVariety[Sequence, TurtleQS]("turtleS").forget,
-    TCBenchVariety[Sequence, TurtleQS2]("turtleS2").forget,
-    TCBenchVariety[Sequence, TurtleQS2]("turtleS3").forget
-  )
-
   import Manipulators._
 
   val sumConsBench =
@@ -98,11 +85,22 @@ object Benchmarks {
     def runBenchmark[Type[_] : Sequence](input: LTree[Int]): Any = sum(frontierRec[Type, Int](input))
   }
 
+  final case class ConcatTreeBenchmark(name0: String, input0: Gen[LTree[Int]])
+    extends ConstantInputBenchmark[Sequence, LTree[Int]](name0, input0) {
+    def runBenchmark[Type[_] : Sequence](input: LTree[Int]): Any = noop(frontierRec[Type, Int](input))
+  }
+
   val concatLeftNestedBench =
     ConcatAndSumTreeBenchmark("concatenating and summing left-nested trees", leftNestedTrees)
 
+  val concatLeftNestedBuildOnlyBench =
+    ConcatTreeBenchmark("concatenating left-nested trees", leftNestedTrees)
+
   val concatRightNestedBench =
     ConcatAndSumTreeBenchmark("concatenating and summing right-nested trees", rightNestedTrees)
+
+  val concatRightNestedBuildOnlyBench =
+    ConcatTreeBenchmark("concatenating right-nested trees", rightNestedTrees)
 
   val concatJaggedNestedBench =
     ConcatAndSumTreeBenchmark("concatenating and summing jagged trees", jaggedNestedTrees)
@@ -116,15 +114,23 @@ object Benchmarks {
     Variety[Sequence, Queue]("que"),
     Variety[Sequence, Catenable]("cat"),
     Variety[Sequence, CatenableArrLeaves]("catarr"),
-    Variety[Sequence, TurtleQ]("turtle")
+    Variety[Sequence, TurtleQ]("turtle"),
+//    Variety[Sequence, PQueue]("pqueue"),
+    Variety[Sequence, InceptionQ]("inceptionq")
   )
 
   val allSeqBenchmarks: Seq[Benchmark[Sequence]] = Seq(
-    sumConsBench, sumSnocBench,
+    sumConsBench,
+    sumSnocBench,
     queueBench, stackBench,
-    consConcatBenchLeft, consConcatBenchRight,
-    snocConcatBenchLeft, snocConcatBenchRight,
-    concatLeftNestedBench, concatRightNestedBench,
+    consConcatBenchLeft,
+    consConcatBenchRight,
+    snocConcatBenchLeft,
+    snocConcatBenchRight,
+    concatLeftNestedBench,
+    concatRightNestedBench,
+    concatLeftNestedBuildOnlyBench,
+    concatRightNestedBuildOnlyBench,
     concatJaggedNestedBench,
     concatBalancedNestedBench
   )

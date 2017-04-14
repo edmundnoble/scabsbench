@@ -26,9 +26,9 @@ object Tests {
       Gen.alphaNumStr
   }
 
-  abstract class StackOpsTest(name0: String) extends Test.AuxC[Sequence, Id, StackOps[String]](name0) {
-    override def generateInput[F[_] : Sequence]: Gen[StackOps[String]] = {
-      StackOps.genOps(Arbitrary(Gen.alphaStr))
+  abstract class StackOpsTest(name0: String) extends Test.AuxC[Sequence, Id, StackOps[Int]](name0) {
+    override def generateInput[F[_] : Sequence]: Gen[StackOps[Int]] = {
+      StackOps.genOps
     }
   }
 
@@ -49,13 +49,13 @@ object Tests {
   }
 
   def arbStackOps = new StackOpsTest("stack size") {
-    override def runTest[F[_] : Sequence](input: StackOps[String]): Assertion = {
+    override def runTest[F[_] : Sequence](input: StackOps[Int]): Assertion = {
       val S = implicitly[Sequence[F]]
 
-      val asList = StackOps.taglessFinal.replay[List, String](input)
-      val asSeq = StackOps.taglessFinal.replay[F, String](input)
+      val asList = StackOps.taglessFinal.replay[List, Int](input)
+      val asSeq = StackOps.taglessFinal.replay[F, Int](input)
 
-      println(input)
+      println(input + "\n" + asList + "\n" + asSeq)
 
       equal(asList.size,
         S.lengthSeq(asSeq))

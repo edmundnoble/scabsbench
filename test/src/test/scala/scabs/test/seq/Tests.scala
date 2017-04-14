@@ -4,6 +4,8 @@ package seq
 
 import org.scalacheck.Gen
 import scabs.Util._
+import cats._
+import cats.implicits._
 import scabs.seq.Sequence
 import scabs.seq.StdlibInstances._
 

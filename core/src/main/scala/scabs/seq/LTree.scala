@@ -1,7 +1,7 @@
 package scabs
 package seq
 
-import scabs.Util.Monad
+import cats._
 
 import scala.annotation.tailrec
 
@@ -25,12 +25,12 @@ object LTree {
   @tailrec
   def index[A](idx: Int, lTree: LTree[A]): A = lTree match {
     case Lf(a) => if (idx == 0) a else ???
-    case Bin(size, left, right) =>
+    case Bin(_, left, right) =>
       if (idx < left.size) index(idx, left)
       else index(idx - left.size, right)
   }
   def update[A](idx: Int, newValue: A, lTree: LTree[A]): LTree[A] = lTree match {
-    case tr@Lf(a) => if (idx == 0) Lf(newValue) else tr
+    case tr@Lf(_) => if (idx == 0) Lf(newValue) else tr
     case Bin(size, left, right) =>
       if (idx < left.size) Bin(size, update(idx, newValue, left), right)
       else Bin(size, left, update(idx - left.size, newValue, right))
@@ -60,14 +60,14 @@ object LTree {
   implicit val ltreeMonad: Monad[LTree] = new Monad[LTree] {
     override def pure[A](a: A): LTree[A] = Lf(a)
 
-    override def bind[A, B](fa: LTree[A])(f: (A) => LTree[B]): LTree[B] = fa match {
+    override def flatMap[A, B](fa: LTree[A])(f: (A) => LTree[B]): LTree[B] = fa match {
       case Lf(a) => f(a)
-      case Bin(_, l, r) => LTree.join(bind(l)(f), bind(r)(f))
+      case Bin(_, l, r) => LTree.join(flatMap(l)(f), flatMap(r)(f))
     }
 
-    override def fmap[A, B](fa: LTree[A])(f: (A) => B): LTree[B] = ???
+    override def map[A, B](fa: LTree[A])(f: (A) => B): LTree[B] = ???
 
-    override def join[A](ffa: LTree[LTree[A]]): LTree[A] = ???
+    override def flatten[A](ffa: LTree[LTree[A]]): LTree[A] = ???
 
     override def tailRecM[A, B](a: A)(f: (A) => LTree[Either[A, B]]): LTree[B] = ???
   }

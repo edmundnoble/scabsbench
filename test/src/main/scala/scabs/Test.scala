@@ -1,8 +1,11 @@
 package scabs
 
-import org.scalacheck.Gen
+import org.scalacheck.{Gen, Test => SCTest}
+import org.scalatest.prop.Configuration
 
-abstract class Test[Typeclass[_[_]]](val name: String) extends Assertion.DSL with Serializable {
+abstract class Test[Typeclass[_[_]]](val name: String,
+                                     val testParameters: Seq[Configuration#PropertyCheckConfigParam] = Seq.empty)
+  extends Assertion.DSL with Serializable {
   type InputWrapper[_]
   type Input
 
@@ -13,8 +16,9 @@ abstract class Test[Typeclass[_[_]]](val name: String) extends Assertion.DSL wit
 
 object Test {
 
-  abstract class AuxC[Typeclass[_[_]], InputWrapper0[_], Input0](name0: String)
-    extends Test[Typeclass](name0) {
+  abstract class AuxC[Typeclass[_[_]], InputWrapper0[_], Input0](name0: String,
+                                                                 testParameters: Seq[Configuration#PropertyCheckConfigParam] = Seq.empty)
+    extends Test[Typeclass](name0, testParameters) {
     type InputWrapper[A] = InputWrapper0[A]
     type Input = Input0
   }

@@ -2,7 +2,8 @@ package scabs
 package free
 package ap
 
-import scabs.Util.{Applicative, ~>}
+import cats._
+import cats.implicits._
 import shapeless.ops.hlist._
 import shapeless._
 import scabs.seq.Sequence

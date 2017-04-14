@@ -3,29 +3,29 @@ package test
 package free
 package monad
 
+import cats.Monad
 import org.scalacheck.Gen
 import scabs.Util._
 import scabs._
 import scabs.free.Constraint.FreeMonad
-import scabs.free.monad.{ADTCPS, RWR, RWRPlusMap, Tagless}
 import scabs.seq.{Catenable, TurtleQ}
 
 final class Tests[F[_]: Monad] {
   type FM[V[_]] = FreeMonad[F, V]
   def varieties: Seq[Variety[FM]] = Seq(
-    // Variety[FM, ADTCPS[F, ?]]("adtcps"),
-    // Variety[FM, RWR[Catenable, F, ?]]("rwrcat"),
-    // Variety[FM, RWR[TurtleQ, F, ?]]("rwrturt"),
-    // Variety[FM, RWRPlusMap[Catenable, F, ?]]("rwrmapcat"),
-    // Variety[FM, RWRPlusMap[TurtleQ, F, ?]]("rwrmapturt"),
-    // Variety[FM, Tagless[F, ?]]("tagless")
+     Variety[FM, scabs.free.monad.ADTCPS[F, ?]]("adtcps"),
+     Variety[FM, scabs.free.monad.RWR[Catenable, F, ?]]("rwrcat"),
+     Variety[FM, scabs.free.monad.RWR[TurtleQ, F, ?]]("rwrturt"),
+     Variety[FM, scabs.free.monad.RWRPlusMap[Catenable, F, ?]]("rwrmapcat"),
+     Variety[FM, scabs.free.monad.RWRPlusMap[TurtleQ, F, ?]]("rwrmapturt"),
+     Variety[FM, scabs.free.monad.Tagless[F, ?]]("tagless")
   )
 
   def identityTest[A](input: Gen[F[A]]): ConstantInputTest[FM, F[A]] =
     new ConstantInputTest[FM, F[A]]("identity", input) {
       def runTest[R[_] : FM](input: F[A]): Assertion = {
         val fm = implicitly[FM[R]]
-        equal(input, fm.retract(fm.generated.bind(fm.lift(input))(fm.generated.pure)))
+        equal(input, fm.retract(fm.generated.flatMap(fm.lift(input))(fm.generated.pure)))
       }
     }
 

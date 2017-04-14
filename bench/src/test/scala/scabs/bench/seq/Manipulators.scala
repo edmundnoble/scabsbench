@@ -99,7 +99,7 @@ object Manipulators {
   def foldMap[S[_], A](tree: LTree[S[A]])(implicit S: SemigroupK[S]): S[A] =
     tree match {
       case Lf(a) => a
-      case Bin(_, left, right) => S.mappend(foldMap[S, A](left), foldMap[S, A](right))
+      case Bin(_, left, right) => S.combine(foldMap[S, A](left), foldMap[S, A](right))
     }
 
   @tailrec

@@ -57,10 +57,32 @@ object Tests {
       val asList = StackOps.taglessFinal.replay[List, Int](input)
       val asSeq = StackOps.taglessFinal.replay[F, Int](input)
 
-      println(input + "\n" + asList + "\n" + asSeq)
+//      println(input + "\n" + asList + "\n" + asSeq)
 
-      equal(asList.size,
-        S.lengthSeq(asSeq))
+      var uc = S.uncons(asSeq)
+      val eqEls = for {
+        (el, i) <- asList.zipWithIndex
+      } yield {
+//        println(s"$i: $el")
+//        println(uc)
+        val remainingInList = asList.size - i - 1
+        uc match {
+          case Some((h, tl)) =>
+            val areEq = equal(el, h)
+            uc = S.uncons(tl)
+//            println(s"list items remaining: $remainingInList")
+//            println(s"queue items remaining: ${S.lengthSeq(tl)}")
+            and(areEq, equal(asList.size - i, S.lengthSeq(tl)))
+          case None =>
+//            println(s"Warning: reached element $el at $i in list but run out of queue")
+            equal(remainingInList, 0)
+        }
+      }
+
+      and(
+        equal(asList.size,
+        S.lengthSeq(asSeq)) :: eqEls :_*)
+//      equal(true, false)
     }
   }
 

@@ -15,10 +15,14 @@ abstract class ScalatestSuiteK[Typeclass[_[_]]](suite: TestSuiteK[Typeclass]) ex
         test.name in {
           forAll(
             test.generateInput[variety.Type],
-            test.testParameters.asInstanceOf[Seq[PropertyCheckConfigParam]]
-          )((i, _) => test.runTest[variety.Type](i))
+            test.testParameters.asInstanceOf[Seq[PropertyCheckConfigParam]] : _*
+          ) { i =>
+            test.runTest[variety.Type](i) : Prop
+          }
         }
       })
     }
   })
+
+  println(s"Tests: ${this.testNames}")
 }

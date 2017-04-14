@@ -117,17 +117,29 @@ object InceptionQ {
     }
   }
   // singleton hack
+  private val emptyNothing = QNil()
+  def empty[E]: InceptionQ[E] = emptyNothing.asInstanceOf[InceptionQ[E]]
 
-  def empty[E]: InceptionQ[E] = QNil().asInstanceOf[InceptionQ[E]]
-
-  private type Nel[+E] = List[E]
-  private object Nel {
-    def apply[E](e: E): Nel[E] = e::Nil
-    def apply[E](e: E, es: List[E]): Nel[E] = e::es
+  final case class Nel[+E](head: E, tail: List[E]) {
+    def size: Int = 1 + tail.size
+    def foldLeft[B](zero: B)(f: (B, E) => B): B = tail.foldLeft(f(zero, head))(f)
+    def map[B](f: E => B): Nel[B] = Nel(f(head), tail map f)
+    def foreach[B](f: E => B): Unit = {
+      f(head)
+      tail foreach f
+    }
+    def reverse: Nel[E] = (head::tail).reverse match {
+      case h::t => Nel(h, t)
+    }
+    def mkString(start: String, sep: String, end: String) = (head::tail).mkString(start, sep, end)
+  }
+  object Nel {
+    def apply[E](e: E): Nel[E] = Nel(e, Nil)
+    def apply[E](e: E, es: Nel[E]): Nel[E] = Nel(e, es.head::es.tail)
   }
 
-  private type ConsList[E] = Newtype[Nel[E], ConsListOps[E]]
-  private class ConsListOps[E](val _l: Nel[E]) extends AnyVal {
+  type ConsList[E] = Newtype[Nel[E], ConsListOps[E]]
+  class ConsListOps[E](val _l: Nel[E]) extends AnyVal {
     def +:(e: E): ConsList[E] = ConsList(e, _l)
     def size: Int = _l.size
     def fold[B](zero: B)(f: (B, E) => B): B = _l.foldLeft(zero)(f)
@@ -135,14 +147,15 @@ object InceptionQ {
     def foreach[B](f: E => B): Unit = _l foreach f
     def reverse: SnocList[E] = SnocList(_l.reverse)
   }
-  private implicit def consListOps[E](l: Nel[E]): ConsListOps[E] = new ConsListOps(l)
-  private object ConsList {
-    def apply[A](as: List[A]): ConsList[A] = newtype(as)
+  implicit def consListOps[E](l: Nel[E]): ConsListOps[E] = new ConsListOps(l)
+  object ConsList {
+    def apply[A](as: Nel[A]): ConsList[A] = newtype(as)
     def apply[A](a: A, as: List[A]): ConsList[A] = newtype(Nel(a, as))
+    def apply[A](a: A, as: Nel[A]): ConsList[A] = newtype(Nel(a, as.head::as.tail))
   }
 
-  private type ConsCarryList[E] = Newtype[Nel[ConsCarry[E]], ConsCarryListOps[E]]
-  private class ConsCarryListOps[E](val _l: Nel[ConsCarry[E]]) extends AnyVal {
+  type ConsCarryList[E] = Newtype[Nel[ConsCarry[E]], ConsCarryListOps[E]]
+  class ConsCarryListOps[E](val _l: Nel[ConsCarry[E]]) extends AnyVal {
     def +: (c: ConsCarry[E]): ConsCarryList[E] = ConsCarryList(c, _l)
     def carrySize[C]: Int = _l.foldLeft(0)((a, f) => a + f.size)
     def foldCarry[B](zero: B)(f: (B, E) => B): B =
@@ -152,7 +165,7 @@ object InceptionQ {
       ConsCarryList(_l map (_ map f))
 
     def nextConsBlock: (ConsList[E], List[ConsCarry[E]]) = _l match {
-      case h::tl =>
+      case Nel(h, tl) =>
         h match {
           case Cons(c) => c -> tl
           case ConsListCarry(cs) =>
@@ -161,9 +174,15 @@ object InceptionQ {
                 cl -> ConsCarry(cc, tl)
             }
           case ReverseS(s) =>
-            s.reverse.nextConsBlock
+            s.reverse.nextConsBlock match {
+              case (cl, cc) =>
+                cl -> ConsCarry(cc, tl)
+            }
           case ReverseSnoc(cs) =>
-            cs.reverse.nextConsBlock
+            cs.reverse.nextConsBlock match {
+              case (cl, cc) =>
+                cl -> ConsCarry(cc, tl)
+            }
         }
     }
 
@@ -172,14 +191,15 @@ object InceptionQ {
     def toStructure: String = _l.map(_.toStructure).mkString("<", ",", ">")
   }
 
-  private implicit def consCarryListOps[E](l: Nel[ConsCarry[E]]): ConsCarryListOps[E] = new ConsCarryListOps(l)
-  private object ConsCarryList {
-    def apply[A](as: List[ConsCarry[A]]): ConsCarryList[A] = newtype(as)
-    def apply[A](a: ConsCarry[A], as: List[ConsCarry[A]]): ConsCarryList[A] = newtype(Nel(a, as))
+  implicit def consCarryListOps[E](l: Nel[ConsCarry[E]]): ConsCarryListOps[E] = new ConsCarryListOps(l)
+  object ConsCarryList {
+    def apply[A](as: Nel[ConsCarry[A]]): ConsCarryList[A] = newtype(as)
+    def apply[A](a: ConsCarry[A], as: List[ConsCarry[A]] = Nil): ConsCarryList[A] = newtype(Nel(a, as))
+    def apply[A](a: ConsCarry[A], as: Nel[ConsCarry[A]]): ConsCarryList[A] = newtype(Nel(a, as.head::as.tail))
   }
 
-  private type SnocList[E] = Newtype[Nel[E], SnocListOps[E]]
-  private class SnocListOps[E](val _l: Nel[E]) extends AnyVal {
+  type SnocList[E] = Newtype[Nel[E], SnocListOps[E]]
+  class SnocListOps[E](val _l: Nel[E]) extends AnyVal {
     def :+(e: E): SnocList[E] = SnocList(e, _l)
 
     def size: Int = _l.size
@@ -192,19 +212,20 @@ object InceptionQ {
 
     def reverse: ConsList[E] = ConsList(_l.reverse)
   }
-  private implicit def snocListOps[E](l: Nel[E]): SnocListOps[E] = new SnocListOps(l)
-  private object SnocList {
+  implicit def snocListOps[E](l: Nel[E]): SnocListOps[E] = new SnocListOps(l)
+  object SnocList {
+    def apply[A](a: A, as: Nel[A]): SnocList[A] = newtype(Nel(a, as.head::as.tail))
     def apply[A](a: A, as: List[A]): SnocList[A] = newtype(Nel(a, as))
     def apply[A](as: Nel[A]): SnocList[A] = newtype(as)
   }
 
-  private type SnocCarryList[E] = Newtype[Nel[SnocCarry[E]], SnocCarryListOps[E]]
-  private class SnocCarryListOps[E](val _l: Nel[SnocCarry[E]]) extends AnyVal {
+  type SnocCarryList[E] = Newtype[Nel[SnocCarry[E]], SnocCarryListOps[E]]
+  class SnocCarryListOps[E](val _l: Nel[SnocCarry[E]]) extends AnyVal {
     def :+ (e: SnocCarry[E]): SnocCarryList[E] = SnocCarryList(_l, e)
 
     def :<: (e: SnocCarry[E]): SnocCarryList[E] = SNil :+ e :+ {
       _l match {
-        case h :: Nil =>
+        case Nel(h, Nil) =>
           h
         case _ =>
           SnocListCarry(SnocCarryList(_l))
@@ -224,40 +245,48 @@ object InceptionQ {
     def reverse: ConsCarryList[E] = ConsCarryList(_l.reverse map (_.reverse))
 
     def nextSnocBlock: (List[SnocCarry[E]], SnocList[E]) = _l match {
-      case h::tl =>
+      case Nel(h, tl) =>
         h match {
           case Snoc(s) => tl -> s
           case SnocListCarry(cs) =>
             cs.nextSnocBlock match {
               case (ss, sl) =>
-                SnocCarry(ss, tl) -> sl
+                SnocCarry(tl, ss) -> sl
             }
           case ReverseC(c) =>
-            c.reverse.nextSnocBlock
+            c.reverse.nextSnocBlock match {
+              case (ss, sl) =>
+                SnocCarry(tl, ss) -> sl
+            }
           case ReverseCons(cs) =>
-            cs.reverse.nextSnocBlock
+            cs.reverse.nextSnocBlock match {
+              case (ss, sl) =>
+                SnocCarry(tl, ss) -> sl
+            }
         }
     }
 
     def toStructure: String = _l.map(_.toStructure).mkString("<", ",", ">")
   }
-  private implicit def snocCarryListOps[E](l: Nel[SnocCarry[E]]): SnocCarryListOps[E] = new SnocCarryListOps(l)
-  private object SnocCarryList {
-    def apply[A](as: List[SnocCarry[A]]): SnocCarryList[A] = newtype(as)
+  implicit def snocCarryListOps[E](l: Nel[SnocCarry[E]]): SnocCarryListOps[E] = new SnocCarryListOps(l)
+  object SnocCarryList {
+    def apply[A](as: Nel[SnocCarry[A]]): SnocCarryList[A] = newtype(as)
     def apply[A](as: List[SnocCarry[A]], a: SnocCarry[A]): SnocCarryList[A] = newtype(Nel(a, as))
+    def apply[A](a: SnocCarry[A]): SnocCarryList[A] = newtype(Nel(a))
+    def apply[A](as: Nel[SnocCarry[A]], a: SnocCarry[A]): SnocCarryList[A] = newtype(Nel(a, as.head::as.tail))
   }
 
-  private object CNil {
-    def +:[E](c: ConsCarry[E]): ConsCarryList[E] = ConsCarryList(c :: Nil)
+  object CNil {
+    def +:[E](c: ConsCarry[E]): ConsCarryList[E] = ConsCarryList(c)
     def +:[E](e: E): ConsList[E] = ConsList(Nel(e))
   }
 
-  private object SNil {
-    def :+ [E](c: SnocCarry[E]): SnocCarryList[E] = SnocCarryList(c :: Nil)
+  object SNil {
+    def :+ [E](c: SnocCarry[E]): SnocCarryList[E] = SnocCarryList(c)
     def :+ [E](e: E): SnocList[E] = SnocList(Nel(e))
   }
 
-  private sealed trait Carry[E] {
+  sealed trait Carry[E] {
 
     def toStructure: String
 
@@ -265,10 +294,10 @@ object InceptionQ {
     def fold[B](zero: B)(f: (B, E) => B): B
   }
 
-  private sealed trait ConsCarry[E] extends Carry[E] {
+  sealed trait ConsCarry[E] extends Carry[E] {
     final def :>: (l: ConsCarryList[E]): ConsCarryList[E] = {
       l._l match {
-        case h :: Nil =>
+        case Nel(h, Nil) =>
           h
         case _ =>
           ConsListCarry(l)
@@ -283,21 +312,21 @@ object InceptionQ {
 
     def nextConsBlock: (ConsList[E], List[ConsCarry[E]])
   }
-  private final object ConsCarry {
-    def apply[E](cc: List[ConsCarry[E]], tl: Nel[ConsCarry[E]]): List[ConsCarry[E]] = (cc, tl) match {
+  final object ConsCarry {
+    def apply[E](cc: List[ConsCarry[E]], tl: List[ConsCarry[E]]): List[ConsCarry[E]] = (cc, tl) match {
       case (Nil, _) =>
         tl
       case (_, Nil) =>
         cc
       case (h::Nil, _) =>
         h :: tl
-      case (_, _) =>
-        ConsListCarry(ConsCarryList(cc)) :: tl
+      case (h::t, _) =>
+        ConsListCarry(ConsCarryList(Nel(h, t))) :: tl
     }
   }
 
 
-  private sealed trait SnocCarry[E] extends Carry[E] {
+  sealed trait SnocCarry[E] extends Carry[E] {
     def map[B](f: E => B): SnocCarry[B]
 
     def foreach[B](f: E => B): Unit
@@ -307,20 +336,20 @@ object InceptionQ {
     def nextSnocBlock: (List[SnocCarry[E]], SnocList[E])
   }
 
-  final private object SnocCarry {
-    def apply[E](tl: Nel[SnocCarry[E]], cc: List[SnocCarry[E]]): List[SnocCarry[E]] = (tl, cc) match {
+  final object SnocCarry {
+    def apply[E](tl: List[SnocCarry[E]], cc: List[SnocCarry[E]]): List[SnocCarry[E]] = (tl, cc) match {
       case (_, Nil) =>
         tl
       case (Nil, _) =>
         cc
       case (_, h::Nil) =>
         h :: tl
-      case (_, _) =>
-        SnocListCarry(SnocCarryList(cc)) :: tl
+      case (_, h::t) =>
+        SnocListCarry(SnocCarryList(Nel(h, t))) :: tl
     }
   }
 
-  private final case class ConsListCarry[E](cs: ConsCarryList[E]) extends ConsCarry[E] {
+  final case class ConsListCarry[E](cs: ConsCarryList[E]) extends ConsCarry[E] {
 
     override def toStructure: String = cs.toStructure
 
@@ -337,7 +366,7 @@ object InceptionQ {
     override def nextConsBlock: (ConsList[E], List[ConsCarry[E]]) = cs.nextConsBlock
   }
 
-  private final case class SnocListCarry[E](cs: SnocCarryList[E]) extends SnocCarry[E] {
+  final case class SnocListCarry[E](cs: SnocCarryList[E]) extends SnocCarry[E] {
 
     override def toStructure: String = cs.toStructure
 
@@ -354,7 +383,7 @@ object InceptionQ {
     override def nextSnocBlock: (List[SnocCarry[E]], SnocList[E]) = cs.nextSnocBlock
   }
 
-  private final case class ReverseS[E](c: SnocCarry[E]) extends ConsCarry[E] {
+  final case class ReverseS[E](c: SnocCarry[E]) extends ConsCarry[E] {
 
 
     override def toStructure: String = s"R(${c.toStructure})"
@@ -367,20 +396,18 @@ object InceptionQ {
 
     override def fold[B](zero: B)(f: (B, E) => B): B = c.fold(zero)(f)
 
-    override def reverse = c
+    override def reverse: SnocCarry[E] = c
 
     override def nextConsBlock: (ConsList[E], List[ConsCarry[E]]) = c.reverse.nextConsBlock
   }
 
-  private final case class ReverseSnoc[E](cs: SnocCarryList[E]) extends ConsCarry[E] {
+  final case class ReverseSnoc[E](cs: SnocCarryList[E]) extends ConsCarry[E] {
 
     override def toStructure: String = s"R(${cs.toStructure})"
 
     override def size: Int = cs.carrySize
 
-
     override def map[B](f: (E) => B): ConsCarry[B] = ReverseSnoc(cs mapCarry f)
-
 
     override def foreach[B](f: (E) => B): Unit = cs foreachCarry f
 
@@ -391,7 +418,7 @@ object InceptionQ {
     override def nextConsBlock: (ConsList[E], List[ConsCarry[E]]) = cs.reverse.nextConsBlock
   }
 
-  private final case class ReverseC[E](c: ConsCarry[E]) extends SnocCarry[E] {
+  final case class ReverseC[E](c: ConsCarry[E]) extends SnocCarry[E] {
 
     override def toStructure: String = s"R(${c.toStructure})"
 
@@ -409,7 +436,7 @@ object InceptionQ {
     override def nextSnocBlock: (List[SnocCarry[E]], SnocList[E]) = c.reverse.nextSnocBlock
   }
 
-  private final case class ReverseCons[E](cs: ConsCarryList[E]) extends SnocCarry[E] {
+  final case class ReverseCons[E](cs: ConsCarryList[E]) extends SnocCarry[E] {
 
     override def toStructure: String = s"R(${cs.toStructure})"
 
@@ -427,10 +454,10 @@ object InceptionQ {
     override def nextSnocBlock: (List[SnocCarry[E]], SnocList[E]) = cs.reverse.nextSnocBlock
   }
 
-  private def rev[E](s: SnocCarry[E]): ConsCarry[E] = ReverseS(s)
-  private def rev[E](c: ConsCarry[E]): SnocCarry[E] = ReverseC(c)
-  private def rev[E](l: ConsCarryList[E]): SnocCarry[E] = ReverseCons(l)
-  private def rev[E](l: SnocCarryList[E]): ConsCarry[E] = ReverseSnoc(l)
+  def rev[E](s: SnocCarry[E]): ConsCarry[E] = ReverseS(s)
+  def rev[E](c: ConsCarry[E]): SnocCarry[E] = ReverseC(c)
+  def rev[E](l: ConsCarryList[E]): SnocCarry[E] = ReverseCons(l)
+  def rev[E](l: SnocCarryList[E]): ConsCarry[E] = ReverseSnoc(l)
 
 
   case class QNil[E]() extends InceptionQ[E] {
@@ -458,7 +485,7 @@ object InceptionQ {
     override def foreach[B](f: (E) => B): Unit = {}
   }
 
-  private final case class Unity[E](u: E) extends InceptionQ[E] /* with SnocCarry[E] with ConsCarry[E] */ {
+  final case class Unity[E](u: E) extends InceptionQ[E] /* with SnocCarry[E] with ConsCarry[E] */ {
 
     override def toStructure: String = "U(1)"
 
@@ -503,7 +530,7 @@ object InceptionQ {
     override def foreach[B](f: (E) => B): Unit = f(u)
   }
 
-  private final case class Cons[E](cons: ConsList[E]) extends InceptionQ[E] with ConsCarry[E] {
+  final case class Cons[E](cons: ConsList[E]) extends InceptionQ[E] with ConsCarry[E] {
 
     override def toStructure: String = s"Cons(${cons.size},_,_,_)"
 
@@ -537,8 +564,8 @@ object InceptionQ {
 
     override def uncons: Option[(E, InceptionQ[E])] = Some {
       cons._l match {
-        case h::Nil => h -> empty[E]
-        case h::t => h -> Cons(newtype(t))
+        case Nel(h, Nil) => h -> empty[E]
+        case Nel(h, t::ts) => h -> Cons(newtype(Nel(t, ts)))
       }
     }
 
@@ -560,7 +587,7 @@ object InceptionQ {
     }
   }
 
-  private final case class ConsP[E](cons: ConsList[E], pre: ConsCarryList[E]) extends InceptionQ[E] {
+  final case class ConsP[E](cons: ConsList[E], pre: ConsCarryList[E]) extends InceptionQ[E] {
 
     override def toStructure: String = s"ConsP(${cons.size},${pre.toStructure},_,_}"
 
@@ -602,23 +629,23 @@ object InceptionQ {
 
     override def uncons: Option[(E, InceptionQ[E])] = Some {
       cons._l match {
-        case h::Nil =>
+        case Nel(h, Nil) =>
           pre.nextConsBlock match {
             case (cns, Nil) =>
               h -> Cons(cns)
-            case (cns, preList) =>
-              h -> ConsP(cns, ConsCarryList(preList))
+            case (cns, ph::pt) =>
+              h -> ConsP(cns, ConsCarryList(Nel(ph, pt)))
           }
-        case h::tl =>
-          h -> ConsP(ConsList(tl), pre)
+        case Nel(h, t::ts) =>
+          h -> ConsP(ConsList(Nel(t, ts)), pre)
       }
     }
 
     override def unsnoc: Option[(InceptionQ[E], E)] = pre.reverse.nextSnocBlock match {
       case (Nil, snc) =>
         ConsSnoc(cons, snc).unsnoc
-      case (app, snc) =>
-        ConsASnoc(cons, SnocCarryList(app), snc).unsnoc
+      case (ah::at, snc) =>
+        ConsASnoc(cons, SnocCarryList(Nel(ah, at)), snc).unsnoc
     }
 
     override def foreach[B](f: (E) => B): Unit = {
@@ -627,7 +654,7 @@ object InceptionQ {
     }
   }
 
-  private final case class ConsA[E](cons: ConsList[E], app: SnocCarryList[E]) extends InceptionQ[E] {
+  final case class ConsA[E](cons: ConsList[E], app: SnocCarryList[E]) extends InceptionQ[E] {
 
     override def toStructure: String = s"ConsA(${cons.size},_,${app.toStructure},_)"
 
@@ -675,28 +702,28 @@ object InceptionQ {
 
     override def uncons: Option[(E, InceptionQ[E])] = Some {
       cons._l match {
-        case h::Nil =>
+        case Nel(h, Nil) =>
           app.reverse.nextConsBlock match {
             case (cns, Nil) =>
               h -> Cons(cns)
-            case (cns, preList) =>
-              h -> ConsP(cons, ConsCarryList(preList))
+            case (cns, ph::pt) =>
+              h -> ConsP(cns, ConsCarryList(Nel(ph, pt)))
           }
-        case h::tl =>
-          h -> ConsA(ConsList(tl), app)
+        case Nel(h, ch::ct) =>
+          h -> ConsA(ConsList(Nel(ch, ct)), app)
       }
     }
 
     override def unsnoc: Option[(InceptionQ[E], E)] = app.nextSnocBlock match {
       case (Nil, snc) =>
         ConsSnoc(cons, snc).unsnoc
-      case (app, snc) =>
-        ConsASnoc(cons, SnocCarryList(app), snc).unsnoc
+      case (ah::at, snc) =>
+        ConsASnoc(cons, SnocCarryList(Nel(ah, at)), snc).unsnoc
     }
 
   }
 
-  private final case class ConsPA[E](cons: ConsList[E], pre: ConsCarryList[E], app: SnocCarryList[E]) extends InceptionQ[E] {
+  final case class ConsPA[E](cons: ConsList[E], pre: ConsCarryList[E], app: SnocCarryList[E]) extends InceptionQ[E] {
 
     override def toStructure: String = s"ConsPA(${cons.size},${pre.toStructure},${app.toStructure},_)"
 
@@ -739,25 +766,25 @@ object InceptionQ {
 
     override def uncons: Option[(E, InceptionQ[E])] = Some {
       cons._l match {
-        case h::Nil =>
+        case Nel(h, Nil) =>
           h -> {
             pre.nextConsBlock match {
               case (cns, Nil) =>
                 ConsA(cns, app)
-              case (cns, preList) =>
-                ConsPA(cons, ConsCarryList(preList), app)
+              case (cns, ph::pt) =>
+                ConsPA(cns, ConsCarryList(Nel(ph, pt)), app)
             }
           }
-        case h::tl =>
-          h -> ConsPA(ConsList(tl), pre, app)
+        case Nel(h, ch::ct) =>
+          h -> ConsPA(ConsList(Nel(ch, ct)), pre, app)
       }
     }
 
     override def unsnoc: Option[(InceptionQ[E], E)] = app.nextSnocBlock match {
       case (Nil, snc) =>
         ConsPSnoc(cons, pre, snc).unsnoc
-      case (app, snc) =>
-        ConsPASnoc(cons, pre, SnocCarryList(app), snc).unsnoc
+      case (ah::at, snc) =>
+        ConsPASnoc(cons, pre, SnocCarryList(Nel(ah, at)), snc).unsnoc
     }
 
     override def foreach[B](f: (E) => B): Unit = {
@@ -767,7 +794,7 @@ object InceptionQ {
     }
   }
 
-  private final case class ConsSnoc[E](cons: ConsList[E], snoc: SnocList[E]) extends InceptionQ[E] {
+  final case class ConsSnoc[E](cons: ConsList[E], snoc: SnocList[E]) extends InceptionQ[E] {
 
     override def toStructure: String = s"ConsSnoc(${cons.size},_,_,${snoc.size}"
 
@@ -809,19 +836,19 @@ object InceptionQ {
 
     override def uncons: Option[(E, InceptionQ[E])] = Some {
       cons._l match {
-        case h::Nil =>
+        case Nel(h, Nil) =>
           h -> Cons(snoc.reverse)
-        case h::t =>
-          h -> ConsSnoc(ConsList(t), snoc)
+        case Nel(h, ch::ct) =>
+          h -> ConsSnoc(ConsList(Nel(ch, ct)), snoc)
       }
     }
 
     override def unsnoc: Option[(InceptionQ[E], E)] = Some {
-      cons._l match {
-        case h::Nil =>
+      snoc._l match {
+        case Nel(h, Nil) =>
           Snoc(cons.reverse) -> h
-        case h::t =>
-          ConsSnoc(cons, SnocList(t)) -> h
+        case Nel(h, sh::st) =>
+          ConsSnoc(cons, SnocList(Nel(sh, st))) -> h
       }
     }
 
@@ -831,7 +858,7 @@ object InceptionQ {
     }
   }
 
-  private final case class ConsPSnoc[E](cons: ConsList[E], pre: ConsCarryList[E], snoc: SnocList[E]) extends InceptionQ[E] {
+  final case class ConsPSnoc[E](cons: ConsList[E], pre: ConsCarryList[E], snoc: SnocList[E]) extends InceptionQ[E] {
 
     override def toStructure: String = s"ConsPSnoc(${cons.size},${pre.toStructure},_,${snoc.size})"
 
@@ -875,22 +902,22 @@ object InceptionQ {
 
     override def uncons: Option[(E, InceptionQ[E])] = Some {
       cons._l match {
-        case h::Nil =>
+        case Nel(h, Nil) =>
           pre.nextConsBlock match {
             case (cns, Nil) =>
               h -> ConsSnoc(cns, snoc)
-            case (cns, preList) =>
-              h -> ConsPSnoc(cns, ConsCarryList(preList), snoc)
+            case (cns, ph::pt) =>
+              h -> ConsPSnoc(cns, ConsCarryList(Nel(ph, pt)), snoc)
           }
-        case h::tl =>
-          h -> ConsPSnoc(ConsList(tl), pre, snoc)
+        case Nel(h, ch::ct) =>
+          h -> ConsPSnoc(ConsList(Nel(ch, ct)), pre, snoc)
       }
     }
 
     override def unsnoc: Option[(InceptionQ[E], E)] = Some {
       snoc._l match {
-        case h::Nil => ConsP(cons, pre) -> h
-        case h::t => ConsPSnoc(cons, pre, SnocList(t)) -> h
+        case Nel(h, Nil) => ConsP(cons, pre) -> h
+        case Nel(h, sh::st) => ConsPSnoc(cons, pre, SnocList(Nel(sh, st))) -> h
       }
     }
 
@@ -902,7 +929,7 @@ object InceptionQ {
   }
 
 
-  private final case class ConsASnoc[E](cons: ConsList[E], app: SnocCarryList[E], snoc: SnocList[E]) extends InceptionQ[E] {
+  final case class ConsASnoc[E](cons: ConsList[E], app: SnocCarryList[E], snoc: SnocList[E]) extends InceptionQ[E] {
 
     override def toStructure: String = s"ConsASnoc(${cons.size},_,${app.toStructure},${snoc.size})"
 
@@ -945,22 +972,22 @@ object InceptionQ {
 
     override def uncons: Option[(E, InceptionQ[E])] = Some {
       cons._l match {
-        case h::Nil =>
+        case Nel(h, Nil) =>
           app.reverse.nextConsBlock match {
             case (cns, Nil) =>
               h -> ConsSnoc(cns, snoc)
-            case (cns, preList) =>
-              h -> ConsPSnoc(cns, ConsCarryList(preList), snoc)
+            case (cns, ph::pt) =>
+              h -> ConsPSnoc(cns, ConsCarryList(Nel(ph, pt)), snoc)
           }
-        case h::tl =>
-          h -> ConsASnoc(ConsList(tl), app, snoc)
+        case Nel(h, ch::ct) =>
+          h -> ConsASnoc(ConsList(Nel(ch, ct)), app, snoc)
       }
     }
 
     override def unsnoc: Option[(InceptionQ[E], E)] = Some {
       snoc._l match {
-        case h::Nil => ConsA(cons, app) -> h
-        case h::t => ConsASnoc(cons, app, SnocList(t)) -> h
+        case Nel(h, Nil) => ConsA(cons, app) -> h
+        case Nel(h, sh::st) => ConsASnoc(cons, app, SnocList(Nel(sh, st))) -> h
       }
     }
 
@@ -972,7 +999,7 @@ object InceptionQ {
   }
 
 
-  private final case class ConsPASnoc[E](cons: ConsList[E], pre: ConsCarryList[E], app: SnocCarryList[E], snoc: SnocList[E]) extends InceptionQ[E] {
+  final case class ConsPASnoc[E](cons: ConsList[E], pre: ConsCarryList[E], app: SnocCarryList[E], snoc: SnocList[E]) extends InceptionQ[E] {
 
     override def toStructure: String = s"ConsPASnoc(${cons.size},${pre.toStructure},${app.toStructure},${snoc.size})"
 
@@ -1016,24 +1043,24 @@ object InceptionQ {
 
     override def uncons: Option[(E, InceptionQ[E])] = Some {
       cons._l match {
-        case h::Nil =>
+        case Nel(h, Nil) =>
           h -> {
             pre.nextConsBlock match {
               case (cns, Nil) =>
                 ConsASnoc(cns, app, snoc)
-              case (cns, preList) =>
-                ConsPASnoc(cns, ConsCarryList(preList), app, snoc)
+              case (cns, ph::pt) =>
+                ConsPASnoc(cns, ConsCarryList(Nel(ph, pt)), app, snoc)
             }
           }
-        case h::tl =>
-          h -> ConsPASnoc(ConsList(tl), pre, app, snoc)
+        case Nel(h, ch::ct) =>
+          h -> ConsPASnoc(ConsList(Nel(ch, ct)), pre, app, snoc)
       }
     }
 
     override def unsnoc: Option[(InceptionQ[E], E)] = Some {
       snoc._l match {
-        case h::Nil => ConsPA(cons, pre, app) -> h
-        case h::t => ConsPASnoc(cons, pre, app, SnocList(t)) -> h
+        case Nel(h, Nil) => ConsPA(cons, pre, app) -> h
+        case Nel(h, sh::st) => ConsPASnoc(cons, pre, app, SnocList(Nel(sh, st))) -> h
       }
     }
 
@@ -1045,7 +1072,7 @@ object InceptionQ {
     }
   }
 
-  private final case class P[E](pre: ConsCarryList[E]) extends InceptionQ[E] {
+  final case class P[E](pre: ConsCarryList[E]) extends InceptionQ[E] {
 
     override def toStructure: String = s"P(_,${pre.toStructure},_,_)"
 
@@ -1084,15 +1111,15 @@ object InceptionQ {
     override def uncons: Option[(E, InceptionQ[E])] = pre.nextConsBlock match {
       case (cns, Nil) =>
         Cons(cns).uncons
-      case (cns, pre) =>
-        ConsP(cns, ConsCarryList(pre)).uncons
+      case (cns, ph::pt) =>
+        ConsP(cns, ConsCarryList(Nel(ph, pt))).uncons
     }
 
     override def unsnoc: Option[(InceptionQ[E], E)] = pre.reverse.nextSnocBlock match {
       case (Nil, snc) =>
         Snoc(snc).unsnoc
-      case (app, snc) =>
-        ASnoc(SnocCarryList(app), snc).unsnoc
+      case (ah::at, snc) =>
+        ASnoc(SnocCarryList(Nel(ah, at)), snc).unsnoc
     }
 
     override def foreach[B](f: (E) => B): Unit = {
@@ -1100,7 +1127,7 @@ object InceptionQ {
     }
   }
 
-  private final case class A[E](app: SnocCarryList[E]) extends InceptionQ[E] {
+  final case class A[E](app: SnocCarryList[E]) extends InceptionQ[E] {
 
     override def toStructure: String = s"A(_,_,${app.toStructure},_)"
 
@@ -1139,15 +1166,15 @@ object InceptionQ {
     override def uncons: Option[(E, InceptionQ[E])] = app.reverse.nextConsBlock match {
       case (cns, Nil) =>
         Cons(cns).uncons
-      case (cns, pre) =>
-        ConsP(cns, ConsCarryList(pre)).uncons
+      case (cns, ph::pt) =>
+        ConsP(cns, ConsCarryList(Nel(ph, pt))).uncons
     }
 
     override def unsnoc: Option[(InceptionQ[E], E)] = app.nextSnocBlock match {
       case (Nil, snc) =>
         Snoc(snc).unsnoc
-      case (app, snc) =>
-        ASnoc(SnocCarryList(app), snc).unsnoc
+      case (ah::at, snc) =>
+        ASnoc(SnocCarryList(Nel(ah, at)), snc).unsnoc
     }
 
     override def foreach[B](f: (E) => B): Unit = {
@@ -1155,7 +1182,7 @@ object InceptionQ {
     }
   }
 
-  private final case class PA[E](pre: ConsCarryList[E], app: SnocCarryList[E]) extends InceptionQ[E] {
+  final case class PA[E](pre: ConsCarryList[E], app: SnocCarryList[E]) extends InceptionQ[E] {
 
     override def toStructure: String = s"PA(_,${pre.toStructure},${app.toStructure},_)"
 
@@ -1199,15 +1226,15 @@ object InceptionQ {
     override def uncons: Option[(E, InceptionQ[E])] = pre.nextConsBlock match {
       case (cns, Nil) =>
         ConsA(cns, app).uncons
-      case (cns, pre) =>
-        ConsPA(cns, ConsCarryList(pre), app).uncons
+      case (cns, ph::pt) =>
+        ConsPA(cns, ConsCarryList(Nel(ph, pt)), app).uncons
     }
 
     override def unsnoc: Option[(InceptionQ[E], E)] = app.nextSnocBlock match {
       case (Nil, snc) =>
         PSnoc(pre, snc).unsnoc
-      case (app, snc) =>
-        PASnoc(pre, SnocCarryList(app), snc).unsnoc
+      case (ah::at, snc) =>
+        PASnoc(pre, SnocCarryList(Nel(ah, at)), snc).unsnoc
     }
 
     override def foreach[B](f: (E) => B): Unit = {
@@ -1216,9 +1243,9 @@ object InceptionQ {
     }
   }
 
-  private def SnoC[E](snoc: SnocList[E]): SnocCarry[E] = Snoc(snoc)
+  def SnoC[E](snoc: SnocList[E]): SnocCarry[E] = Snoc(snoc)
 
-  private final case class Snoc[E](snoc: SnocList[E]) extends InceptionQ[E] with SnocCarry[E] {
+  final case class Snoc[E](snoc: SnocList[E]) extends InceptionQ[E] with SnocCarry[E] {
 
     override def toStructure: String = s"Snoc(_,_,_,${snoc.size})"
 
@@ -1260,8 +1287,8 @@ object InceptionQ {
 
     override def unsnoc: Option[(InceptionQ[E], E)] = Some {
       snoc._l match {
-        case h::Nil => empty[E] -> h
-        case h::t => Snoc(SnocList(t)) -> h
+        case Nel(h, Nil) => empty[E] -> h
+        case Nel(h, sh::st) => Snoc(SnocList(Nel(sh, st))) -> h
       }
     }
 
@@ -1273,7 +1300,7 @@ object InceptionQ {
     }
   }
 
-  private final case class PSnoc[E](pre: ConsCarryList[E], snoc: SnocList[E]) extends InceptionQ[E] {
+  final case class PSnoc[E](pre: ConsCarryList[E], snoc: SnocList[E]) extends InceptionQ[E] {
 
     override def toStructure: String = s"PSnoc(_,${pre.toStructure},_,${snoc.size})"
 
@@ -1316,14 +1343,14 @@ object InceptionQ {
     override def uncons: Option[(E, InceptionQ[E])] = pre.nextConsBlock match {
       case (cns, Nil) =>
         ConsSnoc(cns, snoc).uncons
-      case (cns, pre) =>
-        ConsPSnoc(cns, ConsCarryList(pre), snoc).uncons
+      case (cns, ph::pt) =>
+        ConsPSnoc(cns, ConsCarryList(Nel(ph, pt)), snoc).uncons
     }
 
     override def unsnoc: Option[(InceptionQ[E], E)] = Some {
       snoc._l match {
-        case h::Nil => P(pre) -> h
-        case h::t => PSnoc(pre, SnocList(t)) -> h
+        case Nel(h, Nil) => P(pre) -> h
+        case Nel(h, sh::st) => PSnoc(pre, SnocList(Nel(sh, st))) -> h
       }
     }
 
@@ -1333,7 +1360,7 @@ object InceptionQ {
     }
   }
 
-  private final case class ASnoc[E](app: SnocCarryList[E], snoc: SnocList[E]) extends InceptionQ[E] {
+  final case class ASnoc[E](app: SnocCarryList[E], snoc: SnocList[E]) extends InceptionQ[E] {
 
     override def toStructure: String = s"ASnoc(_,_,${app.toStructure},${snoc.size})"
 
@@ -1376,14 +1403,14 @@ object InceptionQ {
     override def uncons: Option[(E, InceptionQ[E])] = app.reverse.nextConsBlock match {
       case (cns, Nil) =>
         ConsSnoc(cns, snoc).uncons
-      case (cns, pre) =>
-        ConsPSnoc(cns, ConsCarryList(pre), snoc).uncons
+      case (cns, ph::pt) =>
+        ConsPSnoc(cns, ConsCarryList(Nel(ph, pt)), snoc).uncons
     }
 
     override def unsnoc: Option[(InceptionQ[E], E)] = Some {
       snoc._l match {
-        case h::Nil => A(app) -> h
-        case h::t => ASnoc(app, SnocList(t)) -> h
+        case Nel(h, Nil) => A(app) -> h
+        case Nel(h, sh::st) => ASnoc(app, SnocList(Nel(sh, st))) -> h
       }
     }
 
@@ -1394,7 +1421,7 @@ object InceptionQ {
 
   }
 
-  private final case class PASnoc[E](pre: ConsCarryList[E], app: SnocCarryList[E], snoc: SnocList[E]) extends InceptionQ[E] {
+  final case class PASnoc[E](pre: ConsCarryList[E], app: SnocCarryList[E], snoc: SnocList[E]) extends InceptionQ[E] {
 
     override def toStructure: String = s"PASnoc(_,${pre.toStructure},${app.toStructure},${snoc.size})"
 
@@ -1438,14 +1465,14 @@ object InceptionQ {
     override def uncons: Option[(E, InceptionQ[E])] = pre.nextConsBlock match {
       case (cns, Nil) =>
         ConsASnoc(cns, app, snoc).uncons
-      case (cns, pre) =>
-        ConsPASnoc(cns, ConsCarryList(pre), app, snoc).uncons
+      case (cns, ph::pt) =>
+        ConsPASnoc(cns, ConsCarryList(ph, pt), app, snoc).uncons
     }
 
     override def unsnoc: Option[(InceptionQ[E], E)] = Some {
       snoc._l match {
-        case h::Nil => PA(pre, app) -> h
-        case h::t => PASnoc(pre, app, SnocList(t)) -> h
+        case Nel(h, Nil) => PA(pre, app) -> h
+        case Nel(h, sh::st) => PASnoc(pre, app, SnocList(Nel(sh, st))) -> h
       }
     }
 

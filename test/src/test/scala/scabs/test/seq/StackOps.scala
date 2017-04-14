@@ -20,25 +20,28 @@ object StackOps {
 
   implicit def genEmpty[T]: Gen[Empty[T]] = Gen.const(Empty())
 
-  implicit def genCons[T](implicit t: Arbitrary[T]): Gen[Cons[T]] = Gen.sized { size =>
-    for {
+  implicit def genCons[T](implicit t: Arbitrary[T]): Gen[StackOps[T]] = Gen.sized { size =>
+    if(size <= 0) Empty[T]()
+    else for {
       head <- t.arbitrary
       g = Gen.resize(size - 1, genOps[T])
       ops <- g
     } yield Cons(head, ops)
   }
 
-  implicit def genSnoc[T](implicit t: Arbitrary[T]): Gen[Snoc[T]] = Gen.sized { size =>
-    for {
+  implicit def genSnoc[T](implicit t: Arbitrary[T]): Gen[StackOps[T]] = Gen.sized { size =>
+    if(size <= 0) Empty[T]()
+    else for {
       last <- t.arbitrary
       g = Gen.resize(size - 1, genOps[T])
       ops <- g
     } yield Snoc(last, ops)
   }
 
-  implicit def genAppend[T](implicit t: Arbitrary[T]): Gen[Append[T]] = Gen.sized { size =>
-    for {
-      ls <- Gen.chooseNum(1, size-1)
+  implicit def genAppend[T](implicit t: Arbitrary[T]): Gen[StackOps[T]] = Gen.sized { size =>
+    if (size <= 0) Empty[T]()
+    else for {
+      ls <- Gen.chooseNum(0, size-1)
       rs = size - ls
       lhs <- Gen.resize(ls, genOps[T])
       rhs <- Gen.resize(rs, genOps[T])
@@ -46,13 +49,16 @@ object StackOps {
   }
 
   implicit def genOps[T](implicit t: Arbitrary[T]): Gen[StackOps[T]] =
-    Gen.oneOf(genEmpty[T], genCons[T], genSnoc[T], genAppend[T])
+    Gen.oneOf(genCons[T], genSnoc[T], genAppend[T])
 
   implicit def shrinkOps[T]: Shrink[StackOps[T]] = Shrink[StackOps[T]] {
     case Empty() => Stream()
     case Cons(_, ops) => Stream(ops)
     case Snoc(_, ops) => Stream(ops)
-    case Append(lhs, rhs) => Stream(lhs, rhs)
+    case Append(Empty(), Empty()) => Stream(Empty())
+    case Append(Empty(), rhs) => Stream(Empty())
+    case Append(lhs, Empty()) => Stream(Empty())
+    case Append(lhs, rhs) => Stream(lhs, rhs, Empty())
   }
 
   object taglessFinal {

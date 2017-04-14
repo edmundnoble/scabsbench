@@ -6,10 +6,10 @@ import java.nio.ByteBuffer
 
 import org.scalameter.api.Gen
 import org.scalameter.picklers.{IntPickler, PrimitivePickler}
-import scabs.Util.Id
 import scabs.seq._
 import Manipulators._
 import StdlibInstances._
+import cats.Id
 
 import scala.collection.immutable.Queue
 

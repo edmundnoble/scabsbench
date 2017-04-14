@@ -43,6 +43,36 @@ class InceptionQTest extends WordSpec with PropertyChecks with Matchers with App
     "any queue" should {
       implicit val genOps: Gen[StackOps[Int]] = StackOps.genOps[Int]
 
+      "cons uncons" in {
+        forAll(genOps) { ops =>
+          val S = implicitly[Sequence[InceptionQ]]
+
+          val queue = StackOps.taglessFinal.replay[InceptionQ, Int](ops)
+
+          val cQueue = 42 +: queue
+          val Some((h, dQ)) = cQueue.uncons
+
+          cQueue.size should be (queue.size + 1)
+          dQ.size should be (queue.size)
+          h should be (42)
+        }
+      }
+
+      "snoc unsnoc" in {
+        forAll(genOps) { ops =>
+          val S = implicitly[Sequence[InceptionQ]]
+
+          val queue = StackOps.taglessFinal.replay[InceptionQ, Int](ops)
+
+          val sQueue = queue :+ 42
+          val Some((dQ, h)) = sQueue.unsnoc
+
+          sQueue.size should be (queue.size + 1)
+          dQ.size should be (queue.size)
+          h should be (42)
+        }
+      }
+
       "uncons" should {
         "to a queue with one fewer elements" in {
           forAll(genOps) { ops: StackOps[Int] =>
@@ -52,7 +82,7 @@ class InceptionQTest extends WordSpec with PropertyChecks with Matchers with App
             val asList = StackOps.taglessFinal.replay[List, Int](ops)
             val queue = StackOps.taglessFinal.replay[InceptionQ, Int](ops)
 
-            asList.size should be(S.lengthSeq(queue))
+            { asList.size should be(S.lengthSeq(queue)) } withClue s"from list:\n\t$asList\nas queue\n\t$queue"
 
             var fc: InceptionQ[Int] = null
             var pc = queue
@@ -86,7 +116,7 @@ class InceptionQTest extends WordSpec with PropertyChecks with Matchers with App
             val asList = StackOps.taglessFinal.replay[List, Int](ops).reverse
             val queue = StackOps.taglessFinal.replay[InceptionQ, Int](ops)
 
-            asList.size should be(S.lengthSeq(queue))
+            { asList.size should be(S.lengthSeq(queue)) } withClue s"from list:\n\t$asList\nas queue\n\t$queue"
 
             var fs: InceptionQ[Int] = null
             var ps = queue

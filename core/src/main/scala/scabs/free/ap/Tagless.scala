@@ -2,7 +2,8 @@ package scabs
 package free
 package ap
 
-import scabs.Util.{Applicative, Traverse, ~>}
+import cats._
+import cats.implicits._
 import scabs.free.Constraint.{FreeApplicative, FreeConstraint1}
 
 sealed trait Tagless[F[_], A] {
@@ -24,12 +25,12 @@ object Tagless {
         ev.map2(fa.retract, fb.retract)(f)
     }
 
-  def ap[F[_], A, B](fa: Tagless[F, A])(ff: Tagless[F, A => B]): Tagless[F, B] = new Tagless[F, B] {
+  def ap[F[_], A, B](ff: Tagless[F, A => B])(fa: Tagless[F, A]): Tagless[F, B] = new Tagless[F, B] {
     def foldMap[G[_]](trans: ~>[F, G])(implicit ev: Applicative[G]): G[B] =
-      ev.ap(fa.foldMap(trans))(ff.foldMap(trans))
+      ev.ap(ff.foldMap(trans))(fa.foldMap(trans))
 
     def retract(implicit ev: Applicative[F]): F[B] =
-      ev.ap(fa.retract)(ff.retract)
+      ev.ap(ff.retract)(fa.retract)
   }
 
   def pure[F[_], A](a: A): Tagless[F, A] = new Tagless[F, A] {
@@ -44,10 +45,10 @@ object Tagless {
     def retract(implicit ev: Applicative[F]): F[A] = fa
   }
 
-  def fmap[F[_], A, B](frf: Tagless[F, A])(f: A => B): Tagless[F, B] = new Tagless[F, B] {
-    def foldMap[G[_]](trans: ~>[F, G])(implicit ev: Applicative[G]): G[B] = ev.fmap(frf.foldMap(trans))(f)
+  def map[F[_], A, B](frf: Tagless[F, A])(f: A => B): Tagless[F, B] = new Tagless[F, B] {
+    def foldMap[G[_]](trans: ~>[F, G])(implicit ev: Applicative[G]): G[B] = ev.map(frf.foldMap(trans))(f)
 
-    def retract(implicit ev: Applicative[F]): F[B] = ev.fmap(frf.retract)(f)
+    def retract(implicit ev: Applicative[F]): F[B] = ev.map(frf.retract)(f)
   }
 
   implicit def freeApplicativeTagless[F[_]]: FreeApplicative[F, Curried[F]#l] =
@@ -56,13 +57,13 @@ object Tagless {
         def pure[A](a: A): Tagless[F, A] =
           Tagless.pure(a)
 
-        def ap[A, B](fa: Tagless[F, A])(ff: Tagless[F, A => B]): Tagless[F, B] =
-          Tagless.ap(fa)(ff)
+        def ap[A, B](ff: Tagless[F, A => B])(fa: Tagless[F, A]): Tagless[F, B] =
+          Tagless.ap(ff)(fa)
 
         def traverse[S[_] : Traverse, A, B](fa: S[A])(f: (A) => Tagless[F, B]): Tagless[F, S[B]] =
           Traverse[S].traverse[Curried[F]#l, A, B](fa)(f)
 
-        def sequence[S[_] : Traverse, A](fa: S[Tagless[F, A]]): Tagless[F, S[A]] =
+        override def sequence[S[_] : Traverse, A](fa: S[Tagless[F, A]]): Tagless[F, S[A]] =
           Traverse[S].sequence[Curried[F]#l, A](fa)
       }
 

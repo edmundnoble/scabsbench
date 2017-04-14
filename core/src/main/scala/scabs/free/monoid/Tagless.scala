@@ -2,7 +2,8 @@ package scabs
 package free
 package monoid
 
-import scabs.Util.Monoid
+import cats._
+import cats.implicits._
 import scabs.free.Constraint.{FreeConstraint0, FreeMonoid}
 
 object Tagless {
@@ -17,17 +18,17 @@ object Tagless {
     override def retract(v: Tagless[A])(implicit ev: Monoid[A]): A = v.retract
 
     override val generated: Monoid[Tagless[A]] = new Monoid[Tagless[A]] {
-      override def mempty: Tagless[A] = Tagless.empty[A]
+      override def empty: Tagless[A] = Tagless.empty[A]
 
-      override def mappend(fst: Tagless[A], snd: Tagless[A]): Tagless[A] = Tagless.mappend(fst, snd)
+      override def combine(fst: Tagless[A], snd: Tagless[A]): Tagless[A] = Tagless.combine(fst, snd)
     }
 
     override def lift(a: A): Tagless[A] = Tagless.inj(a)
   }
 
   def empty[A]: Tagless[A] = new Tagless[A] {
-    override def foldMap[B](trans: (A) => B)(implicit B: Monoid[B]): B = B.mempty
-    override def retract(implicit ev: Monoid[A]): A = ev.mempty
+    override def foldMap[B](trans: (A) => B)(implicit B: Monoid[B]): B = B.empty
+    override def retract(implicit ev: Monoid[A]): A = ev.empty
   }
 
   def inj[A](value: A): Tagless[A] = new Tagless[A] {
@@ -35,10 +36,10 @@ object Tagless {
     override def retract(implicit ev: Monoid[A]): A = value
   }
 
-  def mappend[A](fst: Tagless[A], snd: Tagless[A]): Tagless[A] = new Tagless[A] {
+  def combine[A](fst: Tagless[A], snd: Tagless[A]): Tagless[A] = new Tagless[A] {
     override def foldMap[B](trans: (A) => B)(implicit B: Monoid[B]): B =
-      B.mappend(fst.foldMap(trans), snd.foldMap(trans))
-    override def retract(implicit ev: Monoid[A]): A = ev.mappend(fst.retract, snd.retract)
+      B.combine(fst.foldMap(trans), snd.foldMap(trans))
+    override def retract(implicit ev: Monoid[A]): A = ev.combine(fst.retract, snd.retract)
   }
 
 }

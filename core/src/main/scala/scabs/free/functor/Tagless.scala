@@ -2,7 +2,8 @@ package scabs
 package free
 package functor
 
-import scabs.Util.{Functor, ~>}
+import cats._
+import cats.implicits._
 import scabs.free.Constraint.{FreeConstraint1, FreeFunctor}
 
 sealed abstract class Tagless[F[_], A] {
@@ -12,11 +13,11 @@ sealed abstract class Tagless[F[_], A] {
 
 object Tagless {
   type Curried[F[_]] = {type l[A] = Tagless[F, A]}
-  def fmap[F[_], A, B](self: Tagless[F, A])(fun: A => B): Tagless[F, B] = new Tagless[F, B] {
+  def map[F[_], A, B](self: Tagless[F, A])(fun: A => B): Tagless[F, B] = new Tagless[F, B] {
     def foldMap[G[_]](trans: ~>[F, G])(implicit G: Functor[G]): G[B] =
-      G.fmap(self.foldMap(trans))(fun)
+      G.map(self.foldMap(trans))(fun)
     def retract(implicit F: Functor[F]): F[B] =
-      F.fmap(self.retract)(fun)
+      F.map(self.retract)(fun)
   }
   def lift[F[_], A](value: F[A]): Tagless[F, A] = new Tagless[F, A] {
     def foldMap[G[_]](trans: ~>[F, G])(implicit G: Functor[G]): G[A] =
@@ -27,8 +28,8 @@ object Tagless {
 
   implicit def freeFunctorTagless[F[_]]: FreeFunctor[F, Curried[F]#l] = new FreeConstraint1[Functor, F, Curried[F]#l] {
     val generated: Functor[Curried[F]#l] = new Functor[Curried[F]#l] {
-      def fmap[A, B](fa: Tagless[F, A])(f: (A) => B): Tagless[F, B] =
-        Tagless.fmap(fa)(f)
+      def map[A, B](fa: Tagless[F, A])(f: (A) => B): Tagless[F, B] =
+        Tagless.map(fa)(f)
     }
 
     def foldMap[A, G[_]](fv: Tagless[F, A])(trans: F ~> G)(implicit ev: Functor[G]): G[A] =

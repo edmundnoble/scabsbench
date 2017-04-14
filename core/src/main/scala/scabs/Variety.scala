@@ -1,6 +1,7 @@
 package scabs
 
 import cats.Eq
+import org.scalacheck.rng.Seed
 
 abstract class Variety[Typeclass[_[_]]](val name: String) {
   type Type[_]

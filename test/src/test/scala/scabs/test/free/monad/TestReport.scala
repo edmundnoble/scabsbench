@@ -3,7 +3,6 @@ package test
 package free
 package monad
 
-import scabs.seq.Sequence
-import scabs.test.seq.Tests
+import cats.implicits._
 
-class TestReport extends ScalatestSuiteK[Sequence](Tests.suite)
+class TestReport extends ScalatestSuiteK(new Tests[Option].suite)

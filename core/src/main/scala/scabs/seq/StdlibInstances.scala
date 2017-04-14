@@ -1,7 +1,8 @@
 package scabs
 package seq
 
-import cats.Eq
+import cats._
+import cats.implicits._
 import scabs.Util._
 
 import scala.collection.immutable.Queue
@@ -11,7 +12,7 @@ object StdlibInstances {
   type Endo[A] = A => A
 
   implicit val funSemiK: SemigroupK[Endo] = new SemigroupK[Endo] {
-    override def mappend[A](fst: Endo[A], snd: Endo[A]): Endo[A] = fst andThen snd
+    override def combineK[A](fst: Endo[A], snd: Endo[A]): Endo[A] = fst andThen snd
   }
 
   implicit val vectorSequenceInstance: Sequence[Vector] = new Sequence[Vector] {
@@ -193,7 +194,7 @@ object StdlibInstances {
   }
 
   implicit def kleisliCategoryTailrec[F[_]](implicit F: Monad[F]): CategoryTailrec[KleisliC[F]#l] = new CategoryTailrec[KleisliC[F]#l] {
-    override def compose[A, B, C](ab: (A) => F[B], bc: (B) => F[C]): (A) => F[C] = a => F.bind(ab(a))(bc)
+    override def compose[A, B, C](ab: (A) => F[B], bc: (B) => F[C]): (A) => F[C] = a => F.flatMap(ab(a))(bc)
 
     override def id[A]: (A) => F[A] = a => F.pure(a)
 
@@ -202,7 +203,7 @@ object StdlibInstances {
       seq.foreach(new (KleisliC[F]#l ~~> BiConst[Unit]#l){
         override def apply[C, D](fa: C => F[D]): Unit = {
           val faUnsafe = fa.asInstanceOf[Any => F[Any]]
-          now = F.bind(now)(faUnsafe)
+          now = F.flatMap(now)(faUnsafe)
         }
       })
       now.asInstanceOf[F[B]]
@@ -214,30 +215,30 @@ object StdlibInstances {
   }
 
   implicit def functionEvaluableFunctor[F[_]](implicit F: Functor[F]): Evaluable[Function1, F] = new Evaluable[Function1, F] {
-    override def eval[A, B](a: F[A], arr: A => B): F[B] = F.fmap(a)(arr)
+    override def eval[A, B](a: F[A], arr: A => B): F[B] = F.map(a)(arr)
   }
 
-  implicit def functionEvaluableMonad[F[_]](implicit F: Monad[F]): Evaluable[Function1, F] = new Evaluable[Function1, F] {
-    override def eval[A, B](a: F[A], arr: A => B): F[B] = F.fmap(a)(arr)
-  }
+//  implicit def functionEvaluableMonad[F[_]](implicit F: Monad[F]): Evaluable[Function1, F] = new Evaluable[Function1, F] {
+//    override def eval[A, B](a: F[A], arr: A => B): F[B] = F.map(a)(arr)
+//  }
 
   implicit def kleisliEvaluable[F[_]](implicit F: Monad[F]): Evaluable[KleisliC[F]#l, F] = new Evaluable[KleisliC[F]#l, F] {
-    override def eval[A, B](a: F[A], arr: (A) => F[B]): F[B] = F.bind(a)(arr)
+    override def eval[A, B](a: F[A], arr: (A) => F[B]): F[B] = F.flatMap(a)(arr)
   }
 
   implicit def staticEvaluable[F[_]](implicit F: Applicative[F]): Evaluable[StaticC[F]#l, F] = new Evaluable[StaticC[F]#l, F] {
-    override def eval[A, B](a: F[A], arr: F[(A) => B]): F[B] = F.ap(a)(arr)
+    override def eval[A, B](a: F[A], arr: F[(A) => B]): F[B] = F.ap(arr)(a)
   }
 
   implicit def steticEvaluable[F[_]](implicit F: Applicative[F]): Evaluable[SteticC[F]#l, F] = new Evaluable[SteticC[F]#l, F] {
     override def eval[A, B](a: F[A], arr: Stetic[F, A, B]): F[B] =
-      arr.fold(F.ap(a), F.fmap(a))
+      arr.fold(F.ap(_)(a), F.map(a))
   }
 
   def steticEvaluableTrans[F[_], G[_]](trans: F ~> G)(implicit G: Applicative[G]): Evaluable[SteticC[F]#l, G] =
     new Evaluable[SteticC[F]#l, G] {
       override def eval[A, B](a: G[A], arr: Stetic[F, A, B]): G[B] =
-        arr.fold(fa => G.ap(a)(trans(fa)), G.fmap(a))
+        arr.fold(fa => G.ap(trans(fa))(a), G.map(a))
     }
 
 }

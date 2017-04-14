@@ -1,6 +1,7 @@
 package scabs
 package free
 
+import cats.{Applicative, Functor, Monad, Monoid, ~>}
 import scabs.Util._
 
 object Constraint {

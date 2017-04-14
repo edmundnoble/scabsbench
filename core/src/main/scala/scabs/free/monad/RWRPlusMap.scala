@@ -2,11 +2,13 @@ package scabs
 package free
 package monad
 
-import scabs.Util._
+import cats._
+import cats.implicits._
 import scabs.free.Constraint.{FreeConstraint1, FreeMonad}
 import scabs.seq.{Sequence, TASequence}
 import scabs.seq.StdlibInstances._
 import cats.syntax.either._
+import scabs.Util.{Evaluable, KleisliC}
 
 import scala.annotation.tailrec
 
@@ -28,9 +30,9 @@ object RWRPlusMap {
         case RWRPlusMap.Pure(a) =>
           G.pure(Right[RWRPlusMap[S, F, Any], Any](a.asInstanceOf[Any]))
         case RWRPlusMap.Seq(nv, s) =>
-          G.fmap(trans(nv))(b => Left[RWRPlusMap[S, F, Any], Any](RWRPlusMap.runSeq(b, s)))
+          G.map(trans(nv))(b => Left[RWRPlusMap[S, F, Any], Any](RWRPlusMap.runSeq(b, s)))
         case RWRPlusMap.Map(nv, maps) =>
-          G.fmap(Evaluable.tailRecEval(trans(nv), maps))(v => Right(v))
+          G.map(Evaluable.tailRecEval(trans(nv), maps))(v => Right(v))
       }
     result.asInstanceOf[G[A]]
   }
@@ -41,20 +43,22 @@ object RWRPlusMap {
         case RWRPlusMap.Pure(a) =>
           F.pure(Right[RWRPlusMap[S, F, Any], Any](a.asInstanceOf[Any]))
         case RWRPlusMap.Seq(nv, s) =>
-          F.fmap(nv)(b => Left[RWRPlusMap[S, F, Any], Any](RWRPlusMap.runSeq(b, s)))
+          F.map(nv)(b => Left[RWRPlusMap[S, F, Any], Any](RWRPlusMap.runSeq(b, s)))
         case RWRPlusMap.Map(nv, maps) =>
-          Evaluable.tailRecEval(nv, maps.andThen((x: Any) => Either.right[RWRPlusMap[S, F, Any], Any](x)))(S, functionEvaluableMonad[F])
+          Evaluable.tailRecEval[Function1, S, F, Nothing, Either[RWRPlusMap[S, F, Any], Any]](nv.asInstanceOf[F[Nothing]],
+            maps.andThen((x: Any) => Right[RWRPlusMap[S, F, Any], Any](x))
+          )(S, functionEvaluableFunctor[F])
       }
     result.asInstanceOf[F[A]]
   }
 
 //  @tailrec
   final def runSeq[S[_], F[_], A, B](v: A, nexts: TASequence[S, KleisliC[Curried[S, F]#l]#l, A, B])(implicit S: Sequence[S]): RWRPlusMap[S, F, Any] =
-    nexts.uncons match {
+    nexts.uncons[A] match {
       case None => pure(v)
       case Some((head, tail)) =>
         val tailAny = tail.asInstanceOf[TASequence[S, KleisliC[Curried[S, F]#l]#l, Any, Any]]
-        head(v.asInstanceOf[Nothing]) match {
+        head(v) match {
           case RWRPlusMap.Pure(a) => runSeq(a, tailAny)
           case RWRPlusMap.Seq(nv, s) => RWRPlusMap.Seq[S, F, Any, Any](nv,
             (s ++ tailAny).asInstanceOf[TASequence[S, KleisliC[Curried[S, F]#l]#l, Any, Any]])
@@ -73,17 +77,14 @@ object RWRPlusMap {
         def pure[A](a: A): RWRPlusMap[S, F, A] =
           RWRPlusMap.pure(a)
 
-        def fmap[A, B](fa: RWRPlusMap[S, F, A])(f: (A) => B): RWRPlusMap[S, F, B] =
+        override def map[A, B](fa: RWRPlusMap[S, F, A])(f: (A) => B): RWRPlusMap[S, F, B] =
           fa.map(f)
 
-        def bind[A, B](fa: RWRPlusMap[S, F, A])(f: (A) => RWRPlusMap[S, F, B]): RWRPlusMap[S, F, B] =
+        def flatMap[A, B](fa: RWRPlusMap[S, F, A])(f: (A) => RWRPlusMap[S, F, B]): RWRPlusMap[S, F, B] =
           fa.flatMap(f)
 
-        def join[A](ffa: RWRPlusMap[S, F, RWRPlusMap[S, F, A]]): RWRPlusMap[S, F, A] =
-          ffa.flatMap(identity)
-
         def tailRecM[A, B](a: A)(f: (A) => RWRPlusMap[S, F, Either[A, B]]): RWRPlusMap[S, F, B] =
-          bind(f(a)) {
+          flatMap(f(a)) {
             case Right(b) => pure(b)
             case Left(next) => tailRecM(next)(f)
           }

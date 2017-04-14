@@ -5,6 +5,8 @@ package seq
 import org.scalacheck.{Arbitrary, Gen, Prop}
 import org.scalatest.prop.Checkers
 import scabs.Util._
+import cats._
+import cats.implicits._
 import scabs.seq.Sequence
 import scabs.seq.StdlibInstances._
 

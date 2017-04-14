@@ -2,7 +2,8 @@ package scabs
 package free
 package monad
 
-import scabs.Util._
+import cats._
+import cats.implicits._
 import scabs.free.Constraint.FreeMonad
 
 sealed trait ADTCPS[F[_], A] {
@@ -16,17 +17,17 @@ object ADTCPS {
     val generated: Monad[Curried[F]#l] = new Monad[Curried[F]#l] {
       override def pure[A](a: A): ADTCPS[F, A] = ADTCPS.Pure(a)
 
-      override def fmap[A, B](fa: ADTCPS[F, A])(f: (A) => B): ADTCPS[F, B] =
-        bind(fa)(f.andThen(ADTCPS.Pure(_)))
+      override def map[A, B](fa: ADTCPS[F, A])(f: (A) => B): ADTCPS[F, B] =
+        flatMap(fa)(f.andThen(ADTCPS.Pure(_)))
 
-      override def bind[A, B](fa: ADTCPS[F, A])(f: (A) => ADTCPS[F, B]): ADTCPS[F, B] =
+      override def flatMap[A, B](fa: ADTCPS[F, A])(f: (A) => ADTCPS[F, B]): ADTCPS[F, B] =
         ADTCPS.Bind(fa, f)
 
-      override def join[A](ffa: ADTCPS[F, ADTCPS[F, A]]): ADTCPS[F, A] =
-        bind(ffa)(fa => fa)
+      override def flatten[A](ffa: ADTCPS[F, ADTCPS[F, A]]): ADTCPS[F, A] =
+        flatMap(ffa)(fa => fa)
 
       override def tailRecM[A, B](a: A)(f: (A) => ADTCPS[F, Either[A, B]]): ADTCPS[F, B] =
-        bind(f(a))(_.fold(tailRecM(_)(f), pure))
+        flatMap(f(a))(_.fold(tailRecM(_)(f), pure))
     }
     def foldMap[A, G[_]](fv: ADTCPS[F, A])(trans: F ~> G)(implicit ev: Monad[G]): G[A] = fv.foldMap(trans)
     def retract[A](fv: ADTCPS[F, A])(implicit ev: Monad[F]): F[A] = fv.retract
@@ -44,11 +45,11 @@ object ADTCPS {
     override def retract(implicit F: Monad[F]): F[A] =
       value
   }
-  case class Bind[F[_], A, B](free: ADTCPS[F, A], bind: A => ADTCPS[F, B]) extends ADTCPS[F, B] {
+  case class Bind[F[_], A, B](free: ADTCPS[F, A], flatMap: A => ADTCPS[F, B]) extends ADTCPS[F, B] {
     override def foldMap[G[_]](trans: ~>[F, G])(implicit G: Monad[G]): G[B] =
-      G.bind(free.foldMap(trans))(bind.andThen(_.foldMap(trans)))
+      G.flatMap(free.foldMap(trans))(flatMap.andThen(_.foldMap(trans)))
     override def retract(implicit F: Monad[F]): F[B] =
-      F.bind(free.retract)(bind(_).retract)
+      F.flatMap(free.retract)(flatMap(_).retract)
   }
 }
 

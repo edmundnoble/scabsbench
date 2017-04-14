@@ -2,7 +2,8 @@ package scabs
 package free
 package ap
 
-//import scabs.Util._
+//import cats._
+//import cats.implicits._
 //import scabs.free.Constraint.{FreeApplicative, FreeConstraint1}
 //import scabs.free.ap.ApSequenceDirect.Curried
 //import scabs.seq.{Sequence, StdlibInstances, TASequence}

@@ -2,7 +2,8 @@ package scabs
 package free
 package monad
 
-import scabs.Util.{Monad, ~>}
+import cats._
+import cats.implicits._
 import scabs.free.Constraint.{FreeConstraint1, FreeMonad}
 
 sealed trait Tagless[F[_], A] {
@@ -19,17 +20,17 @@ object Tagless {
       def pure[A](a: A): Tagless[F, A] =
         Tagless.pure(a)
 
-      def fmap[A, B](fa: Tagless[F, A])(f: (A) => B): Tagless[F, B] =
-        Tagless.fmap(fa)(f)
+      override def map[A, B](fa: Tagless[F, A])(f: (A) => B): Tagless[F, B] =
+        Tagless.map(fa)(f)
 
-      def bind[A, B](fa: Tagless[F, A])(f: (A) => Tagless[F, B]): Tagless[F, B] =
-        Tagless.bind(fa)(f)
+      def flatMap[A, B](fa: Tagless[F, A])(f: (A) => Tagless[F, B]): Tagless[F, B] =
+        Tagless.flatMap(fa)(f)
 
-      def join[A](ffa: Tagless[F, Tagless[F, A]]): Tagless[F, A] =
-        Tagless.join(ffa)
+      override def flatten[A](ffa: Tagless[F, Tagless[F, A]]): Tagless[F, A] =
+        Tagless.flatten(ffa)
 
       def tailRecM[A, B](a: A)(f: (A) => Tagless[F, Either[A, B]]): Tagless[F, B] =
-        Tagless.bind(f(a))(_.fold(tailRecM(_)(f), pure))
+        Tagless.flatMap(f(a))(_.fold(tailRecM(_)(f), pure))
     }
 
     def foldMap[A, G[_]](fv: Tagless[F, A])(trans: ~>[F, G])(implicit ev: Monad[G]): G[A] =
@@ -50,12 +51,12 @@ object Tagless {
       F.pure(a)
   }
 
-  def fmap[F[_], A, B](fa: Tagless[F, A])(f: A => B): Tagless[F, B] = new Tagless[F, B] {
+  def map[F[_], A, B](fa: Tagless[F, A])(f: A => B): Tagless[F, B] = new Tagless[F, B] {
     def foldMap[G[_]](trans: F ~> G)(implicit G: Monad[G]): G[B] =
-      G.fmap(fa.foldMap(trans))(f)
+      G.map(fa.foldMap(trans))(f)
 
     def retract(implicit F: Monad[F]): F[B] =
-      F.fmap(fa.retract)(f)
+      F.map(fa.retract)(f)
   }
 
   def lift[F[_], A](alg: F[A]): Tagless[F, A] = new Tagless[F, A] {
@@ -66,20 +67,20 @@ object Tagless {
       alg
   }
 
-  def bind[F[_], A, B](fa: Tagless[F, A])(f: A => Tagless[F, B]): Tagless[F, B] = new Tagless[F, B] {
+  def flatMap[F[_], A, B](fa: Tagless[F, A])(f: A => Tagless[F, B]): Tagless[F, B] = new Tagless[F, B] {
     def foldMap[G[_]](trans: F ~> G)(implicit G: Monad[G]): G[B] =
-      G.bind(fa.foldMap(trans))(f(_).foldMap(trans))
+      G.flatMap(fa.foldMap(trans))(f(_).foldMap(trans))
 
     def retract(implicit F: Monad[F]): F[B] =
-      F.bind(fa.retract)(f(_).retract)
+      F.flatMap(fa.retract)(f(_).retract)
   }
 
-  def join[F[_], A](ffa: Tagless[F, Tagless[F, A]]): Tagless[F, A] = new Tagless[F, A] {
+  def flatten[F[_], A](ffa: Tagless[F, Tagless[F, A]]): Tagless[F, A] = new Tagless[F, A] {
     def foldMap[G[_]](trans: F ~> G)(implicit G: Monad[G]): G[A] =
-      G.bind(ffa.foldMap(trans))(_.foldMap(trans))
+      G.flatMap(ffa.foldMap(trans))(_.foldMap(trans))
 
     def retract(implicit F: Monad[F]): F[A] =
-      F.bind(ffa.retract)(_.retract)
+      F.flatMap(ffa.retract)(_.retract)
   }
 
 }

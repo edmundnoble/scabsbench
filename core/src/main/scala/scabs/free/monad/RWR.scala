@@ -2,7 +2,8 @@ package scabs
 package free
 package monad
 
-import scabs.Util.{Monad, ~>}
+import cats._
+import cats.implicits._
 import scabs.free.Constraint.{FreeConstraint1, FreeMonad}
 import scabs.seq.Sequence
 
@@ -22,7 +23,7 @@ object RWR {
         case RWR.Pure(a) =>
           G.pure(Right[RWR[S, F, Any], Any](a.asInstanceOf[Any]))
         case RWR.Seq(nv, s) =>
-          G.fmap(trans(nv))(b => Left[RWR[S, F, Any], Any](RWR.run(b, s)))
+          G.map(trans(nv))(b => Left[RWR[S, F, Any], Any](RWR.run(b, s)))
       }
     result.asInstanceOf[G[A]]
   }
@@ -33,7 +34,7 @@ object RWR {
         case RWR.Pure(a) =>
           F.pure(Right[RWR[S, F, Any], Any](a.asInstanceOf[Any]))
         case RWR.Seq(nv, s) =>
-          F.fmap(nv)(b => Left[RWR[S, F, Any], Any](RWR.run(b, s)))
+          F.map(nv)(b => Left[RWR[S, F, Any], Any](RWR.run(b, s)))
       }
     result.asInstanceOf[F[A]]
   }
@@ -55,17 +56,17 @@ object RWR {
       val generated: Monad[Curried[S, F]#l] = new Monad[Curried[S, F]#l] {
         def pure[A](a: A): RWR[S, F, A] = RWR.Pure(a)
 
-        def fmap[A, B](fa: RWR[S, F, A])(f: (A) => B): RWR[S, F, B] =
-          bind(fa)(f.andThen(RWR.Pure[S, F, B]))
+        override def map[A, B](fa: RWR[S, F, A])(f: (A) => B): RWR[S, F, B] =
+          flatMap(fa)(f.andThen(RWR.Pure[S, F, B]))
 
-        def bind[A, B](fa: RWR[S, F, A])(f: (A) => RWR[S, F, B]): RWR[S, F, B] =
+        def flatMap[A, B](fa: RWR[S, F, A])(f: (A) => RWR[S, F, B]): RWR[S, F, B] =
           fa.flatMap(f)
 
-        def join[A](ffa: RWR[S, F, RWR[S, F, A]]): RWR[S, F, A] =
-          bind(ffa)(identity)
+        override def flatten[A](ffa: RWR[S, F, RWR[S, F, A]]): RWR[S, F, A] =
+          flatMap(ffa)(identity)
 
         def tailRecM[A, B](a: A)(f: (A) => RWR[S, F, Either[A, B]]): RWR[S, F, B] =
-          bind(f(a)) {
+          flatMap(f(a)) {
             case Right(b)   => pure(b)
             case Left(next) => tailRecM(next)(f)
           }

@@ -4,7 +4,8 @@ package seq
 
 import java.nio.ByteBuffer
 
-import cats.SemigroupK
+import cats._
+import cats.implicits._
 import org.scalameter.api._
 import org.scalameter.picklers.{IntPickler, PrimitivePickler}
 import scabs.seq.{Bin, LTree, Lf, Sequence}
@@ -24,10 +25,10 @@ object Manipulators {
   val constructSizes: Gen[Int] = Gen.enumeration("constructSizes")(10, 100, 2000, 3000)
   val queueBenchSizes: Gen[Int] = Gen.enumeration("queueBenchSizes")(6000)
   val stackBenchSizes: Gen[Int] = Gen.enumeration("stackBenchSizes")(6000)
-  val destructSizes: Gen[Int] = Gen.enumeration("destructSizes")(1500, 3000)
+  val destructSizes: Gen[Int] = Gen.enumeration("destructSizes")(3500, 7000)
   val concatInnerOuterSizes: Gen[(Int, Int)] = Gen.enumeration("concatInnerOuterSizes")((300, 30), (500, 50))
-  val treeSizes: Gen[Int] = Gen.enumeration("treeSizes")(500, 1000, 2000)
-  val balancedTreeSizes: Gen[Int] = Gen.enumeration("balancedTreeSizes")(16, 19)
+  val treeSizes: Gen[Int] = Gen.enumeration("treeSizes")(500, 5000, 10000)
+  val balancedTreeSizes: Gen[Int] = Gen.enumeration("balancedTreeSizes")(16, 20)
   val leftNestedTrees: Gen[LTree[Int]] = treeSizes.map(TreeManipulators.generateLeftNestedTree(0, _))
   val rightNestedTrees: Gen[LTree[Int]] = treeSizes.map(TreeManipulators.generateRightNestedTree(0, _))
   val jaggedNestedTrees: Gen[LTree[Int]] = treeSizes.map(TreeManipulators.generateJaggedTree(0, _))
@@ -90,10 +91,10 @@ object Manipulators {
   def concatLeft[S[_]](seq: List[S[Int]])(implicit S: Sequence[S]): Int =
     sum[S](seq.reduceLeft(S.concat))
 
-  def frontierRec[S[_], A](tree: LTree[A])(implicit S: Sequence[S]): S[A] =
+  def frontierRec[S[_], A](tree: LTree[A])(implicit S: Sequence[S]): Eval[S[A]] =
     tree match {
-      case Lf(a) => S.one(a)
-      case Bin(_, left, right) => S.concat(frontierRec[S, A](left), frontierRec[S, A](right))
+      case Lf(a) => Eval.now(S.one(a))
+      case Bin(_, left, right) => (Eval.defer(frontierRec[S, A](left)) |@| Eval.defer(frontierRec[S, A](right))).map(S.concat)
     }
 
   def foldMap[S[_], A](tree: LTree[S[A]])(implicit S: SemigroupK[S]): S[A] =
@@ -112,8 +113,6 @@ object Manipulators {
     if (size == 0) start
     else stack[S](S.tail(S.cons(size, start)), size - 1)
 
-  def noop[S[_]](seq: S[Int])(implicit S: Sequence[S]): Unit = {
-    // do nothing -- just testing building speed
-  }
+  def noop[S[_]](seq: S[Int])(implicit S: Sequence[S]): S[Int] = seq
 
 }

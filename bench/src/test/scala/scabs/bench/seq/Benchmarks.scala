@@ -83,25 +83,14 @@ object Benchmarks {
 
   final case class ConcatAndSumTreeBenchmark(name0: String, input0: Gen[LTree[Int]])
     extends ConstantInputBenchmark[Sequence, LTree[Int]](name0, input0) {
-    def runBenchmark[Type[_] : Sequence](input: LTree[Int]): Any = sum(frontierRec[Type, Int](input))
-  }
-
-  final case class ConcatTreeBenchmark(name0: String, input0: Gen[LTree[Int]])
-    extends ConstantInputBenchmark[Sequence, LTree[Int]](name0, input0) {
-    def runBenchmark[Type[_] : Sequence](input: LTree[Int]): Any = noop(frontierRec[Type, Int](input))
+    def runBenchmark[Type[_] : Sequence](input: LTree[Int]): Any = sum(frontierRec[Type, Int](input).value)
   }
 
   val concatLeftNestedBench =
     ConcatAndSumTreeBenchmark("concatenating and summing left-nested trees", leftNestedTrees)
 
-  val concatLeftNestedBuildOnlyBench =
-    ConcatTreeBenchmark("concatenating left-nested trees", leftNestedTrees)
-
   val concatRightNestedBench =
     ConcatAndSumTreeBenchmark("concatenating and summing right-nested trees", rightNestedTrees)
-
-  val concatRightNestedBuildOnlyBench =
-    ConcatTreeBenchmark("concatenating right-nested trees", rightNestedTrees)
 
   val concatJaggedNestedBench =
     ConcatAndSumTreeBenchmark("concatenating and summing jagged trees", jaggedNestedTrees)
@@ -110,13 +99,12 @@ object Benchmarks {
     ConcatAndSumTreeBenchmark("concatenating and summing balanced trees", balancedNestedTrees)
 
   val sequenceVarieties: Seq[Variety[Sequence]] = Seq(
-    Variety[Sequence, List]("list"),
+//    Variety[Sequence, List]("list"),
     Variety[Sequence, Vector]("vec"),
-    Variety[Sequence, Queue]("que"),
+//    Variety[Sequence, Queue]("que"),
     Variety[Sequence, Catenable]("cat"),
     Variety[Sequence, CatenableArrLeaves]("catarr"),
     Variety[Sequence, TurtleQ]("turtle"),
-//    Variety[Sequence, PQueue]("pqueue"),
     Variety[Sequence, InceptionQ]("inceptionq")
   )
 
@@ -130,8 +118,6 @@ object Benchmarks {
     snocConcatBenchRight,
     concatLeftNestedBench,
     concatRightNestedBench,
-    concatLeftNestedBuildOnlyBench,
-    concatRightNestedBuildOnlyBench,
     concatJaggedNestedBench,
     concatBalancedNestedBench
   )

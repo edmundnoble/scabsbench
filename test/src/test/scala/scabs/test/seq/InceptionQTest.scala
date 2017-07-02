@@ -6,6 +6,7 @@ import InceptionQ._
 import org.scalatest.prop.{Checkers, PropertyChecks}
 import org.scalacheck.Arbitrary._
 import org.scalacheck.{Gen, Prop}
+import scabs.test.seq.Tests.StackOpsTest
 
 /**
   *
@@ -44,103 +45,103 @@ class InceptionQTest extends WordSpec with PropertyChecks with Matchers with App
       implicit val genOps: Gen[StackOps[Int]] = StackOps.genOps[Int]
 
       "cons uncons" in {
-        forAll(genOps) { ops =>
-          val S = implicitly[Sequence[InceptionQ]]
-
-          val queue = StackOps.taglessFinal.replay[InceptionQ, Int](ops)
+        forAll(genOps)(ops => {
+          val queue = ops.replay[InceptionQ]
 
           val cQueue = 42 +: queue
           val Some((h, dQ)) = cQueue.uncons
 
-          cQueue.size should be (queue.size + 1)
-          dQ.size should be (queue.size)
-          h should be (42)
-        }
+          cQueue.size should be(queue.size + 1)
+          dQ.size should be(queue.size)
+          h should be(42)
+        })
       }
 
       "snoc unsnoc" in {
-        forAll(genOps) { ops =>
-          val S = implicitly[Sequence[InceptionQ]]
-
-          val queue = StackOps.taglessFinal.replay[InceptionQ, Int](ops)
+        forAll(genOps)(ops => {
+          val queue = ops.replay[InceptionQ]
 
           val sQueue = queue :+ 42
           val Some((dQ, h)) = sQueue.unsnoc
 
-          sQueue.size should be (queue.size + 1)
-          dQ.size should be (queue.size)
-          h should be (42)
-        }
+          sQueue.size should be(queue.size + 1)
+          dQ.size should be(queue.size)
+          h should be(42)
+        })
       }
 
       "uncons" should {
         "to a queue with one fewer elements" in {
-          forAll(genOps) { ops: StackOps[Int] =>
-            implicit val L = scabs.seq.StdlibInstances.listSequenceInstance
-            val S = implicitly[Sequence[InceptionQ]]
+          unconsDecreasesLengthByOne[InceptionQ]
+        }
+      }
 
-            val asList = StackOps.taglessFinal.replay[List, Int](ops)
-            val queue = StackOps.taglessFinal.replay[InceptionQ, Int](ops)
+      def unconsDecreasesLengthByOne[S[_]](implicit S: Sequence[S]): Assertion = {
+        forAll(genOps)((ops: StackOps[Int]) => {
+          import scabs.seq.StdlibInstances.listSequenceInstance
 
-            { asList.size should be(S.lengthSeq(queue)) } withClue s"from list:\n\t$asList\nas queue\n\t$queue"
+          val asList = ops.replay[List]
+          val queue = ops.replay[S]
 
-            var fc: InceptionQ[Int] = null
-            var pc = queue
-            var uc = S.uncons(queue)
-            for {
-              (el, i) <- asList.zipWithIndex
-            } {
-              uc match {
-                case Some((h, tl)) =>
-                  {
-                    h should be (el)
-                    tl.size should be (asList.size - i - 1)
-                  } withClue s"with prior queue:\n\t$fc\nqueue:\n\t$pc\nproducing tail:\n\t$tl\nfrom list:\n\t$asList\nstarting with:\n\t$queue\nat:\n\t$i"
-                  fc = pc
-                  pc = tl
-                  uc = S.uncons(tl)
-                case None =>
-                  asList.isEmpty
+          var fc: S[Int] = null
+          var pc = queue
+          var uc = S.uncons(queue)
+          var as: List[Assertion] = Nil
+          for {
+            (el, i) <- asList.zipWithIndex
+          } {
+            uc match {
+              case Some((h, tl)) => {
+                as ::= equal(h, el)
+                as ::= equal(S.lengthSeq(tl), asList.size - i - 1)
+              }
+                fc = pc
+                pc = tl
+                uc = S.uncons(tl)
+              case None =>
+            }
+          }
+          and(as: _*)
+        })
+
+        new StackOpsTest("") {
+          override def runTest[F[_] : Sequence](ops: StackOps[Int]): scabs.Assertion = unsnocDecreasesLengthByOne[S]
+        }
+
+        def unsnocDecreasesLengthByOne[S[_]](ops: StackOps[Int])(implicit S: Sequence[S]): scabs.Assertion = {
+              import scabs.seq.StdlibInstances.listSequenceInstance
+
+              val asList = ops.replay[List].reverse
+              val queue = ops.replay[S]
+
+              var fs: S[Int] = null
+              var ps = queue
+              var us = S.unsnoc(queue)
+              var as: List[Assertion] = Nil
+              for {
+                (el, i) <- asList.zipWithIndex
+              } {
+                us match {
+                  case Some((tl, h)) => {
+                    as ::= equal(h, el)
+                    as ::= equal(S.lengthSeq(tl), asList.size - i - 1)
+                  }
+                    fs = ps
+                    ps = tl
+                    us = S.unsnoc(tl)
+                  case _ =>
+                }
+              }
+              and(as: _*)
+            }
+
+            "unsnoc" should {
+              "to a queue with one fewer elements" in {
+                unsnocDecreasesLengthByOne[InceptionQ]
               }
             }
           }
         }
       }
 
-      "unsnoc" should {
-        "to a queue with one fewer elements" in {
-          forAll(genOps) { ops: StackOps[Int] =>
-            implicit val L = scabs.seq.StdlibInstances.listSequenceInstance
-            val S = implicitly[Sequence[InceptionQ]]
-
-            val asList = StackOps.taglessFinal.replay[List, Int](ops).reverse
-            val queue = StackOps.taglessFinal.replay[InceptionQ, Int](ops)
-
-            { asList.size should be(S.lengthSeq(queue)) } withClue s"from list:\n\t$asList\nas queue\n\t$queue"
-
-            var fs: InceptionQ[Int] = null
-            var ps = queue
-            var us = S.unsnoc(queue)
-            for {
-              (el, i) <- asList.zipWithIndex
-            } {
-              us match {
-                case Some((tl, h)) =>
-                  {
-                    h should be (el)
-                    tl.size should be (asList.size - i - 1)
-                  } withClue s"with prior queue:\n\t$fs\nqueue:\n\t$ps\nproducing tail:\n\t$tl\nfrom list:\n\t$asList\nstarting with:\n\t$queue\nat:\n\t$i"
-                  fs = ps
-                  ps = tl
-                  us = S.unsnoc(tl)
-                case None =>
-                  asList.isEmpty
-              }
-            }
-          }
-        }
-      }
     }
-  }
-
-}

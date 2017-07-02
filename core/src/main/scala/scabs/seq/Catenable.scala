@@ -158,7 +158,7 @@ object Catenable {
     override def cons[A](x: A, q: Catenable[A]): Catenable[A] = x +: q
     override def snoc[A](q: Catenable[A], y: A): Catenable[A] = q :+ y
     override def lengthSeq[A](q: Catenable[A]): Int = q.toList.length
-    override def fold[A, B](q: Catenable[A])(z: B)(f: (B, A) => B): B = q.foldLeft(z)(f)
+    override def cata[A, B](q: Catenable[A])(z: B)(f: (B, A) => B): B = q.foldLeft(z)(f)
     override def toList[A](q: Catenable[A]): List[A] = q.toList
     override def toSeq[A](xs: List[A]): Catenable[A] = fromSeq(xs)
     override def uncons[A](s: Catenable[A]): Option[(A, Catenable[A])] = s.uncons

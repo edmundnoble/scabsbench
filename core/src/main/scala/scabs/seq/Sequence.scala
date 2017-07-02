@@ -3,6 +3,8 @@ package seq
 
 import simulacrum.typeclass
 
+import scala.annotation.tailrec
+
 @typeclass trait Sequence[S[_]] {
 
   def empty[A]: S[A]
@@ -17,13 +19,27 @@ import simulacrum.typeclass
 
   def tail[A](queue: S[A]): S[A]
 
+  def tails[A](queue: S[A]): S[S[A]] = {
+    @tailrec
+    def loop(q: S[A], acc: S[S[A]]): S[S[A]] =
+    if (isEmpty(q)) acc
+    else {
+      val t = tail(q)
+      loop(t, cons(t, acc))
+    }
+    loop(queue, empty)
+  }
+
   def cons[A](x: A, q: S[A]): S[A]
 
   def snoc[A](q: S[A], y: A): S[A]
 
   def lengthSeq[A](q: S[A]): Int
 
-  def fold[A, B](q: S[A])(z: B)(f: (B, A) => B): B
+  def cata[A, B](q: S[A])(z: B)(f: (B, A) => B): B
+
+  def para[A, B](q: S[A])(z: B)(f: (B, S[A]) => B): S[B] =
+    cata(tails(q))(cons(z, empty))((sb, sa) => cons(f(head(sb), sa), sb))
 
   def toList[A](q: S[A]): List[A]
 
@@ -42,7 +58,7 @@ import simulacrum.typeclass
   def one[A](a: A): S[A] = cons(a, empty)
 
   def rebuild[R[_], A](rs: S[A])(implicit R: Sequence[R]): R[A] =
-    fold[A, R[A]](rs)(R.empty)(R.snoc)
+    cata[A, R[A]](rs)(R.empty)(R.snoc)
 
 }
 

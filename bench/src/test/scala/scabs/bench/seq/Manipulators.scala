@@ -83,7 +83,7 @@ object Manipulators {
   }
 
   def sum[S[_]](seq: S[Int])(implicit S: Sequence[S]): Int =
-    S.fold(seq)(0)(_ + _)
+    S.cata(seq)(0)(_ + _)
 
   def concatRight[S[_]](seq: List[S[Int]])(implicit S: Sequence[S]): Int =
     sum[S](seq.reduceRight(S.concat))

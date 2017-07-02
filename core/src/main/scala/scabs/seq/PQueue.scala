@@ -205,7 +205,7 @@ object PQueue {
 
     override def lengthSeq[A](q: PQueue[A]): Int = q.length
 
-    override def fold[A, B](q: PQueue[A])(z: B)(f: (B, A) => B): B = q.fold(z)(f)
+    override def cata[A, B](q: PQueue[A])(z: B)(f: (B, A) => B): B = q.fold(z)(f)
 
     override def toList[A](q: PQueue[A]): List[A] = q.fold[List[A]](Nil)((a, v) => v :: a)
 

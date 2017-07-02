@@ -98,7 +98,7 @@ object InceptionQ {
 //        println(s"Fold failed for: $q")
 //        throw e
 //    }
-    override def fold[A, B](q: InceptionQ[A])(z: B)(f: (B, A) => B): B = {
+    override def cata[A, B](q: InceptionQ[A])(z: B)(f: (B, A) => B): B = {
       var result = z
       this.foreach(q)(x => result = f(result, x))
 //      println(s"fold q2: ${q.toStructure}")

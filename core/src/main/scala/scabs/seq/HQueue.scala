@@ -16,7 +16,7 @@ object HQueue {
     override def cons[A](x: A, q: HQueue[A]): HQueue[A] = HQueue(q.size + 1, x :: q.left, q.right)
     override def snoc[A](q: HQueue[A], y: A): HQueue[A] = HQueue(q.size + 1, q.left, y :: q.right)
     override def lengthSeq[A](q: HQueue[A]): Int = q.size
-    def fold[A, B](q: HQueue[A])(z: B)(f: (B, A) => B): B =
+    def cata[A, B](q: HQueue[A])(z: B)(f: (B, A) => B): B =
       q.right.reverse.foldLeft(q.left.foldLeft(z)(f))(f)
     override def toList[A](q: HQueue[A]): List[A] = q.left ++ q.right.reverse
     override def toSeq[A](xs: List[A]): HQueue[A] = normD(xs.length, xs, Nil)

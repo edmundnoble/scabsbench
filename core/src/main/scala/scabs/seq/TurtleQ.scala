@@ -54,7 +54,7 @@ object TurtleQ {
 
       override def lengthSeq[A](q: TurtleQ[A]): Int = q.size
 
-      override def fold[A, B](q: TurtleQ[A])(z: B)(f: (B, A) => B): B = q.fold(z)(f)
+      override def cata[A, B](q: TurtleQ[A])(z: B)(f: (B, A) => B): B = q.fold(z)(f)
 
       override def toList[A](q: TurtleQ[A]): List[A] =
         q.fold[List[A]](Nil)((e, i) => i :: e)

@@ -196,7 +196,7 @@ object CatenableArrLeaves {
     override def cons[A](x: A, q: CatenableArrLeaves[A]): CatenableArrLeaves[A] = x +: q
     override def snoc[A](q: CatenableArrLeaves[A], y: A): CatenableArrLeaves[A] = q :+ y
     override def lengthSeq[A](q: CatenableArrLeaves[A]): Int = q.toList.length
-    override def fold[A, B](q: CatenableArrLeaves[A])(z: B)(f: (B, A) => B): B = q.foldLeft(z)(f)
+    override def cata[A, B](q: CatenableArrLeaves[A])(z: B)(f: (B, A) => B): B = q.foldLeft(z)(f)
     override def toList[A](q: CatenableArrLeaves[A]): List[A] = q.toList
     override def toSeq[A](xs: List[A]): CatenableArrLeaves[A] = fromSeq(xs)
     override def uncons[A](s: CatenableArrLeaves[A]): Option[(A, CatenableArrLeaves[A])] = s.uncons

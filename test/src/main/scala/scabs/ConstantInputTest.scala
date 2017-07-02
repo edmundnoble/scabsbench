@@ -1,9 +1,9 @@
 package scabs
 
 import org.scalacheck.Gen
+import org.scalatest.prop.Configuration
 
-abstract class ConstantInputTest[C[_[_]], In](testName: String, input: Gen[In]) extends Test[C](testName) {
-  type InputWrapper[A] = In
+abstract class ConstantInputTest[C[_[_]], In](testName: String, input: Gen[In],
+                                              testParameters: Seq[Configuration#PropertyCheckConfigParam] = Seq.empty) extends Test[C](testName) {
   type Input = In
-  override def generateInput[F[_] : C]: Gen[In] = input
 }

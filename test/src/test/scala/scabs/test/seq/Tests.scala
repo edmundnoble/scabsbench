@@ -13,82 +13,80 @@ import scabs.seq.StdlibInstances._
 import scala.collection.immutable.Queue
 
 object Tests {
-  def varieties: Seq[Variety[Sequence]] = Seq(
-    Variety[Sequence, List]("list"),
-    Variety[Sequence, Vector]("vec"),
-    Variety[Sequence, Queue]("que"),
-    Variety[Sequence, scabs.seq.Catenable]("cat"),
-    Variety[Sequence, scabs.seq.CatenableArrLeaves]("catarr"),
-    Variety[Sequence, scabs.seq.TurtleQ]("turtle"),
-    Variety[Sequence, scabs.seq.InceptionQ]("inceptionQ")
-  )
-
-  abstract class StringInputTest(name0: String) extends Test.AuxC[Sequence, Id, String](name0) {
-    def generateInput[F[_] : Sequence]: Gen[String] =
-      Gen.alphaNumStr
+  def varieties: Seq[Variety[Sequence]] = {
+    Seq(
+      Variety[Sequence, List]("list"),
+      Variety[Sequence, Vector]("vec"),
+      Variety[Sequence, Queue]("que"),
+      Variety[Sequence, scabs.seq.Catenable]("cat"),
+      Variety[Sequence, scabs.seq.CatenableArrLeaves]("catarr"),
+      Variety[Sequence, scabs.seq.TurtleQ]("turtle"),
+      Variety[Sequence, scabs.seq.InceptionQ]("inceptionQ")
+    )
   }
 
-  abstract class StackOpsTest(name0: String) extends Test.AuxC[Sequence, Id, StackOps[Int]](name0) {
-    override def generateInput[F[_] : Sequence]: Gen[StackOps[Int]] = {
-      StackOps.genOps
-    }
-  }
+  abstract class StackOpsTest(name0: String) extends Test.ImplicitInput[Sequence, StackOps[Int]](name0)
 
-  def consUncons = new StringInputTest("uncons(cons(s, x)) == (s, x)") {
-    def runTest[F[_] : Sequence](input: String): Assertion =
-      equal(
-        Sequence[F].uncons(Sequence[F].cons(input, Sequence[F].empty[String])),
-        Some((input, Sequence[F].empty[String]))
-      )
-  }
-
-  def snocUnsnoc = new StringInputTest("unsnoc(snoc(x, s)) == (x, s)") {
-    def runTest[F[_] : Sequence](input: String): Assertion =
-      equal(
-        Sequence[F].uncons(Sequence[F].snoc(Sequence[F].empty[String], input)),
-        Some((input, Sequence[F].empty[String]))
-      )
-  }
-
-  def arbStackOps = new StackOpsTest("stack size") {
-    override def runTest[F[_] : Sequence](input: StackOps[Int]): Assertion = {
-      val S = implicitly[Sequence[F]]
-
-      val asList = StackOps.taglessFinal.replay[List, Int](input)
-      val asSeq = StackOps.taglessFinal.replay[F, Int](input)
-
-//      println(input + "\n" + asList + "\n" + asSeq)
-
-      var uc = S.uncons(asSeq)
-      val eqEls = for {
-        (el, i) <- asList.zipWithIndex
-      } yield {
-//        println(s"$i: $el")
-//        println(uc)
-        val remainingInList = asList.size - i - 1
-        uc match {
-          case Some((h, tl)) =>
-            val areEq = equal(el, h)
-            uc = S.uncons(tl)
-//            println(s"list items remaining: $remainingInList")
-//            println(s"queue items remaining: ${S.lengthSeq(tl)}")
-            and(areEq, equal(asList.size - i, S.lengthSeq(tl)))
-          case None =>
-//            println(s"Warning: reached element $el at $i in list but run out of queue")
-            equal(remainingInList, 0)
-        }
+  def consUnconsIdentity = {
+    new StackOpsTest("uncons(cons(s, x)) == (s, x)") {
+      def runTest[F[_]](ops: StackOps[Int])(implicit F: Sequence[F]): Assertion = {
+        val input = ops.replay[F]
+        equal(
+          Sequence[F].uncons(Sequence[F].cons(1, input)),
+          Some((1, input))
+        )
       }
-
-      and(
-        equal(asList.size,
-        S.lengthSeq(asSeq)) :: eqEls :_*)
-//      equal(true, false)
     }
   }
 
-  def tests: Seq[Test[Sequence]] = Seq(
-    consUncons, snocUnsnoc, arbStackOps
-  )
+  def snocUnsnocIdentity = {
+    new StackOpsTest("unsnoc(snoc(x, s)) == (x, s)") {
+      def runTest[F[_]](ops: StackOps[Int])(implicit F: Sequence[F]): Assertion = {
+        val input = ops.replay[F]
+        equal(
+          F.uncons(F.snoc(input, "test")),
+          Some(("test", input))
+        )
+      }
+    }
+  }
+
+  def consIncrementsLength = {
+    new StackOpsTest("cons(x, s).length = s.length + 1") {
+      def runTest[F[_]](ops: StackOps[Int])(implicit F: Sequence[F]): Assertion = {
+        val input = ops.replay[F]
+        equal(
+          F.lengthSeq(F.cons("test", input)),
+          F.lengthSeq(input) + 1
+        )
+      }
+    }
+  }
+
+  def snocIncrementsLength = {
+    new StackOpsTest("snoc(s, x).length = s.length + 1") {
+      def runTest[F[_]](ops: StackOps[Int])(implicit F: Sequence[F]): Assertion = {
+        val input = ops.replay[F]
+        equal(
+          F.lengthSeq(F.snoc(input, "test")),
+          F.lengthSeq(input) + 1
+        )
+      }
+    }
+  }
+
+  def unconsDecrementsLength = new StackOpsTest("") {
+    def runTest[F[_]](input: StackOps[Int])(implicit F: Sequence[F]): Assertion = {
+
+    }
+  }
+
+
+  def tests: Seq[Test[Sequence]] = {
+    Seq(
+      consUnconsIdentity, snocUnsnocIdentity, arbStackOps
+    )
+  }
 
   val suite =
     TestSuiteK(varieties, tests)

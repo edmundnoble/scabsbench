@@ -6,42 +6,48 @@ import org.scalacheck.util.Pretty
 
 import scala.language.implicitConversions
 
-sealed abstract class Assertion
+final case class Equal[A](f: A, s: A)
 
-final case class Equal[A](f: A, s: A)(implicit val toPretty: A => Pretty) extends Assertion
+final case class StackOverflow[A](eval: () => A)
 
-final case class StackOverflow[A](eval: () => A) extends Assertion
+final case class StackSafe[A](eval: () => A)
 
-final case class StackSafe[A](eval: () => A) extends Assertion
+final case class And[A, B](f: A, s: B)
 
-final case class And(assertions: Seq[Assertion]) extends Assertion
+trait AssertionT[A] {
+  def resultOf(a: A): Prop
+}
 
-object Assertion {
+object AssertionT {
+  implicit def toAssertionOps[A](a: A): AssertionTOps[A] = new AssertionTOps[A](a)
 
-  trait DSL {
-    def equal[A](f: A, s: A): Assertion = {
-      Equal(f, s)
-    }
-
-    def stackOverflow[A](a: => A): Assertion = {
-      StackOverflow(() => a)
-    }
-
-    def stackSafe[A](a: => A): Assertion = {
-      StackOverflow(() => a)
-    }
-
-    def and(as: Assertion*): Assertion = {
-      And(as)
+  implicit def assertionTEqualsProp[A: (? => Pretty)]: AssertionT[Equal[A]] = {
+    new AssertionT[Equal[A]] {
+      def resultOf(a: Equal[A]): Prop = Prop.=?(a.f, a.s)
     }
   }
 
-  def allEqual[A](as: Seq[A]): Boolean = {
-    if (as.isEmpty) {
-      true
-    } else {
-      val head = as.head
-      as.tail.forall(_ == head)
+  implicit def assertionTStackOverflowProp[A]: AssertionT[StackOverflow[A]] = {
+    new AssertionT[StackOverflow[A]] {
+      def resultOf(a: StackOverflow[A]): Prop = {
+        if (overflowsStack(a.eval)) Prop.proved
+        else Prop.falsified :| "Expected a stack overflow"
+      }
+    }
+  }
+
+  implicit def assertionTStackSafeProp[A]: AssertionT[StackSafe[A]] = {
+    new AssertionT[StackSafe[A]] {
+      def resultOf(a: StackSafe[A]): Prop = {
+        if (!overflowsStack(a.eval)) Prop.proved
+        else Prop.falsified :| "Unexpected stack overflow"
+      }
+    }
+  }
+
+  implicit def assertionTAndProp[A, B](implicit indA: AssertionT[A], indB: AssertionT[B]): AssertionT[And[A, B]] = {
+    new AssertionT[And[A, B]] {
+      def resultOf(a: And[A, B]): Prop = indA.resultOf(a.f) && indB.resultOf(a.s)
     }
   }
 
@@ -55,37 +61,8 @@ object Assertion {
     }
   }
 
-  def resultOf(assertion: Assertion): Boolean = {
-    assertion match {
-      case Equal(f, s) =>
-        f == s
-      case StackOverflow(f) =>
-        overflowsStack(f)
-      case StackSafe(f) =>
-        !overflowsStack(f)
-      case And(assertions) =>
-        assertions.forall(resultOf)
-    }
-  }
+}
 
-  implicit def assertionToProp(assertion: Assertion): Prop = {
-    assertion match {
-      case eq@Equal(f, s) => Prop.=?(f, s)(eq.toPretty)
-      case StackOverflow(f) =>
-        if (overflowsStack(f))
-          Prop.proved
-        else Prop.falsified :| {
-          "Expected a stack overflow"
-        }
-      case StackSafe(f) =>
-        if (!overflowsStack(f))
-          Prop.proved
-        else Prop.falsified :| {
-          "Unexpected stack overflow"
-        }
-      case And(assertions) =>
-        Prop.all(assertions.map(assertionToProp): _*)
-    }
-  }
-
+final class AssertionTOps[A](val a: A) extends AnyVal {
+  def toProp(implicit inst: AssertionT[A]): Prop = inst.resultOf(a)
 }

@@ -1,15 +1,15 @@
 package scabs
 
-import org.scalacheck.{Gen, Test => SCTest}
+import org.scalacheck.{Gen, Prop, Test => SCTest}
 import org.scalatest.prop.Configuration
 
 abstract class Test[Typeclass[_[_]]](val name: String,
                                      val testParameters: Seq[Configuration#PropertyCheckConfigParam] = Seq.empty)
-  extends Assertion.DSL with Serializable {
+  extends Serializable {
   type Input
   val generateInput: Gen[Input]
 
-  def runTest[F[_] : Typeclass](input: Input): Assertion
+  def runTest[F[_] : Typeclass](input: Input): Prop
 }
 
 object Test {

@@ -14,7 +14,7 @@ abstract class ScalatestSuiteK[Typeclass[_[_]]](suite: TestSuiteK[Typeclass]) ex
       suite.tests.foreach(test => {
         test.name in {
           forAll(
-            test.generateInput[variety.Type],
+            test.generateInput,
             test.testParameters.asInstanceOf[Seq[PropertyCheckConfigParam]] : _*
           ) { i =>
             test.runTest[variety.Type](i) : Prop
@@ -23,6 +23,4 @@ abstract class ScalatestSuiteK[Typeclass[_[_]]](suite: TestSuiteK[Typeclass]) ex
       })
     }
   })
-
-  println(s"Tests: ${this.testNames}")
 }
